@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150730022138) do
+ActiveRecord::Schema.define(version: 20150730040856) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
@@ -23,11 +23,14 @@ ActiveRecord::Schema.define(version: 20150730022138) do
     t.integer  "duration"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "character_id"
   end
+
+  add_index "buffs", ["character_id"], name: "index_buffs_on_character_id"
 
   create_table "characters", force: true do |t|
     t.string   "name"
-    t.string   "type"
+    t.string   "breed"
     t.integer  "stats"
     t.integer  "health"
     t.integer  "attack"
@@ -68,7 +71,7 @@ ActiveRecord::Schema.define(version: 20150730022138) do
 
   create_table "moves", force: true do |t|
     t.string   "name"
-    t.string   "type"
+    t.string   "category"
     t.string   "realm"
     t.string   "element"
     t.integer  "power"
