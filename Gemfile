@@ -1,31 +1,48 @@
 source 'https://rubygems.org'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.13'
-
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+# prod standard gems
+gem 'rails'
+gem 'unicorn'
+gem 'thin'
+gem 'pg'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.2'
+gem 'sass-rails'
 
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-
-# Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.0.0'
-
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
-
-# Use jquery as the JavaScript library
+# JS gems
+gem 'uglifier'
+gem 'coffee-rails'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
+gem 'jbuilder', '~> 1.2'
+
+# Backbone Gems
+gem 'backbone-rails'#, '~> 1.0'
+gem 'marionette-rails'
+gem 'handlebars_assets'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
 
+# DB gems
+group :test, :development do
+  gem 'pry-rails'
+  gem 'pry-doc', :require => false
+  gem 'sqlite3'
+  gem 'rspec-rails'
+  gem 'pry'
+  gem 'factory_girl_rails'
+  gem 'database_cleaner'
+  gem 'awesome_print'
+  gem 'capybara'
+  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'guard-rspec'
+  gem 'spork'
+  gem 'guard-spork'
+end
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 1.2'
+
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
