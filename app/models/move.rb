@@ -1,4 +1,6 @@
 class Move < ActiveRecord::Base
   has_many :effects
-  has_and_belongs_to_many :characters
+  has_many :move_lists
+  has_many :characters, through: :move_lists
+  validates :name, uniqueness: true
 end
