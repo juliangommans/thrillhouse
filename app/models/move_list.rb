@@ -1,4 +1,4 @@
 class MoveList < ActiveRecord::Base
-  has_many :moves
-  has_many :characters
+  belongs_to :move
+  belongs_to :character
 end

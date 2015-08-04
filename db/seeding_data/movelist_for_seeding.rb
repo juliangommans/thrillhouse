@@ -66,7 +66,21 @@ module MoveSeeds
       cooldown_total: 1,
       rank: 1,
       tier: 1
-    }]
+    },
+    { name: "Soothing Breeze",
+      type: "heal",
+      realm: "ethereal",
+      element: "air",
+      power: 35,
+      cost: 2,
+      effect1: [],
+      effect2: "",
+      cooldown: 2,
+      cooldown_total: 2,
+      rank: 1,
+      tier: 1
+    }
+  ]
   end
 
 

@@ -4,7 +4,7 @@ require_relative "./seeding_data/movelist_for_seeding"
 
 ######################################
 
-# moves_array = [MoveSeeds.air_moves_1, MoveSeeds.water_moves_1, MoveSeeds.fire_moves_1]
+# moves_array = [MoveSeeds.fire_moves_1, MoveSeeds.air_moves_1, MoveSeeds.water_moves_1]
 
 # moves_array.each do |moves|
 #   moves.each do |move|
@@ -26,3 +26,13 @@ require_relative "./seeding_data/movelist_for_seeding"
 
 ######################################
 
+# character_array.count.times do |movelist|
+#   bob = Move.where(element: Character.find((movelist+1)).specialisation)
+#   bob.each do |move|
+#   puts bob
+#     y = MoveList.create(move_id: move.id, character_id: (movelist+1))
+#     y.save!
+#   end
+# end
+
+######################################
