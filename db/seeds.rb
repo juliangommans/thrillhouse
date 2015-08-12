@@ -14,7 +14,7 @@ require_relative "./seeding_data/movelist_for_seeding"
 #   end
 # end
 
-######################################
+# #####################################
 
 # character_array = [Characters.bear,Characters.eagle,Characters.tiger]
 
@@ -24,7 +24,7 @@ require_relative "./seeding_data/movelist_for_seeding"
 #   z.save!
 # end
 
-######################################
+# #####################################
 
 # character_array.count.times do |movelist|
 #   bob = Move.where(element: Character.find((movelist+1)).specialisation)
