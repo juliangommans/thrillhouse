@@ -1,4 +1,4 @@
-<a href="#" id=""<%= @id %>""><%= @name %></a>
+<a href="#" class="js-show-move" id=""<%= @id %>""><%= @name %></a>
 <ul class="dropdown-menu">
   <li><a href="#">Power: <%= @power %> (<%= @category %>)</a></li>
   <li><a href="#">Cooldown: <%= @cooldown %> round(s)</a></li>

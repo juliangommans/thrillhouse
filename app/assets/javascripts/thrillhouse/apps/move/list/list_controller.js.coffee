@@ -16,15 +16,23 @@
 
     fireMoves: (moves) ->
       fireView = @getMovesView moves, "Fire"
+      @listeningForShow fireView
       @layout.fireRegion.show fireView
 
     waterMoves: (moves) ->
       waterView = @getMovesView moves, "Water"
+      @listeningForShow waterView
       @layout.waterRegion.show waterView
 
     airMoves: (moves) ->
       airView = @getMovesView moves, "Air"
+      @listeningForShow airView
       @layout.airRegion.show airView
+
+    listeningForShow: (view) ->
+      @listenTo view, "childview:get:move:show", (child, args) ->
+        console.log "arguments", args
+        App.request "move:show", args.model
 
     getMovesView: (moves, element) ->
       model = new Backbone.Model {name: element}

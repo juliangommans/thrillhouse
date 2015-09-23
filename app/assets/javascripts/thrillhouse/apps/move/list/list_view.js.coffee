@@ -14,6 +14,8 @@
     template: 'move/list/_moves'
     tagName: 'li'
     className: 'dropdown-submenu'
+    triggers:
+      "click .js-show-move": "get:move:show"
 
   class List.MoveList extends App.Views.CompositeView
     template: 'move/list/_move_list'
