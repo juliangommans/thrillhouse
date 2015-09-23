@@ -1,0 +1,8 @@
+<h4> <%= @name %>'s stats are as follows </h4>
+<p>Element: <%= @element %></p>
+<p>Power: <%= @power %></p>
+<p>Category: <%= @category %></p>
+<p>Cooldown: <%= @cooldown %></p>
+<p>Cost: <%= @cost %></p>
+<p>Realm: <%= @realm %></p>
+

@@ -618,7 +618,7 @@ end
 options = {
   title: "Thrillhouse",
   appname: "move",
-  branchname: "list",
+  branchname: "show",
   routable: true,
   custom: "/thrillhouse"
 }

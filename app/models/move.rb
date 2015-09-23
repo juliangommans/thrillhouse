@@ -5,7 +5,7 @@ class Move < ActiveRecord::Base
   validates :name, uniqueness: true
 
   def description
-    "#{name} is a #{realm} move #{self.realms} that does #{power} #{self.categorys}. This ability #{self.cooldowns}"
+    "#{name} is a #{realm} move #{self.realms} that does #{power} #{self.categorys}. #{name} #{self.cooldowns}"
   end
 
   def categorys
