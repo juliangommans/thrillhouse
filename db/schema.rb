@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150730040856) do
+ActiveRecord::Schema.define(version: 20150916061919) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20150730040856) do
     t.integer  "speed"
     t.integer  "action_points"
     t.integer  "critical_strike_chance"
-    t.integer  "critical_strike_power"
+    t.decimal  "critical_strike_power"
     t.integer  "combo_points"
     t.string   "specialisation"
     t.string   "nature"

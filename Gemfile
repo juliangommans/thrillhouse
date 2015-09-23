@@ -8,6 +8,7 @@ gem 'pg'
 
 # Use SCSS for stylesheets
 gem 'sass-rails'
+gem 'bootstrap-sass'
 
 # JS gems
 gem 'uglifier'
@@ -15,11 +16,12 @@ gem 'coffee-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jbuilder', '~> 1.2'
-
-# Backbone Gems
-gem 'backbone-rails'#, '~> 1.0'
-gem 'marionette-rails'
-gem 'handlebars_assets'
+gem 'rabl'
+gem 'oj'
+gem 'gon'
+gem 'js-routes'
+gem 'eco'
+gem 'compass-rails'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'

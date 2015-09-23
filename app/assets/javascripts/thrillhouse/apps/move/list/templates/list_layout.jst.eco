@@ -1,0 +1,15 @@
+<div id="list-region" class="dropdown">
+
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"> Moves List
+  <span class="caret"></span></button>
+
+  <ul id="elements-region" class="dropdown-menu multi-level">
+    <li id="fire-region" class="dropdown-submenu">
+    </li>
+    <li id="water-region" class="dropdown-submenu">
+    </li>
+    <li id="air-region" class="dropdown-submenu">
+    </li>
+  </ul>
+
+</div>

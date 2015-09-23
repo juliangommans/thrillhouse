@@ -1,0 +1,6 @@
+<div id="battledome-wrapper">
+  <div id="panel-region"></div>
+  <div id="display-region"></div>
+  <div id="ui-region"></div>
+</div>
+<div id="combat-log-region"></div>

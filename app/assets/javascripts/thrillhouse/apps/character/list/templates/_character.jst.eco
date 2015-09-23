@@ -1,0 +1,9 @@
+<td><a href="#" id="name"><%= @name %></a></td>
+<td><%= @breed %></td>
+<td><%= @specialisation %></td>
+<td><%= @base_stats.health %></td>
+<td><%= @base_stats.attack %></td>
+<td><%= @base_stats.defense %></td>
+<td><%= @base_stats.energy %></td>
+<td><%= @base_stats.resilience %></td>
+<td><%= @base_stats.speed %></td>

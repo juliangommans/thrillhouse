@@ -1,0 +1,15 @@
+<table>
+  <thead>
+    <td>Name</td>
+    <td>Breed</td>
+    <td>Spec</td>
+    <td>Health</td>
+    <td>Attack</td>
+    <td>Defense</td>
+    <td>Energy</td>
+    <td>Resilience</td>
+    <td>Speed</td>
+  </thead>
+  <tbody>
+  </tbody>
+</table>

@@ -1,0 +1,10 @@
+<a href="#" id=""<%= @id %>""><%= @name %></a>
+<ul class="dropdown-menu">
+  <li><a href="#">Power: <%= @power %> (<%= @category %>)</a></li>
+  <li><a href="#">Cooldown: <%= @cooldown %> round(s)</a></li>
+  <li><a href="#">Cost: <%= @cost %> action point(s)</a></li>
+  <li><a href="#">Realm: <%= @realm %></a></li>
+  <li><a href="#">Element: <%= @element %></a></li>
+  <li><a href="#">Tier: <%= @tier %></a></li>
+</ul>
+

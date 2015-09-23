@@ -1,0 +1,6 @@
+<h4> Secondary Stats </h4>
+
+<%= console.log @ %>
+
+<% for k,v of @secondary_stats: %>
+<div><span> <%= k %>: </span><span> <%= v %> </span></div>

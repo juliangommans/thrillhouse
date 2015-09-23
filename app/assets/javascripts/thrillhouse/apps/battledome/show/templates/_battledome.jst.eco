@@ -1,0 +1,4 @@
+<% console.log @ %>
+baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
+<br>
+goody is <%= @player.get('name') %> the <%= @player.get('breed') %>

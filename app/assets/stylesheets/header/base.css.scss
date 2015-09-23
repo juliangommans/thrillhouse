@@ -1,0 +1,21 @@
+#header {
+  top: 0;
+  height: 85px;
+  width: 100%;
+  background-color: lightgray;
+  // color: black;
+  text-align: center;
+  #title{
+    padding-top: 5px;
+    text-shadow: 1px 1px whitesmoke;
+    font-size: 25px;
+  }
+  p {
+    margin-bottom: 5px;
+  }
+}
+
+#nav-bar {
+  text-align: center;
+  padding-bottom: 5px;
+}

@@ -1,0 +1,4 @@
+<h4> Base Stats </h4>
+
+<% for k,v of @base_stats: %>
+<div><span> <%= k %>: </span><span> <%= v %> </span></div>
