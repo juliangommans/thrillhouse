@@ -5,7 +5,7 @@ class Move < ActiveRecord::Base
   validates :name, uniqueness: true
 
   def description
-    "#{name} is a #{realm} move #{self.realms} that does #{power} #{self.categorys}. #{name} #{self.cooldowns}"
+    "#{name} is a #{element.capitalize} based, #{realm.capitalize} move that does #{power} #{self.categorys}. #{name} #{self.cooldowns}, it costs #{cost} action points to use."
   end
 
   def categorys
@@ -18,9 +18,9 @@ class Move < ActiveRecord::Base
 
   def realms
     if "#{realm}" == "ethereal"
-      "(this is special/magical damage, enhanced by 'Energy' and resisted by 'Resilience')"
+      "(this is special/magical damage, enhanced by Energy and resisted by Resilience)"
     else
-      "(this is physical damage, enhanced by 'Attack' and resisted by 'Defense')"
+      "(this is physical damage, enhanced by Attack and resisted by Defense)"
     end
   end
 

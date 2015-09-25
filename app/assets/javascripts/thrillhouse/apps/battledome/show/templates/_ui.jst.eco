@@ -1,1 +1,46 @@
-ui region
+<div id="moves-region">
+  goody is <%= @player.get('name') %> the <%= @player.get('breed') %>
+  <br>
+  <% for move in @player.get('moves'): %>
+    <button class="player-moves btn btn-sm btn-danger" data-toggle="popover" data-placement="bottom" data-content='<%= move.description %>'>
+      <%= move.name %>
+    </button>
+  <% end %>
+
+</div>
+<div id="character-data">
+  Stats
+  <table class="table-striped">
+    <tr>
+      <td>Health:</td>
+      <td><%= @player.get('base_stats').health %> </td>
+      <td>Action Points:</td>
+      <td><%= @player.get('secondary_stats').action_points %> </td>
+    </tr>
+    <tr>
+      <td>Attack:</td>
+      <td><%= @player.get('base_stats').attack %> </td>
+      <td>Combo Points:</td>
+      <td><%= @player.get('secondary_stats').combo_points %> </td>
+    <tr>
+      <td>Defense:</td>
+      <td> <%= @player.get('base_stats').defense %> </td>
+      <td>Crit Chance:</td>
+      <td><%= @player.get('secondary_stats').critical_strike_chance %> </td>
+    </tr>
+    <tr>
+      <td>Energy:</td>
+      <td><%= @player.get('base_stats').energy %> </td>
+      <td>Crit Damage:</td>
+      <td><%= @player.get('secondary_stats').critical_strike_damage %> </td>
+    </tr>
+    <tr>
+      <td>Resilience:</td>
+      <td> <%= @player.get('base_stats').resilience %> </td>
+    </tr>
+    <tr>
+      <td>Speed:</td>
+      <td><%= @player.get('base_stats').speed %> </td>
+    </tr>
+  </table>
+</div>

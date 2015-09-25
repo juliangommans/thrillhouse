@@ -2,7 +2,7 @@
 <p>Element: <%= @element %></p>
 <p>Power: <%= @power %></p>
 <p>Category: <%= @category %></p>
+<p>Realm: <%= @realm %></p>
 <p>Cooldown: <%= @cooldown %></p>
 <p>Cost: <%= @cost %></p>
-<p>Realm: <%= @realm %></p>
 

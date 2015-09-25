@@ -4,7 +4,6 @@
 
     initialize: (options) ->
       { move, id } = options
-      console.log options
       move or= App.request "move:entity", id
       App.execute "when:fetched", move, =>
         @layout = @getLayout()
