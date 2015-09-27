@@ -1,0 +1,42 @@
+
+#ui-region {
+  width: 75%;
+  height: 150px;
+  bottom: 0;
+  position: absolute;
+  background-color: orange;
+  #moves-region {
+    width: 52%;
+    display: inline-block;
+  }
+  #character-data {
+    float: right;
+    width: 23%;
+    display: inline-block;
+  }
+  #character-points {
+    width: 20%;
+    height: 100%;
+    display: inline-block;
+  }
+  .points-circle {
+    width: 14px;
+    height: 14px;
+    background: green;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+    border: 2px solid red;
+    display: inline-block;
+  }
+  .combo-points {
+    background: gray;
+  }
+  .crit-points {
+    background: gray;
+  }
+}
+
+
+
+

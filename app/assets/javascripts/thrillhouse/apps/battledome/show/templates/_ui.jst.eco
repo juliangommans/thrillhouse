@@ -2,12 +2,38 @@
   goody is <%= @player.get('name') %> the <%= @player.get('breed') %>
   <br>
   <% for move in @player.get('moves'): %>
-    <button class="player-moves btn btn-sm btn-danger" data-toggle="popover" data-placement="bottom" data-content='<%= move.description %>'>
-      <%= move.name %>
+    <button class="player-moves btn btn-sm btn-default" data-toggle="popover" data-placement="bottom" data-content='<%= move.description %>'>
+      <%= move.name %>(<%= move.cost %>)
     </button>
   <% end %>
-
+  <div id="confirm-moves">
+    <br>
+    <button class="player-moves btn btn-sm btn-danger">
+      Fight
+    </button>
 </div>
+</div>
+
+<div id="character-points">
+  Action Points
+  <br>
+  <% for num in [1..@player.get('secondary_stats').action_points]: %>
+    <div id="ap<%=num%>" class="action-points points-circle"></div>
+  <% end %>
+  <br>
+  Combo Points
+  <br>
+  <% for num in [1..3]: %>
+    <div id="combo<%=num%>" class="combo-points points-circle"></div>
+  <% end %>
+  <br>
+    Combo Points
+  <br>
+  <% for num in [1..10]: %>
+    <div id="crit<%=num%>" class="crit-points points-circle"></div>
+  <% end %>
+</div>
+
 <div id="character-data">
   Stats
   <table class="table-striped">
@@ -32,7 +58,7 @@
       <td>Energy:</td>
       <td><%= @player.get('base_stats').energy %> </td>
       <td>Crit Damage:</td>
-      <td><%= @player.get('secondary_stats').critical_strike_damage %> </td>
+      <td><%= @player.get('secondary_stats').critical_strike_power %> </td>
     </tr>
     <tr>
       <td>Resilience:</td>
@@ -44,3 +70,9 @@
     </tr>
   </table>
 </div>
+
+
+
+
+
+

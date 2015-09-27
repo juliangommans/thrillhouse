@@ -10,22 +10,6 @@
   height: 655px;
 }
 
-#ui-region {
-  width: 75%;
-  height: 150px;
-  bottom: 0;
-  position: absolute;
-  background-color: orange;
-  #moves-region {
-    width: 75%;
-    display: inline-block;
-  }
-  #character-data {
-    float: right;
-    width: 25%;
-    display: inline-block;
-  }
-}
 
 #combat-log-region {
   width: 25%;
