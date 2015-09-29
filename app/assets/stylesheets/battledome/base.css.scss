@@ -6,15 +6,19 @@
 }
 
 #display-region {
+  padding-left: 5px;
   width: 75%;
   height: 655px;
 }
-
 
 #combat-log-region {
   width: 25%;
   height: 713px;
   right: 0;
+  overflow-y: auto;
   background-color: blue;
   position: absolute;
+  color: white;
+  text-align: center;
+  font-size: 75%;
 }

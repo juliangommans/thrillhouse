@@ -1,6 +1,9 @@
 <div id="battledome-wrapper">
 <!--   <div id="panel-region"></div> -->
-  <div id="combat-log-region"></div>
+  <div id="combat-log-region">
+    <h4>Welcome to the Battle Dome</h4>
+    <hr>
+  </div>
   <div id="display-region"></div>
   <div id="ui-region"></div>
 </div>

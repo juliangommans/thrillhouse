@@ -20,6 +20,14 @@ node :secondary_stats do |r|
   }
 end
 
+node(:total_ap) do |r|
+  r[:action_points]
+end
+
+node(:total_health) do |r|
+  r[:health]
+end
+
 child :moves do
   extends("move/_base")
 end

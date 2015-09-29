@@ -7,5 +7,6 @@ baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
 <button class="opponent-moves"> <%= move.name %> </button>
 <% end %>
 
+<span class="opponent-health"> <%= @opponent.get('base_stats').health %>/<%= @opponent.get('total_health') %></span>
 <br>
 

@@ -6,12 +6,13 @@
   position: absolute;
   background-color: orange;
   #moves-region {
-    width: 52%;
+    padding-left: 5px;
+    width: 48%;
     display: inline-block;
   }
   #character-data {
     float: right;
-    width: 23%;
+    width: 27%;
     display: inline-block;
   }
   #character-points {
@@ -22,18 +23,28 @@
   .points-circle {
     width: 14px;
     height: 14px;
-    background: green;
+    background: gray;
     -moz-border-radius: 7px;
     -webkit-border-radius: 7px;
     border-radius: 7px;
     border: 2px solid red;
     display: inline-block;
   }
+  .available {
+    background: green;
+    border: 2px solid lightgreen;
+  }
+  .selected {
+    background: darkgray;
+  }
   .combo-points {
     background: gray;
   }
   .crit-points {
     background: gray;
+  }
+  .modal-ap-wrapper {
+    float: right;
   }
 }
 
