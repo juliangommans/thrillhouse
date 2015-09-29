@@ -1,4 +1,11 @@
 <% console.log @ %>
 baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
+
 <br>
-goody is <%= @player.get('name') %> the <%= @player.get('breed') %>
+
+<% for move in @opponent.get('moves'): %>
+<button class="opponent-moves"> <%= move.name %> </button>
+<% end %>
+
+<br>
+

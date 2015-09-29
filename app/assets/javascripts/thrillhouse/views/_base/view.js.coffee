@@ -21,3 +21,8 @@
         url = '#' + url unless options.external
 
         "<a href="#{url}">#{@escape(name)}</a>"
+
+    showData: (args) ->
+      $(args.currentTarget).popover('show')
+    hideData: (args) ->
+      $(args.currentTarget).popover('hide')

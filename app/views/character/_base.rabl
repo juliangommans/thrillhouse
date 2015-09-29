@@ -19,3 +19,7 @@ node :secondary_stats do |r|
   combo_points: r[:combo_points]
   }
 end
+
+child :moves do
+  extends("move/_base")
+end

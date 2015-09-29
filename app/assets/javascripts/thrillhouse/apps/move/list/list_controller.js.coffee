@@ -31,7 +31,6 @@
 
     listeningForShow: (view) ->
       @listenTo view, "childview:get:move:show", (child, args) ->
-        console.log "arguments", args
         App.request "move:show", args.model
 
     getMovesView: (moves, element) ->

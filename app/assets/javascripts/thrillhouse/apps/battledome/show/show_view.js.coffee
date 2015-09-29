@@ -5,6 +5,11 @@
 
   class Show.Ui extends App.Views.ItemView
     template: 'battledome/show/_ui'
+    ui:
+      playerMoves: '.player-moves'
+    events:
+      'mouseenter @ui.playerMoves': 'showData'
+      'mouseleave @ui.playerMoves': 'hideData'
 
   class Show.Layout extends App.Views.Layout
     template: 'battledome/show/battledome_layout'

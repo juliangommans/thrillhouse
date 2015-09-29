@@ -14,7 +14,6 @@
         @show @layout
 
     listView: (characters) ->
-      console.log characters
       listView = @getListView characters
 
       @listenTo listView, "childview:show:character", (child, args) ->
