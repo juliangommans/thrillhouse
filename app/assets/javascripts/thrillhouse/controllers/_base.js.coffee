@@ -23,3 +23,5 @@
         if model.get("element") is element
           return model
       return new Backbone.Collection moveList
+
+    

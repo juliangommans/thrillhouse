@@ -20,33 +20,54 @@
           @show @layout
 
       @selectedMoves = []
+      @cooldowns = []
 
     getLayout: ->
       new Show.Layout
 
     showView: (model) ->
-      showView = @getShowView(model)
-      @layout.displayRegion.show showView
+      @showView = @getShowView(model)
+      @layout.displayRegion.show @showView
 
     uiView: (model) ->
-      uiView = @getUiView(model)
+      @uiView = @getUiView(model)
 
-      @listenTo uiView, "check:action:points", (view, element) =>
+      @listenTo @uiView, "check:action:points", (view, element) =>
         player = element.model.get('player')
         selectedMove = view.currentTarget
         @checkActionPoints(player, selectedMove)
 
-      @listenTo uiView, "clear:chosen:moves", (args) =>
-        @resetUi args
+      @listenTo @uiView, "clear:chosen:moves", =>
+        @resetUi()
         @combatLogUpdate("You have successfully cleared your selection.")
 
-      @listenTo uiView, "unselect:this:move", (view, element) =>
+      @listenTo @uiView, "unselect:this:move", (view, element) =>
         player = element.model.get('player')
         selectedMove = view.currentTarget
         @unSelectMove(player, selectedMove)
 
-      @layout.uiRegion.show uiView
+      @listenTo @uiView,  "confirm:chosen:moves", (args) =>
+        @initiateCombat(args)
+        @uiView.render()
+        @showView.render()
+
+      @listenTo @uiView, "reset:action:points", (args) =>
+        @pointsDisplay("up")
+
+      @layout.uiRegion.show @uiView
       @pointsDisplay("up")
+
+    initiateCombat: (args) ->
+      combatOptions = {
+        player: args.model.get('player')
+        opponent: args.model.get('opponent')
+        moves: @selectedMoves
+      }
+      results = App.request "battledome:combat", combatOptions
+      console.log "this be the results", results
+      @stripResults(results)
+      # @finalizeRound(results)
+      results
 
     checkActionPoints: (player, selectedMove) ->
       move = @findMove(player, selectedMove)
@@ -55,7 +76,7 @@
       if cost <= ap
         @selectedMoves.push(move)
         @deductActionPoints(player,cost)
-        message = "You selected #{$(selectedMove).text()}, you now have #{ap - cost} action points left"
+        message = "<p>You selected #{$(selectedMove).text()}, you now have <b>#{ap - cost}</b> action points left</p>"
         @combatLogUpdate(message)
       else
         @notEnoughAp()
@@ -70,6 +91,8 @@
     addBackActionPoints: (player, move) ->
       console.log "-1 move", @selectedMoves
       player.get('secondary_stats').action_points += move.cost
+      ap = player.get('secondary_stats').action_points
+      @combatLogUpdate("<p>You have unselected #{move.name}, you now have <b>#{ap}</b> points left</p>")
       @pointsDisplay("up")
 
 
@@ -85,22 +108,20 @@
       $(button).removeClass('selected-last')
 
     combatLogUpdate: (message) ->
-      $('#combat-log-region').append("#{message} <hr>")
+      $('#combat-log-region').append("<p>#{message}</p>")
 
-    resetUi: (args) ->
+    resetUi: ->
       @selectedMoves.length = 0
-      totalAp = args.model.get('player').get('total_ap')
-      currentAp = args.model.get('player').get('secondary_stats').action_points
-      args.model.get('player').get('secondary_stats').action_points += (totalAp - currentAp)
-      @pointsDisplay("up")
-      $('.player-moves').removeClass('selected')
-      $('.selected-last').removeClass('selected-last')
+      totalAp = @model.get('player').get('total_ap')
+      currentAp = @model.get('player').get('secondary_stats').action_points
+      @model.get('player').get('secondary_stats').action_points += (totalAp - currentAp)
+      @uiView.render()
+      @showView.render()
 
     deductActionPoints: (player,cost) ->
       console.log "+1 move", @selectedMoves
       player.get('secondary_stats').action_points -= cost
       @pointsDisplay "down"
-
 
     pointsDisplay: (direction) ->
       modalArray = $('.modal-ap')
@@ -119,10 +140,45 @@
         for item in [0..(total - available)]
           $(array[total - item]).removeClass('available')
 
+    stripResults: (results) ->
+      @delay(results.outcome,2000)
+
+    delay: (array,time) ->
+      count = 0
+      total = array.length - 1
+      looper = =>
+        @sortResultData(array[count])
+        if count >= total
+          return
+        else
+          count++
+        setTimeout looper, time
+      looper()
+
+    sortResultData: (result) ->
+      console.log "result", result
+      @checkHealth(result)
+      if result.move.cooldown > 1
+        @cooldowns.push(result.move)
+      @combatLogUpdate(result.message)
+
+    checkHealth: (result) ->
+      if result.target is "player"
+        @model.get('player').get('base_stats').health += result.healthChange
+      else
+        @model.get('opponent').get('base_stats').health -= result.healthChange
+
+    finalizeRound: ->
+      @combatLogUpdate("<p><b>End of round #{@model.get('round').count}</b></p><hr>")
+      @model.get('round').count += 1
+      @combatLogUpdate("<p><b>Beginning of round #{@model.get('round').count}</b></p>")
+      @resetUi()
+
     createBattleModel: (player, opponent) ->
       new Backbone.Model
         player: player
         opponent: opponent
+        round: {count: 1}
 
     getShowView: (model) ->
       new Show.Battledome

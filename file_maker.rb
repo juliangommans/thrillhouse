@@ -617,9 +617,9 @@ end
 
 options = {
   title: "Thrillhouse",
-  appname: "move",
-  branchname: "show",
-  routable: true,
+  appname: "battledome",
+  branchname: "combat",
+  routable: false,
   custom: "/thrillhouse"
 }
 

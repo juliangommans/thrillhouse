@@ -27,9 +27,11 @@
           </button>
         <% end %>
           <br>
+          <br>
 
         <div class="modal-footer">
-          <button type="button" id="close-move-list" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="accept-move-list" class="btn btn-default" data-dismiss="modal">Accept</button>
+          <button type="button" id="close-move-list" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
       </div>
 
