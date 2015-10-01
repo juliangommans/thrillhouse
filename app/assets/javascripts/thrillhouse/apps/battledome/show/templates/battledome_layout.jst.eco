@@ -1,10 +1,23 @@
 <div id="battledome-wrapper">
 <!--   <div id="panel-region"></div> -->
-  <div id="combat-log-region">
-    <h4>Welcome to the Battle Dome</h4>
-    <hr>
+  <div class="container">
+    <div class="row test">
+
+      <div class="row test">
+        <div class="col-xs-9" id="display-region"></div>
+        <div class="col-xs-3" id="combat-log-region">
+        <h4>Welcome to the Battle Dome</h4>
+        <hr>
+      </div>
+      </div>
+      <div class="row test">
+        <div class="col-xs-9" id="ui-region"></div>
+      </div>
+
+
+    </div>
   </div>
-  <div id="display-region"></div>
-  <div id="ui-region"></div>
+
 </div>
+
 

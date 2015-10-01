@@ -44,6 +44,7 @@
         move:
           move: move
           cooldown: move.cooldown
+          id: move.id
         healthChange: totalHeal
         target: "player"
         message: message

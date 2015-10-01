@@ -4,7 +4,7 @@
     template: 'battledome/show/_battledome'
 
   class Show.Ui extends App.Views.ItemView
-    template: 'battledome/show/_ui'
+    template: 'battledome/show/_moves'
     ui:
       playerMoves: '.player-moves'
       confirmChoices: '.player-confirm-moves'

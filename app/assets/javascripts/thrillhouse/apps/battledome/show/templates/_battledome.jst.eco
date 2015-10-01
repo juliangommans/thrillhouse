@@ -1,12 +1,24 @@
-<% console.log @ %>
-baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
+<div id="battledome-size">
+  <div class="row">
 
-<br>
+    <div class="col-sm-8">
+      baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
+    </div>
 
-<% for move in @opponent.get('moves'): %>
-<button class="opponent-moves"> <%= move.name %> </button>
-<% end %>
+    <div class="col-sm-4">
+       <span class="opponent-health"> <%= @opponent.get('base_stats').health %>/<%= @opponent.get('total_health') %></span>
 
-<span class="opponent-health"> <%= @opponent.get('base_stats').health %>/<%= @opponent.get('total_health') %></span>
-<br>
+    </div>
 
+  </div>
+
+  <div class="row">
+    <% for move in @opponent.get('moves'): %>
+      <div class="col-sm-2">
+        <button class="opponent-moves"> <%= move.name %> </button>
+      </div>
+    <% end %>
+  </div>
+
+
+</div>

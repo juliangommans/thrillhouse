@@ -48,8 +48,6 @@
 
       @listenTo @uiView,  "confirm:chosen:moves", (args) =>
         @initiateCombat(args)
-        @uiView.render()
-        @showView.render()
 
       @listenTo @uiView, "reset:action:points", (args) =>
         @pointsDisplay("up")
@@ -66,11 +64,10 @@
       results = App.request "battledome:combat", combatOptions
       console.log "this be the results", results
       @stripResults(results)
-      # @finalizeRound(results)
-      results
 
     checkActionPoints: (player, selectedMove) ->
-      move = @findMove(player, selectedMove)
+      identifier = parseInt($(selectedMove).attr('id'))
+      move = @findMove(player.get('moves'), identifier)
       cost = move.cost
       ap = player.get('secondary_stats').action_points
       if cost <= ap
@@ -82,7 +79,8 @@
         @notEnoughAp()
 
     unSelectMove: (player, selectedMove) ->
-      move = @findMove(player, selectedMove)
+      identifier = parseInt($(selectedMove).attr('id'))
+      move = @findMove(player.get('moves'), identifier)
       moveIndex = @selectedMoves.indexOf(move)
       if moveIndex > -1
         @selectedMoves.splice(moveIndex, 1)
@@ -96,9 +94,9 @@
       @pointsDisplay("up")
 
 
-    findMove: (player, selectedMove) ->
-      _.find(player.get('moves'), (move) ->
-        move.id == parseInt($(selectedMove).attr('id'))
+    findMove: (array, identifier) ->
+      _.find(array, (move) ->
+        move.id == identifier
       )
 
     notEnoughAp: ->
@@ -148,7 +146,10 @@
       total = array.length - 1
       looper = =>
         @sortResultData(array[count])
+        @uiView.render()
+        @showView.render()
         if count >= total
+          @finalizeRound time
           return
         else
           count++
@@ -156,10 +157,12 @@
       looper()
 
     sortResultData: (result) ->
-      console.log "result", result
+      cooldowns = @model.get('cooldowns').player
+      console.log "this is the cooldowns before", cooldowns
       @checkHealth(result)
-      if result.move.cooldown > 1
-        @cooldowns.push(result.move)
+      if result.move.cooldown >= 1
+        unless @findMove(cooldowns, result.move.id)
+          @model.get('cooldowns').player.push(result.move)
       @combatLogUpdate(result.message)
 
     checkHealth: (result) ->
@@ -168,17 +171,37 @@
       else
         @model.get('opponent').get('base_stats').health -= result.healthChange
 
-    finalizeRound: ->
+    finalizeRound: (time) ->
+      @roundUpdates()
+      setTimeout @resolve, time
+      console.log "current model", @model
+
+    resolve: =>
       @combatLogUpdate("<p><b>End of round #{@model.get('round').count}</b></p><hr>")
       @model.get('round').count += 1
       @combatLogUpdate("<p><b>Beginning of round #{@model.get('round').count}</b></p>")
       @resetUi()
 
+    roundUpdates: ->
+      cooldowns = @model.get('cooldowns').player
+      console.log "this is the cooldowns, after", cooldowns
+      for cd in cooldowns.slice(0).reverse()
+        cd.cooldown -= 1
+        if cd.cooldown < 1
+          move = @findMove(cooldowns, cd.id)
+          moveIndex = cooldowns.indexOf(move)
+          if moveIndex > -1
+            @model.get('cooldowns').player.splice(moveIndex, 1)
+
     createBattleModel: (player, opponent) ->
       new Backbone.Model
         player: player
         opponent: opponent
-        round: {count: 1}
+        round:
+          count: 1
+        cooldowns:
+          player: []
+          opponent: []
 
     getShowView: (model) ->
       new Show.Battledome

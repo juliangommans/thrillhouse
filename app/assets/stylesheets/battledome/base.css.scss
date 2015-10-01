@@ -1,23 +1,33 @@
 #battledome-wrapper {
   height: 713px;
-  width: 100%;
   position: relative;
   background-color: green;
 }
 
-#display-region {
-  padding-left: 5px;
-  width: 75%;
-  height: 655px;
-}
+// #display-region {
+//   padding-left: 5px;
+//   width: 989px;
+//   height: 565px;
+// }
+
+// #battledome-size {
+//   width: 989px;
+//   height: 565px;
+// }
+
+// #ui-size{
+//   text-align: center;
+//   width: 989px;
+//   height: 150px;
+// }
 
 #combat-log-region {
-  width: 25%;
+  width: 24%;
   height: 713px;
-  right: 0;
+
   overflow-y: auto;
   background-color: blue;
-  position: absolute;
+
   color: white;
   text-align: center;
   font-size: 75%;
