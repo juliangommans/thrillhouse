@@ -49,11 +49,11 @@
       @listenTo @uiView,  "confirm:chosen:moves", (args) =>
         @initiateCombat(args)
 
-      @listenTo @uiView, "reset:action:points", (args) =>
-        @pointsDisplay("up")
+      @listenTo @uiView, "reset:ui:points", (args) =>
+        @postRenderUpdate()
 
       @layout.uiRegion.show @uiView
-      @pointsDisplay("up")
+      @postRenderUpdate()# "up", "action_points"
 
     initiateCombat: (args) ->
       combatOptions = {
@@ -68,15 +68,37 @@
     checkActionPoints: (player, selectedMove) ->
       identifier = parseInt($(selectedMove).attr('id'))
       move = @findMove(player.get('moves'), identifier)
-      cost = move.cost
       ap = player.get('secondary_stats').action_points
-      if cost <= ap
-        @selectedMoves.push(move)
-        @deductActionPoints(player,cost)
-        message = "<p>You selected #{$(selectedMove).text()}, you now have <b>#{ap - cost}</b> action points left</p>"
+      if move.cost <= ap
+        @assignMove(move)
+        message = "<p>You selected #{$(selectedMove).text()}, you now have <b>#{ap - move.cost}</b> action points left</p>"
         @combatLogUpdate(message)
       else
         @notEnoughAp()
+
+    assignMove: (move) ->
+      @selectedMoves.push(move)
+      @addComboPoint()
+      @deductActionPoints(move.cost)
+
+    addComboPoint: ->
+      total = @model.get('player').get('totals')["combo_points"]
+      if @model.get('player').get('secondary_stats')["combo_points"] < total
+        @model.get('player').get('secondary_stats')["combo_points"] += 1
+        @postRenderUpdate()# "up", "combo_points"
+      else
+        @initiateComboBonus(total)
+
+    initiateComboBonus: (total) ->
+      bonus = confirm "would you like add a bonus to this move?"
+      console.log "max combo points reached", bonus
+      if bonus
+        @selectedMoves[(@selectedMoves.length - 1)].bonus = true
+        console.log "SELECTED", @selectedMoves
+        $('.combo-points').removeClass('available')
+        @model.get('player').get('secondary_stats')["combo_points"] -= total
+
+
 
     unSelectMove: (player, selectedMove) ->
       identifier = parseInt($(selectedMove).attr('id'))
@@ -91,7 +113,7 @@
       player.get('secondary_stats').action_points += move.cost
       ap = player.get('secondary_stats').action_points
       @combatLogUpdate("<p>You have unselected #{move.name}, you now have <b>#{ap}</b> points left</p>")
-      @pointsDisplay("up")
+      @postRenderUpdate() #{}"up", "action_points"
 
 
     findMove: (array, identifier) ->
@@ -110,26 +132,34 @@
 
     resetUi: ->
       @selectedMoves.length = 0
-      totalAp = @model.get('player').get('total_ap')
+      totalAp = @model.get('player').get('totals')["action_points"]
       currentAp = @model.get('player').get('secondary_stats').action_points
       @model.get('player').get('secondary_stats').action_points += (totalAp - currentAp)
       @uiView.render()
       @showView.render()
+      @postRenderUpdate()
 
-    deductActionPoints: (player,cost) ->
+    deductActionPoints: (cost) ->
       console.log "+1 move", @selectedMoves
-      player.get('secondary_stats').action_points -= cost
-      @pointsDisplay "down"
+      @model.get('player').get('secondary_stats').action_points -= cost
+      @pointsDisplay "down", "action_points"
 
-    pointsDisplay: (direction) ->
-      modalArray = $('.modal-ap')
-      uiArray = $('.ui-ap')
-      @updateDisplay(modalArray, direction)
-      @updateDisplay(uiArray, direction)
+    pointsDisplay: (direction, stat) ->
+      switch stat
+        when "action_points"
+          modalArray = $('.modal-ap')
+          uiArray = $('.ui-ap')
+          @updateDisplay(modalArray, direction, stat)
+          @updateDisplay(uiArray, direction, stat)
+        when "combo_points"
+          uiArray = $('.combo-points')
+          @updateDisplay(uiArray, direction, stat)
+        else
+          alert "boourns - we don't know what points you want yo"
 
-    updateDisplay: (array, direction) ->
-      available = @model.get('player').get('secondary_stats').action_points
-      total = @model.get('player').get('total_ap')
+    updateDisplay: (array, direction, stat) ->
+      available = @model.get('player').get('secondary_stats')[stat]
+      total = @model.get('player').get('totals')[stat]
       if direction is "up"
         if available > 0
           for item in [1..available]
@@ -148,6 +178,7 @@
         @sortResultData(array[count])
         @uiView.render()
         @showView.render()
+        @postRenderUpdate()
         if count >= total
           @finalizeRound time
           return
@@ -166,10 +197,17 @@
       @combatLogUpdate(result.message)
 
     checkHealth: (result) ->
+      console.log "checkhealth results"
       if result.target is "player"
         @model.get('player').get('base_stats').health += result.healthChange
       else
         @model.get('opponent').get('base_stats').health -= result.healthChange
+
+    adjustHealthBar: (target) ->
+      targetHp = @model.get(target).get('base_stats').health
+      totalHp = @model.get(target).get('totals').health
+      newHp = Math.round(targetHp/totalHp*100)
+      $("##{target}-current-hp").width("#{newHp}%")
 
     finalizeRound: (time) ->
       @roundUpdates()
@@ -181,6 +219,7 @@
       @model.get('round').count += 1
       @combatLogUpdate("<p><b>Beginning of round #{@model.get('round').count}</b></p>")
       @resetUi()
+      @postRenderUpdate()
 
     roundUpdates: ->
       cooldowns = @model.get('cooldowns').player
@@ -192,6 +231,12 @@
           moveIndex = cooldowns.indexOf(move)
           if moveIndex > -1
             @model.get('cooldowns').player.splice(moveIndex, 1)
+
+    postRenderUpdate: ->
+      @pointsDisplay "up", "action_points"
+      @pointsDisplay "up", "combo_points"
+      @adjustHealthBar("player")
+      @adjustHealthBar("opponent")
 
     createBattleModel: (player, opponent) ->
       new Backbone.Model

@@ -20,12 +20,12 @@ node :secondary_stats do |r|
   }
 end
 
-node(:total_ap) do |r|
-  r[:action_points]
-end
-
-node(:total_health) do |r|
-  r[:health]
+node :totals do |r|
+  {
+  action_points: r[:action_points],
+  health: r[:health],
+  combo_points: r[:total_combo_points]
+  }
 end
 
 child :moves do

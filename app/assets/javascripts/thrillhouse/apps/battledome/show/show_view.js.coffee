@@ -38,7 +38,7 @@
       @render()
 
     onRender: ->
-      @triggerMethod("reset:action:points")
+      @triggerMethod("reset:ui:points")
 
 
   class Show.Layout extends App.Views.Layout

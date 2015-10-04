@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150916061919) do
+ActiveRecord::Schema.define(version: 20151002022020) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
@@ -46,6 +46,8 @@ ActiveRecord::Schema.define(version: 20150916061919) do
     t.string   "nature"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "total_combo_points"
+    t.integer  "total_critical_strike_points"
   end
 
   create_table "effects", force: true do |t|
@@ -81,6 +83,9 @@ ActiveRecord::Schema.define(version: 20150916061919) do
     t.integer  "tier"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "bonus",           default: false
+    t.boolean  "critical",        default: false
+    t.decimal  "critical_damage"
   end
 
   create_table "passives", force: true do |t|

@@ -1,12 +1,11 @@
 <div id="battledome-size">
   <div class="row">
 
-    <div class="col-sm-8">
+    <div class="col-xs-8">
       baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
     </div>
 
-    <div class="col-sm-4">
-       <span class="opponent-health"> <%= @opponent.get('base_stats').health %>/<%= @opponent.get('total_health') %></span>
+    <div class="col-xs-4">
 
     </div>
 
@@ -14,11 +13,30 @@
 
   <div class="row">
     <% for move in @opponent.get('moves'): %>
-      <div class="col-sm-2">
+      <div class="col-xs-2">
         <button class="opponent-moves"> <%= move.name %> </button>
       </div>
     <% end %>
   </div>
-
+  <div class="row">
+    <div class="col-xs-8">
+    </div>
+    <div class="col-xs-4">
+      <div class="outer-health-bar">
+        <div id="opponent-current-hp" class="inner-health-bar">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-9">
+    </div>
+    <div class="col-xs-3">
+      <span class="opponent-health"> <%= @opponent.get('base_stats').health %>/<%= @opponent.get('totals').health %></span>
+      <span class="opponent-health-percent">
+       ( <%= @opponent.get('base_stats').health / @opponent.get('totals').health * 100 %>% )
+      </span>
+    </div>
+  </div>
 
 </div>

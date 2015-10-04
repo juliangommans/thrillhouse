@@ -15,47 +15,54 @@
     sortMoveType: (move) ->
       switch move.category
         when "damage"
-          @resolveDamage(move)
+          @resolveMove(move, "opponent")
         when "heal"
-          @resolveHeal(move)
+          @resolveMove(move, "player")
         when "utility"
           console.log "this is a utility move"
         else
           alert "you done fucked up son"
 
-    resolveDamage: (move) ->
-      damage = move.power * @player.get('base_stats').attack
-      totalDamage = @damageCalculation(damage)
-      message = "<p>Your #{move.name} dealt <b>#{totalDamage}</b> damage to your opponent</p>"
+    resolveMove: (move, target) ->
+      power = move.power * @player.get('base_stats')[@getRealm(move)]
+      modifier = @getModifier(move)
+      if move.category is "damage"
+        total = @damageCalculation(power, modifier)
+        message = "<p>Your #{move.name} dealt <b>#{total}</b> damage to your opponent</p>"
+      else if move.category is "heal"
+        total = @healCalculation(power, modifier)
+        message = "<p>Your #{move.name} healed you for <b>#{total}</b> health</p>"
+      else
+        console.log "yeah mate, nah"
       @outcome.push {
         move:
           move: move
           cooldown: move.cooldown
-        healthChange: totalDamage
-        target: "opponent"
+        healthChange: total
+        target: target
         message: message
       }
 
-    resolveHeal: (move) ->
-      heal = move.power * @player.get('base_stats').energy
-      totalHeal = @healCalculation(heal)
-      message = "<p>Your #{move.name} healed you for <b>#{totalHeal}</b> health</p>"
-      @outcome.push {
-        move:
-          move: move
-          cooldown: move.cooldown
-          id: move.id
-        healthChange: totalHeal
-        target: "player"
-        message: message
-      }
+    getRealm: (move) ->
+      if move.realm is "ethereal"
+        return "attack"
+      else
+        return "energy"
 
-    damageCalculation: (damage) ->
+    getModifier: (move) ->
+      modifier = 1
+      if move.bonus
+        modifier += 0.5
+      if move.critical
+        modifier += move.critical_damage
+      return modifier
+
+    damageCalculation: (damage, modifier) ->
       total = damage / @opponent.get('base_stats').defense
-      total / 2
+      total = total * modifier / 2
       Math.floor(total)
 
-    healCalculation: (heal) ->
+    healCalculation: (heal, modifier) ->
       combinedDef =  @player.get('base_stats').defense +  @player.get('base_stats').resilience
       total = heal / combinedDef
       Math.ceil(total)

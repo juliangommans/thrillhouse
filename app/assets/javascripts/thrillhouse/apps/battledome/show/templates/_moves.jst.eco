@@ -37,7 +37,7 @@
         Action Points
       </div>
       <div class="row">
-        <% for num in [@player.get('total_ap')..1]: %>
+        <% for num in [@player.get('totals')["action_points"]..1]: %>
           <div class="ui-ap points-circle"></div>
         <% end %>
       </div>
@@ -45,7 +45,7 @@
         Combo Points
       </div>
       <div class="row">
-        <% for num in [1..3]: %>
+        <% for num in [1..@player.get('totals')["combo_points"]]: %>
           <div id="combo<%=num%>" class="combo-points points-circle"></div>
         <% end %>
       </div>
@@ -90,7 +90,7 @@
       <div class="modal-header">
         <h4 class="modal-title"> Select your moves
           <div class="modal-ap-wrapper"> Available action points
-          <% for num in [@player.get('total_ap')..1]: %>
+          <% for num in [@player.get('totals')["action_points"]..1]: %>
             <div id="ap<%=num%>" class="modal-ap action-points points-circle"></div>
           <% end %>
           </div>
