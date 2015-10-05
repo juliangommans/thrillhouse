@@ -63,11 +63,12 @@
       }
       results = App.request "battledome:combat", combatOptions
       console.log "this be the results", results
-      @stripResults(results)
+      unless results.outcome.length < 1
+        @stripResults(results)
 
     checkActionPoints: (player, selectedMove) ->
-      identifier = parseInt($(selectedMove).attr('id'))
-      move = @findMove(player.get('moves'), identifier)
+      identifier = $(selectedMove).attr('id')
+      move = @findMove(player.get('moves'), parseInt(identifier))
       ap = player.get('secondary_stats').action_points
       if move.cost <= ap
         @assignMove(move)
@@ -91,18 +92,16 @@
 
     initiateComboBonus: (total) ->
       bonus = confirm "would you like add a bonus to this move?"
-      console.log "max combo points reached", bonus
       if bonus
         @selectedMoves[(@selectedMoves.length - 1)].bonus = true
-        console.log "SELECTED", @selectedMoves
         $('.combo-points').removeClass('available')
         @model.get('player').get('secondary_stats')["combo_points"] -= total
 
 
 
     unSelectMove: (player, selectedMove) ->
-      identifier = parseInt($(selectedMove).attr('id'))
-      move = @findMove(player.get('moves'), identifier)
+      identifier = $(selectedMove).attr('id')
+      move = @findMove(player.get('moves'), parseInt(identifier))
       moveIndex = @selectedMoves.indexOf(move)
       if moveIndex > -1
         @selectedMoves.splice(moveIndex, 1)
@@ -189,7 +188,6 @@
 
     sortResultData: (result) ->
       cooldowns = @model.get('cooldowns').player
-      console.log "this is the cooldowns before", cooldowns
       @checkHealth(result)
       if result.move.cooldown >= 1
         unless @findMove(cooldowns, result.move.id)
@@ -197,7 +195,6 @@
       @combatLogUpdate(result.message)
 
     checkHealth: (result) ->
-      console.log "checkhealth results"
       if result.target is "player"
         @model.get('player').get('base_stats').health += result.healthChange
       else
@@ -210,25 +207,27 @@
       $("##{target}-current-hp").width("#{newHp}%")
 
     finalizeRound: (time) ->
-      @roundUpdates()
-      setTimeout @resolve, time
+      @cooldownUpdates()
+      setTimeout @resolveRound, time
       console.log "current model", @model
 
-    resolve: =>
+    resolveRound: =>
       @combatLogUpdate("<p><b>End of round #{@model.get('round').count}</b></p><hr>")
       @model.get('round').count += 1
       @combatLogUpdate("<p><b>Beginning of round #{@model.get('round').count}</b></p>")
       @resetUi()
       @postRenderUpdate()
 
-    roundUpdates: ->
+    cooldownUpdates: ->
       cooldowns = @model.get('cooldowns').player
       console.log "this is the cooldowns, after", cooldowns
       for cd in cooldowns.slice(0).reverse()
         cd.cooldown -= 1
         if cd.cooldown < 1
           move = @findMove(cooldowns, cd.id)
+          console.log "this is the move on CD less than 1", move
           moveIndex = cooldowns.indexOf(move)
+          console.log "this is it's move index", moveIndex
           if moveIndex > -1
             @model.get('cooldowns').player.splice(moveIndex, 1)
 
@@ -237,6 +236,24 @@
       @pointsDisplay "up", "combo_points"
       @adjustHealthBar("player")
       @adjustHealthBar("opponent")
+      @checkCooldowns()
+
+
+    checkCooldowns: ->
+      array = $('.player-moves')
+      cooldowns = @getCooldowns()
+      for move in [0..(array.length-1)]
+        if @findMove(cooldowns, parseInt($(array[move]).attr('id')))
+          $(array[move]).addClass('disabled')
+        else
+          $(array[move]).removeClass('disabled')
+
+    getCooldowns: ->
+      cooldowns = []
+      for item in @model.get('cooldowns').player
+        cooldowns.push(item.move)
+      return cooldowns
+
 
     createBattleModel: (player, opponent) ->
       new Backbone.Model

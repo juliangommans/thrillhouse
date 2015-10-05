@@ -7,6 +7,8 @@
       @outcome = []
       if @moves.length > 0
         @actionMove()
+      else
+        alert "You have not selected any moves."
 
     actionMove: ->
       for move in @moves

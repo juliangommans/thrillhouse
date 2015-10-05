@@ -85,6 +85,14 @@ ul, ol, dl {  list-style-type: none;  }
   background-color: whitesmoke;
 }
 
+.padded-rows {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.filler-rows {
+  height: 50px;
+}
 // .test {
 //   border: 1px solid black;
 // }

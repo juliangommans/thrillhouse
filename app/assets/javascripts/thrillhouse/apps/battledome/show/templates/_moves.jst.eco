@@ -3,15 +3,15 @@
   <div class="row">
     <div class="col-lg-2 test" id="moves-column">
       <!-- First column -->
-      <div class="row" id="moves-title">
+      <div class="row padded-rows" id="moves-title">
         <%= @player.get('name') %> the <%= @player.get('breed') %>
       </div>
-      <div class="row" id="moves-list">
+      <div class="row padded-rows" id="moves-list">
         <button class="player-select-moves btn btn-sm btn-danger" data-toggle="modal" data-target="#moves-modal">
             Moves List
         </button>
       </div>
-      <div class="row" id="moves-confirm">
+      <div class="row padded-rows" id="moves-confirm">
         <button class="player-confirm-moves btn btn-sm btn-danger">
           Fight
         </button>
