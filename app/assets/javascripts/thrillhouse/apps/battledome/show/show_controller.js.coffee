@@ -20,7 +20,6 @@
           @show @layout
 
       @selectedMoves = []
-      @cooldowns = []
 
     getLayout: ->
       new Show.Layout
@@ -61,11 +60,11 @@
         opponent: args.model.get('opponent')
         moves: @selectedMoves
       }
-      @disableCombat()
       results = App.request "battledome:combat", combatOptions
       console.log "this be the results", results
       unless results.outcome.length < 1
         @stripResults(results)
+        @disableCombatButtons()
 
     checkActionPoints: (player, selectedMove) ->
       identifier = $(selectedMove).attr('id')
@@ -92,13 +91,11 @@
         @initiateComboBonus(total)
 
     initiateComboBonus: (total) ->
-      bonus = confirm "would you like add a bonus to this move?"
+      bonus = confirm "would you like add a bonus to this move (+50% effectiveness)?"
       if bonus
         @selectedMoves[(@selectedMoves.length - 1)].bonus = true
         $('.combo-points').removeClass('available')
         @model.get('player').get('secondary_stats')["combo_points"] -= total
-
-
 
     unSelectMove: (player, selectedMove) ->
       identifier = $(selectedMove).attr('id')
@@ -178,7 +175,7 @@
         @sortResultData(array[count])
         @uiView.render()
         @showView.render()
-        @disableCombat()
+        @disableCombatButtons()
         @postRenderUpdate()
         if count >= total
           @finalizeRound time
@@ -197,16 +194,36 @@
       @combatLogUpdate(result.message)
 
     checkHealth: (result) ->
+      playerTotal = @model.get('player').get('totals').health
+      opponentTotal = @model.get('opponent').get('totals').health
       if result.target is "player"
         @model.get('player').get('base_stats').health += result.healthChange
+        if @model.get('player').get('base_stats').health >= playerTotal
+          @model.get('player').get('base_stats').health = playerTotal
       else
         @model.get('opponent').get('base_stats').health -= result.healthChange
+        if @model.get('opponent').get('base_stats').health >= opponentTotal
+          @model.get('opponent').get('base_stats').health = opponentTotal
 
     adjustHealthBar: (target) ->
       targetHp = @model.get(target).get('base_stats').health
       totalHp = @model.get(target).get('totals').health
       newHp = Math.round(targetHp/totalHp*100)
       $("##{target}-current-hp").width("#{newHp}%")
+      @checkHealthColor(newHp, target)
+
+    checkHealthColor: (percent, target) ->
+      if percent < 60 and percent > 25
+        $("##{target}-current-hp").css("background-color","orange")
+      else if percent < 25
+        $("##{target}-current-hp").css("background-color","red")
+      else
+        $("##{target}-current-hp").css("background-color","lightgreen")
+
+    checkBonuses: ->
+      for move in @model.get('player').get('moves')
+        if move.bonus
+          move.bonus = false
 
     finalizeRound: (time) ->
       @cooldownUpdates()
@@ -217,19 +234,17 @@
       @combatLogUpdate("<p><b>End of round #{@model.get('round').count}</b></p><hr>")
       @model.get('round').count += 1
       @combatLogUpdate("<p><b>Beginning of round #{@model.get('round').count}</b></p>")
+      @checkBonuses()
       @resetUi()
       @postRenderUpdate()
 
     cooldownUpdates: ->
       cooldowns = @model.get('cooldowns').player
-      console.log "this is the cooldowns, after", cooldowns
       for cd in cooldowns.slice(0).reverse()
         cd.cooldown -= 1
         if cd.cooldown < 1
           move = @findMove(cooldowns, cd.id)
-          console.log "this is the move on CD less than 1", move
           moveIndex = cooldowns.indexOf(move)
-          console.log "this is it's move index", moveIndex
           if moveIndex > -1
             @model.get('cooldowns').player.splice(moveIndex, 1)
 
@@ -240,15 +255,12 @@
       @adjustHealthBar("opponent")
       @checkCooldowns()
 
-
     checkCooldowns: ->
       array = $('.player-moves')
       cooldowns = @getCooldowns()
       for move in [0..(array.length-1)]
         if @findMove(cooldowns, parseInt($(array[move]).attr('id')))
-          $(array[move]).addClass('disabled')
-        else
-          $(array[move]).removeClass('disabled')
+          @disableButtons(array[move])
 
     getCooldowns: ->
       cooldowns = []
@@ -256,8 +268,10 @@
         cooldowns.push(item.move)
       return cooldowns
 
-    disableCombat: ->
-      $('.player-confirm-moves').addClass('disabled')
+    disableCombatButtons: ->
+      array = $('.in-combat')
+      for button in [0..(array.length-1)]
+        @disableButtons($(array[button]))
 
     createBattleModel: (player, opponent) ->
       new Backbone.Model

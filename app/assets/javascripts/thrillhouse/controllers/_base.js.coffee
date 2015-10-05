@@ -24,4 +24,10 @@
           return model
       return new Backbone.Collection moveList
 
-    
+    disableButtons: (element) ->
+      value = $(element).text()
+      $(element).html("<strike>#{value}</strike>")
+      $(element).addClass('disabled')
+
+
+

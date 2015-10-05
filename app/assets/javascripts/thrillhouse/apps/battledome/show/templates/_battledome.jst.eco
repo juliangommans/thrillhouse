@@ -10,13 +10,13 @@
 
   </div>
 
-  <div class="row padded-rows">
+<!--   <div class="row padded-rows">
     <% for move in @opponent.get('moves'): %>
       <div class="col-xs-2">
         <button class="opponent-moves"> <%= move.name %> </button>
       </div>
     <% end %>
-  </div>
+  </div> -->
   <div class="row padded-rows">
     <div class="col-xs-8">
     </div>
@@ -41,9 +41,7 @@
   <div class="row filler-rows"></div>
   <div class="row filler-rows"></div>
   <div class="row filler-rows"></div>
-  <div class="row padded-rows"></div>
-  <div class="row padded-rows"></div>
-  <div class="row padded-rows"></div>
+  <div class="row filler-rows"></div>
 
   <div class="row padded-rows">
     <div class="col-xs-3">

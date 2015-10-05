@@ -7,15 +7,15 @@
         <%= @player.get('name') %> the <%= @player.get('breed') %>
       </div>
       <div class="row padded-rows" id="moves-list">
-        <button class="player-select-moves btn btn-sm btn-danger" data-toggle="modal" data-target="#moves-modal">
+        <button class="player-select-moves in-combat btn btn-sm btn-danger" data-toggle="modal" data-target="#moves-modal">
             Moves List
         </button>
       </div>
       <div class="row padded-rows" id="moves-confirm">
-        <button class="player-confirm-moves btn btn-sm btn-danger">
+        <button class="player-confirm-moves in-combat btn btn-sm btn-danger">
           Fight
         </button>
-        <button class="player-clear-moves btn btn-sm btn-danger">
+        <button class="player-clear-moves in-combat btn btn-sm btn-danger">
           Clear
         </button>
       </div>
