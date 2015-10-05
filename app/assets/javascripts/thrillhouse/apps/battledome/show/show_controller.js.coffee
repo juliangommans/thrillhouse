@@ -53,7 +53,7 @@
         @postRenderUpdate()
 
       @layout.uiRegion.show @uiView
-      @postRenderUpdate()# "up", "action_points"
+      @postRenderUpdate()
 
     initiateCombat: (args) ->
       combatOptions = {
@@ -61,6 +61,7 @@
         opponent: args.model.get('opponent')
         moves: @selectedMoves
       }
+      @disableCombat()
       results = App.request "battledome:combat", combatOptions
       console.log "this be the results", results
       unless results.outcome.length < 1
@@ -86,7 +87,7 @@
       total = @model.get('player').get('totals')["combo_points"]
       if @model.get('player').get('secondary_stats')["combo_points"] < total
         @model.get('player').get('secondary_stats')["combo_points"] += 1
-        @postRenderUpdate()# "up", "combo_points"
+        @postRenderUpdate()
       else
         @initiateComboBonus(total)
 
@@ -177,6 +178,7 @@
         @sortResultData(array[count])
         @uiView.render()
         @showView.render()
+        @disableCombat()
         @postRenderUpdate()
         if count >= total
           @finalizeRound time
@@ -254,6 +256,8 @@
         cooldowns.push(item.move)
       return cooldowns
 
+    disableCombat: ->
+      $('.player-confirm-moves').addClass('disabled')
 
     createBattleModel: (player, opponent) ->
       new Backbone.Model
