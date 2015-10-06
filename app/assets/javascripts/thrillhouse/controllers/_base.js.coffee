@@ -29,5 +29,22 @@
       $(element).html("<strike>#{value}</strike>")
       $(element).addClass('disabled')
 
+    oppositeTarget: (target) ->
+      if target is "player"
+        return "opponent"
+      else
+        return "player"
+
+    getTargetObject: (target) ->
+      if target is "player"
+        return {
+          target: @player
+          opposite: @opponent
+        }
+      else
+        return {
+          target: @opponent
+          opposite: @player
+        }
 
 

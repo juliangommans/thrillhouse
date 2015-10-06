@@ -70,12 +70,17 @@
       identifier = $(selectedMove).attr('id')
       move = @findMove(player.get('moves'), parseInt(identifier))
       ap = player.get('secondary_stats').action_points
+      @checkZeroCd(move, selectedMove)
       if move.cost <= ap
         @assignMove(move)
         message = "<p>You selected #{$(selectedMove).text()}, you now have <b>#{ap - move.cost}</b> action points left</p>"
         @combatLogUpdate(message)
       else
         @notEnoughAp()
+
+    checkZeroCd: (move,el) ->
+      if move.cooldown is 0
+        $(el).removeClass('selected')
 
     assignMove: (move) ->
       @selectedMoves.push(move)
@@ -186,24 +191,21 @@
       looper()
 
     sortResultData: (result) ->
-      cooldowns = @model.get('cooldowns').player
+      owner = result.owner
+      cooldowns = @model.get('cooldowns')[owner]
       @checkHealth(result)
       if result.move.cooldown >= 1
         unless @findMove(cooldowns, result.move.id)
-          @model.get('cooldowns').player.push(result.move)
+          @model.get('cooldowns')[owner].push(result.move)
       @combatLogUpdate(result.message)
 
     checkHealth: (result) ->
-      playerTotal = @model.get('player').get('totals').health
-      opponentTotal = @model.get('opponent').get('totals').health
-      if result.target is "player"
-        @model.get('player').get('base_stats').health += result.healthChange
-        if @model.get('player').get('base_stats').health >= playerTotal
-          @model.get('player').get('base_stats').health = playerTotal
-      else
-        @model.get('opponent').get('base_stats').health -= result.healthChange
-        if @model.get('opponent').get('base_stats').health >= opponentTotal
-          @model.get('opponent').get('base_stats').health = opponentTotal
+      targetTotal = @model.get(result.target).get('totals').health
+      ownerTotal = @model.get(result.owner).get('totals').health
+      outcome = if result.move.move.category is "damage" then result.healthChange else 0 - result.healthChange
+      @model.get(result.target).get('base_stats').health -= outcome
+      if @model.get(result.target).get('base_stats').health >= targetTotal
+        @model.get(result.target).get('base_stats').health = targetTotal
 
     adjustHealthBar: (target) ->
       targetHp = @model.get(target).get('base_stats').health
