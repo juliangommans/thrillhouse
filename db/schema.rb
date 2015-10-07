@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151002022020) do
+ActiveRecord::Schema.define(version: 20151007201558) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
@@ -86,6 +86,9 @@ ActiveRecord::Schema.define(version: 20151002022020) do
     t.boolean  "bonus",           default: false
     t.boolean  "critical",        default: false
     t.decimal  "critical_damage"
+    t.string   "stat"
+    t.string   "stat_target"
+    t.string   "description"
   end
 
   create_table "passives", force: true do |t|

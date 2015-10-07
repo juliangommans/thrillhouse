@@ -1,6 +1,7 @@
 ######################################
 require_relative "./seeding_data/characters_for_seeding"
-require_relative "./seeding_data/movelist_for_seeding"
+require_relative "./seeding_data/simple_movelist"
+# require_relative "./seeding_data/movelist_for_seeding"
 
 ######################################
 
@@ -9,7 +10,7 @@ require_relative "./seeding_data/movelist_for_seeding"
 # moves_array.each do |moves|
 #   moves.each do |move|
 #     puts move
-#     x = Move.create(name: move[:name], category: move[:type], realm: move[:realm], element: move[:element], power: move[:power], cost: move[:cost], cooldown: move[:cooldown], rank: move[:rank], tier: move[:tier])
+#     x = Move.create(name: move[:name], category: move[:type], critical_damage: move[:critical_damage], realm: move[:realm], element: move[:element], power: move[:power], cost: move[:cost], cooldown: move[:cooldown], stat: move[:stat], stat_target: move[:stat_target], description: move[:description], rank: move[:rank], tier: move[:tier])
 #     x.save!
 #   end
 # end
@@ -35,4 +36,4 @@ require_relative "./seeding_data/movelist_for_seeding"
 #   end
 # end
 
-######################################
+# #####################################

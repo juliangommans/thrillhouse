@@ -281,6 +281,4 @@ module MoveSeeds
         tier: 1
       }]
   end
-
-
 end
