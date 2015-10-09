@@ -23,6 +23,7 @@ end
 node :totals do |r|
   {
   action_points: r[:action_points],
+  critical_strike_points: r[:total_critical_strike_points],
   combo_points: r[:total_combo_points],
   health: r[:health],
   attack: r[:attack],

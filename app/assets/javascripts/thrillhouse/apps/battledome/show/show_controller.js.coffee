@@ -56,6 +56,7 @@
 
     initiateCombat: (args) ->
       combatOptions = {
+        cooldowns: args.model.get('cooldowns')
         player: args.model.get('player')
         opponent: args.model.get('opponent')
         moves: @selectedMoves
@@ -192,10 +193,11 @@
 
     sortResultData: (result) ->
       owner = result.owner
+      console.log "result", result
       cooldowns = @model.get('cooldowns')[owner]
       @checkHealth(result)
       if result.move.cooldown >= 1
-        unless @findMove(cooldowns, result.move.id)
+        unless @findMove(cooldowns, result.move.move.id)
           @model.get('cooldowns')[owner].push(result.move)
       @combatLogUpdate(result.message)
 
@@ -243,9 +245,10 @@
     cooldownUpdates: ->
       cooldowns = @model.get('cooldowns').player
       for cd in cooldowns.slice(0).reverse()
+        console.log "cd", cd
         cd.cooldown -= 1
         if cd.cooldown < 1
-          move = @findMove(cooldowns, cd.id)
+          move = @findMove(cooldowns, cd.move.id)
           moveIndex = cooldowns.indexOf(move)
           if moveIndex > -1
             @model.get('cooldowns').player.splice(moveIndex, 1)

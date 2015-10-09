@@ -4,15 +4,29 @@
 
     initialize: (options) ->
       @opponent = options.opponent
-      @total_ap = @opponent.get("totals").action_points
+      @cooldowns = options.cooldowns.opponent
       @ap = @opponent.get("secondary_stats").action_points
       @moves = @opponent.get("moves")
+      @availableMoves = @getAvailableMoves()
       @selectedMoves = []
       @selectMoves()
+      console.log "AVAILABLE AI MOVES", @availableMoves
+
+    getAvailableMoves: ->
+      array = []
+      for move in @moves
+        unless @checkCd(move)
+          array.push(move)
+      array
+
+    checkCd: (move) ->
+      _.find(@cooldowns, (cd) ->
+        cd.move == move
+      )
 
     selectMoves: ->
       for item in [1..6]
-        @checkMove(_.sample(@moves))
+        @checkMove(_.sample(@availableMoves))
 
     checkMove: (move) ->
       if move.cost <= @ap

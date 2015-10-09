@@ -6,7 +6,7 @@
       {@player, @opponent, @moves} = options
       @outcome = []
       @movesArray = []
-      @opponentMoves = App.request 'battledome:ai', {opponent: @opponent}
+      @opponentMoves = App.request 'battledome:ai', options
       @opponentMoveArray = @opponentMoves.selectedMoves
       @compileMoveOrder()
       if @movesArray.length > 0

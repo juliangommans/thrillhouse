@@ -46,8 +46,8 @@ ActiveRecord::Schema.define(version: 20151007201558) do
     t.string   "nature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "total_combo_points"
-    t.integer  "total_critical_strike_points"
+    t.integer  "total_combo_points",           default: 5
+    t.integer  "total_critical_strike_points", default: 10
   end
 
   create_table "effects", force: true do |t|
