@@ -46,5 +46,3 @@
           target: @opponent
           opposite: @player
         }
-
-

@@ -22,33 +22,50 @@
     sortMoveType: (move, owner) ->
       switch move.category
         when "damage"
-          @resolveMove(move, @oppositeTarget(owner))
+          @resolveMove(move, @oppositeTarget(owner), owner)
         when "heal"
-          @resolveMove(move, owner)
+          @resolveMove(move, owner, owner)
         when "utility"
           console.log "this is a utility move"
         else
           alert "you done fucked up son"
 
-    resolveMove: (move, target) ->
+    resolveMove: (move, target, owner) ->
       modifier = @getModifier(move)
       if move.category is "damage"
-        total = @damageCalculation(move, modifier)
+        total = @damageCalculation(move, modifier, target)
         message = "<p>#{@oppositeTarget(target)}s #{move.name} deals <b>#{total}</b> damage to #{target}</p>"
       else if move.category is "heal"
-        total = @healCalculation(move, modifier)
+        total = @healCalculation(move, modifier, target)
         message = "<p>#{target}s #{move.name} healed them for <b>#{total}</b> health</p>"
       else
         console.log "yeah mate, nah"
+      message = @buffMessage(move, message, owner)
       @outcome.push {
         move:
           move: move
           cooldown: move.cooldown
         healthChange: total
         target: target
-        owner: @oppositeTarget(target)
+        owner: owner
         message: message
+        buff:
+          stat: move.stat
+          target: move.stat_target
+          direction: @getBuffDirection(move, owner)
       }
+
+    getBuffDirection: (move, owner) ->
+      if move.stat_target is owner
+        return "increase"
+      else
+        return "decrease"
+
+    buffMessage: (move, message, owner) ->
+      if move.stat
+        message += "<p>#{move.stat_target} has had their #{move.stat} #{@getBuffDirection(move, owner)}d by 20%.</p>"
+      else
+        message
 
     getRealm: (move) ->
       if move.realm is "ethereal"

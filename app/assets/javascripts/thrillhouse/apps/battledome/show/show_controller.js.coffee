@@ -118,10 +118,14 @@
       @combatLogUpdate("<p>You have unselected #{move.name}, you now have <b>#{ap}</b> points left</p>")
       @postRenderUpdate() #{}"up", "action_points"
 
-
     findMove: (array, identifier) ->
       _.find(array, (move) ->
         move.id == identifier
+      )
+
+    findCooldown: (array, identifier) ->
+      _.find(array, (move) ->
+        move.move.id == identifier
       )
 
     notEnoughAp: ->
@@ -193,13 +197,47 @@
 
     sortResultData: (result) ->
       owner = result.owner
-      console.log "result", result
       cooldowns = @model.get('cooldowns')[owner]
+      @sortBuffs(result)
       @checkHealth(result)
       if result.move.cooldown >= 1
-        unless @findMove(cooldowns, result.move.move.id)
+        unless @findCooldown(cooldowns, result.move.move.id)
           @model.get('cooldowns')[owner].push(result.move)
       @combatLogUpdate(result.message)
+
+    sortBuffs: (result) ->
+      target = result.buff.target
+      if result.buff.stat
+        unless @findMove(@model.get('buffs')[target], result.buff)
+          @model.get('buffs')[target].push(result.buff)
+
+    assignStatChanges: ->
+      for character in ["player", "opponent"]
+        @resetStats(character)
+        unless @model.get("buffs")[character].length < 1
+          @adjustStats(character)
+
+    resetStats: (character) ->
+      for k, v of @model.get(character).get('base_stats')
+        unless k is "health"
+          v = @model.get(character).get('totals').k
+
+    adjustStats: (character) ->
+      buffs = @model.get("buffs")[character]
+      for buff in buffs
+        if buff.target is character
+          @updateStat(character, buff)
+        else
+          @updateStat(@oppositeTarget(character), buff)
+
+    updateStat: (char, buff) ->
+      Math.round(@model.get(char).get('base_stats')[buff.stat] *= @buffModifier(buff))
+
+    buffModifier: (buff) ->
+      if buff.direction is "increase"
+        1.2
+      else
+        0.8
 
     checkHealth: (result) ->
       targetTotal = @model.get(result.target).get('totals').health
@@ -239,6 +277,7 @@
       @model.get('round').count += 1
       @combatLogUpdate("<p><b>Beginning of round #{@model.get('round').count}</b></p>")
       @checkBonuses()
+      @assignStatChanges()
       @resetUi()
       @postRenderUpdate()
 
@@ -248,7 +287,7 @@
         console.log "cd", cd
         cd.cooldown -= 1
         if cd.cooldown < 1
-          move = @findMove(cooldowns, cd.move.id)
+          move = @findCooldown(cooldowns, cd.move.id)
           moveIndex = cooldowns.indexOf(move)
           if moveIndex > -1
             @model.get('cooldowns').player.splice(moveIndex, 1)
@@ -285,6 +324,9 @@
         round:
           count: 1
         cooldowns:
+          player: []
+          opponent: []
+        buffs:
           player: []
           opponent: []
 
