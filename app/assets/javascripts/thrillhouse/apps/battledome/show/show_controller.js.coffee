@@ -69,7 +69,7 @@
 
     checkActionPoints: (player, selectedMove) ->
       identifier = $(selectedMove).attr('id')
-      move = @findMove(player.get('moves'), parseInt(identifier))
+      move = @findItem(player.get('moves'), parseInt(identifier))
       ap = player.get('secondary_stats').action_points
       @checkZeroCd(move, selectedMove)
       if move.cost <= ap
@@ -105,7 +105,7 @@
 
     unSelectMove: (player, selectedMove) ->
       identifier = $(selectedMove).attr('id')
-      move = @findMove(player.get('moves'), parseInt(identifier))
+      move = @findItem(player.get('moves'), parseInt(identifier))
       moveIndex = @selectedMoves.indexOf(move)
       if moveIndex > -1
         @selectedMoves.splice(moveIndex, 1)
@@ -116,11 +116,11 @@
       player.get('secondary_stats').action_points += move.cost
       ap = player.get('secondary_stats').action_points
       @combatLogUpdate("<p>You have unselected #{move.name}, you now have <b>#{ap}</b> points left</p>")
-      @postRenderUpdate() #{}"up", "action_points"
+      @postRenderUpdate() #up", "action_points"
 
-    findMove: (array, identifier) ->
-      _.find(array, (move) ->
-        move.id == identifier
+    findItem: (array, identifier) ->
+      _.find(array, (item) ->
+        item.id == identifier
       )
 
     findCooldown: (array, identifier) ->
@@ -162,7 +162,7 @@
           uiArray = $('.combo-points')
           @updateDisplay(uiArray, direction, stat)
         else
-          alert "boourns - we don't know what points you want yo"
+          alert "boourns - we don't know what points you want yo =>", stat
 
     updateDisplay: (array, direction, stat) ->
       available = @model.get('player').get('secondary_stats')[stat]
@@ -198,21 +198,45 @@
     sortResultData: (result) ->
       owner = result.owner
       cooldowns = @model.get('cooldowns')[owner]
-      @sortBuffs(result)
+      @sortBuffs(result.move)
       @checkHealth(result)
       if result.move.cooldown >= 1
         unless @findCooldown(cooldowns, result.move.move.id)
           @model.get('cooldowns')[owner].push(result.move)
       @combatLogUpdate(result.message)
 
-    sortBuffs: (result) ->
-      target = result.buff.target
-      if result.buff.stat
-        unless @findMove(@model.get('buffs')[target], result.buff)
-          @model.get('buffs')[target].push(result.buff)
+    sortBuffs: (move) ->
+      target = @getBuffTarget(move)
+      if move.buffs
+        for buff in move.buffs
+          foundBuff = @findItem(@model.get('buffs')[target], buff.id)
+          @addBuff(foundBuff, buff, target)
+
+    getBuffTarget: (move) ->
+      if move.owner is "opponent"
+        if move.move.stat_target is "opponent"
+          return "player"
+        else
+          return "opponent"
+      else
+        if move.move.stat_target is "opponent"
+            return "opponent"
+          else
+            return "player"
+
+    addBuff: (foundBuff, buff, target) ->
+      if foundBuff
+        console.log "FOUND BUFF", foundBuff
+        unless foundBuff.stacks >= foundBuff.max_stacks
+          foundBuff.stacks += 1
+      else
+        @model.get('buffs')[target].push(buff)
+        foundBuff = @findItem(@model.get('buffs')[target], buff.id)
+        foundBuff.stacks += 1
 
     assignStatChanges: ->
       for character in ["player", "opponent"]
+        console.log "#{character}s buffs =>", @model.get('buffs')[character]
         @resetStats(character)
         unless @model.get("buffs")[character].length < 1
           @adjustStats(character)
@@ -223,21 +247,23 @@
           v = @model.get(character).get('totals').k
 
     adjustStats: (character) ->
+      console.log "we're adjusting stats for #{character}"
       buffs = @model.get("buffs")[character]
       for buff in buffs
-        if buff.target is character
-          @updateStat(character, buff)
-        else
-          @updateStat(@oppositeTarget(character), buff)
+        @updateStat(character, buff)
 
     updateStat: (char, buff) ->
-      Math.round(@model.get(char).get('base_stats')[buff.stat] *= @buffModifier(buff))
+      newStat = @model.get(char).get('base_stats')[buff.stat] *= @buffModifier(buff)
+      @model.get(char).get('base_stats')[buff.stat] = Math.round(newStat)
 
     buffModifier: (buff) ->
-      if buff.direction is "increase"
-        1.2
+      buffValue = 1
+      modifier = buff.value * buff.stacks
+      if buff.buff_type is "increase"
+        buffValue += modifier
       else
-        0.8
+        buffValue -= modifier
+      return buffValue
 
     checkHealth: (result) ->
       targetTotal = @model.get(result.target).get('totals').health
@@ -295,15 +321,30 @@
     postRenderUpdate: ->
       @pointsDisplay "up", "action_points"
       @pointsDisplay "up", "combo_points"
-      @adjustHealthBar("player")
-      @adjustHealthBar("opponent")
+      for person in ["player", "opponent"]
+        @adjustHealthBar(person)
+        @checkStatsDisplay(person)
       @checkCooldowns()
+
+    checkStatsDisplay: (person) ->
+      data = @model.get(person)
+      for stat, value of data.get('base_stats')
+        if data.get('totals')[stat] > value
+          @changeStatColour(person, stat, "red")
+        else if data.get('totals')[stat] < value
+          @changeStatColour(person, stat, "green")
+        else
+          @changeStatColour(person, stat, "black")
+
+    changeStatColour: (person, stat, colour) ->
+      if  $("##{person}-#{stat}")
+        $("##{person}-#{stat}").css("color", colour)
 
     checkCooldowns: ->
       array = $('.player-moves')
       cooldowns = @getCooldowns()
       for move in [0..(array.length-1)]
-        if @findMove(cooldowns, parseInt($(array[move]).attr('id')))
+        if @findItem(cooldowns, parseInt($(array[move]).attr('id')))
           @disableButtons(array[move])
 
     getCooldowns: ->

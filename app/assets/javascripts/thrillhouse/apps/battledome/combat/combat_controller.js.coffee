@@ -13,7 +13,6 @@
         @actionMove()
       else
         alert "You have not selected any moves."
-      console.log "move array", @movesArray
 
     actionMove: ->
       for move in @movesArray
@@ -22,53 +21,48 @@
     sortMoveType: (move, owner) ->
       switch move.category
         when "damage"
-          @resolveMove(move, @oppositeTarget(owner), owner)
+          @resolveMove(move, "them", owner)
         when "heal"
-          @resolveMove(move, owner, owner)
+          @resolveMove(move, "us", owner)
         when "utility"
           console.log "this is a utility move"
         else
-          alert "you done fucked up son"
+          alert "you done fucked up son - i.e. this is not a move =>", move
 
     resolveMove: (move, target, owner) ->
+      confirmedTarget = @getOwnersTarget(owner, target)
       modifier = @getModifier(move)
       if move.category is "damage"
-        total = @damageCalculation(move, modifier, target)
-        message = "<p>#{@oppositeTarget(target)}s #{move.name} deals <b>#{total}</b> damage to #{target}</p>"
+        total = @damageCalculation(move, modifier, confirmedTarget)
+        message = "<p>#{@oppositeTarget(confirmedTarget)}s #{move.name} deals <b>#{total}</b> damage to #{confirmedTarget}</p>"
       else if move.category is "heal"
-        total = @healCalculation(move, modifier, target)
-        message = "<p>#{target}s #{move.name} healed them for <b>#{total}</b> health</p>"
+        total = @healCalculation(move, modifier, confirmedTarget)
+        message = "<p>#{confirmedTarget}s #{move.name} healed them for <b>#{total}</b> health</p>"
       else
         console.log "yeah mate, nah"
-      message = @buffMessage(move, message, owner)
+      # message = @buffMessage(move, message, owner)
       @outcome.push {
         move:
           move: move
           cooldown: move.cooldown
+          buffs: move.buffs
+          owner: owner
+          target: confirmedTarget
         healthChange: total
-        target: target
+        target: confirmedTarget
         owner: owner
         message: message
-        buff:
-          stat: move.stat
-          target: move.stat_target
-          direction: @getBuffDirection(move, owner)
       }
 
-    getBuffDirection: (move, owner) ->
-      if move.stat_target is owner
-        return "increase"
-      else
-        return "decrease"
-
     buffMessage: (move, message, owner) ->
-      if move.stat
-        message += "<p>#{move.stat_target} has had their #{move.stat} #{@getBuffDirection(move, owner)}d by 20%.</p>"
+      console.log "buff message move", move
+      if move.buffs.length > 0
+        message += "<p>#{move.stat_target} has had their #{move.stat}</p>"
       else
         message
 
     getRealm: (move) ->
-      if move.realm is "ethereal"
+      if move.realm is "corporeal"
         return {
           damage: "attack"
           resistence: "defense"
@@ -89,15 +83,16 @@
 
     damageCalculation: (move, modifier, target) ->
       realm = @getRealm(move)
-      target = @getTargetObject(target)
-      damage = move.power * target.target.get('base_stats')[realm.damage]
-      total = damage / target.opposite.get('base_stats')[realm.resistence]
+      newTarget = @getTargetObject(target)
+      damage = move.power * newTarget.opposite.get('base_stats')[realm.damage]
+      total = damage / newTarget.target.get('base_stats')[realm.resistence]
       total = total * modifier / 2
       Math.floor(total)
 
     healCalculation: (move, modifier, target) ->
       target = @getTargetObject(target).target
-      heal = move.power * target.get('base_stats')[@getRealm(move).damage]
+      realm = @getRealm(move)
+      heal = move.power * target.get('base_stats')[realm.damage]
       combinedDef =  target.get('base_stats').defense + target.get('base_stats').resilience
       total = heal / combinedDef
       Math.ceil(total)
@@ -123,6 +118,7 @@
       @enterMoves(moveObject)
 
     enterMoves: (moveObject) ->
+      console.log "moveObject =>", moveObject
       if moveObject.moves.length > 0
         @movesArray.push({
           move: moveObject.moves.shift()
@@ -132,11 +128,11 @@
     buildMoveObject: (owner) ->
       if owner is "opponent"
         array = @opponentMoveArray
-      else
+      else if owner is "player"
         array = @moves
-
+      else
+        console.log "we have no owner"
       @adjustSpeed(owner)
-
       move =
         moves: array
         owner: owner

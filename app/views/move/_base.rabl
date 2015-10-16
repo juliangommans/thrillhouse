@@ -3,3 +3,7 @@ attributes :id, :name, :category, :realm, :element, :power, :cost, :cooldown, :c
 node(:description) do |move|
   move.rails_description
 end
+
+child :buffs do
+  extends("buff/_base")
+end

@@ -32,8 +32,10 @@
     oppositeTarget: (target) ->
       if target is "player"
         return "opponent"
-      else
+      else if target is "opponent"
         return "player"
+      else
+        console.log "target is neither player nor opponnent"
 
     getTargetObject: (target) ->
       if target is "player"
@@ -46,3 +48,22 @@
           target: @opponent
           opposite: @player
         }
+
+    getOwnersTarget: (owner, target) ->
+      if owner is "player"
+        if target is "us"
+          return "player"
+        else if target is "them"
+          return "opponent"
+        else
+          console.log "players target is unknown"
+      else if owner is "opponent"
+        if target is "us"
+          return "opponent"
+        else if target is "them"
+          return "player"
+        else
+          console.log "opponents target is unknown"
+      else
+        console.log "owner is not known"
+

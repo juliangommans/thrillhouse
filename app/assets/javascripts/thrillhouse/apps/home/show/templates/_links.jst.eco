@@ -1,13 +1,24 @@
-<li>
-  <a href="#" id="character-list">Character Page</a>
-</li>
-<li>
-  <a href="#" id="move-list">Move List</a>
-</li>
-<li>
-  <a href="#" id="abilities-list">Abilities List</a>
-</li>
-<li>
-  <a href="#" id="battle-dome">Battle Dome</a>
-</li>
+<div class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">BattleDome
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <a href="#" id="character-list">Character Page</a>
+    </li>
+    <li>
+      <a href="#" id="move-list">Move List</a>
+    </li>
+    <li>
+      <a href="#" id="abilities-list">Abilities List</a>
+    </li>
+    <li>
+      <a href="#" id="battle-dome">Combat</a>
+    </li>
+  </ul>
+<div>
+
+<a href="#" id="little-cric">Lil Cric</a>
+
+
 

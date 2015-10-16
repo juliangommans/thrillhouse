@@ -11,19 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151007201558) do
+ActiveRecord::Schema.define(version: 20151013005058) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
     t.string   "buff_type"
     t.string   "stat"
     t.string   "type"
-    t.integer  "value"
+    t.decimal  "value"
     t.integer  "stacks"
     t.integer  "duration"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "character_id"
+    t.integer  "max_stacks"
   end
 
   add_index "buffs", ["character_id"], name: "index_buffs_on_character_id"
@@ -87,6 +88,7 @@ ActiveRecord::Schema.define(version: 20151007201558) do
     t.boolean  "critical",        default: false
     t.decimal  "critical_damage"
     t.string   "stat"
+    t.string   "stat_type"
     t.string   "stat_target"
     t.string   "description"
   end

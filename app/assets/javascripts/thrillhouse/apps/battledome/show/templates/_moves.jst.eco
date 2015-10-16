@@ -65,7 +65,7 @@
         <div class="col-lg-4 test">
           <% for stat, value of @player.get('base_stats'): %>
             <div class="row">
-              <%= stat %>: <%= value %>
+              <span> <%= stat %>: </span><span id="player-<%= stat%>"><%= value %></span>
             </div>
           <% end %>
         </div>
