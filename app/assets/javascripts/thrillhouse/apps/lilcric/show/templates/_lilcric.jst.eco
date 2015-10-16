@@ -1,0 +1,37 @@
+<div id="above-pitch" class="row">
+  <div id="bowler" class="col-xs-2">
+    <div id="ball"> </div>
+  </div>
+  <div class="col-xs-7">
+  </div>
+  <div id="batsman" class="person col-xs-1">
+  </div>
+  <div id="wicket-col" class="col-xs-2">
+    <div id="empty-wicket"></div>
+    <div id="wicket"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-1">
+  </div>
+  <div id="pitch" class="col-xs-10">
+  </div>
+  <div class="col-xs-1">
+  </div>
+</div>
+<div id="below-pitch" class="row">
+  <div class="pitch-segments col-xs-2">
+  </div>
+  <div id="short-pitch" class="pitch-segments col-xs-4">
+    SHORT
+  </div>
+  <div id="good-pitch" class="pitch-segments col-xs-2">
+    GOOD
+  </div>
+  <div id="full-pitch" class="pitch-segments col-xs-2">
+    FULL
+  </div>
+  <div class="pitch-segments col-xs-2">
+  </div>
+</div>
+

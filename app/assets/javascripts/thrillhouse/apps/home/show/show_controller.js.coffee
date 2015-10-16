@@ -22,6 +22,9 @@
       @listenTo showView, "get:move:list", ->
         App.request "move:list"
 
+      @listenTo showView, "get:lil:cric", ->
+        App.request "lilcric:show"
+
       @layout.listRegion.show showView
 
     panelView: ->

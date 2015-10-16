@@ -1,0 +1,63 @@
+#control-region {
+  height: 100px;
+  width: 100%;
+}
+
+#play-region{
+
+  #short-pitch {
+    background-color: red;
+    opacity: 0.4;
+  }
+  #good-pitch {
+    background-color: green;
+    opacity: 0.4;
+  }
+  #full-pitch {
+    background-color: orange;
+    opacity: 0.4;
+  }
+
+  #pitch {
+    background-color: green;
+    height: 10px;
+  }
+
+  #below-pitch {
+    color: white;
+    text-align: center;
+  }
+
+  .pitch-segments{
+    height: 40px;
+  }
+
+  .person {
+    height: 150px;
+    width: 15px;
+    margin: auto;
+    background-color: black;
+  }
+
+
+  #empty-wicket{
+    height: 60px;
+  }
+
+  #wicket {
+    height: 90px;
+    width: 8px;
+    margin: auto;
+    background-color: brown;
+  }
+
+  #ball {
+    position: relative;
+    height: 0px;
+    width: 0px;
+    border-radius: 10px;
+    border: 5px solid red;
+
+  }
+
+}

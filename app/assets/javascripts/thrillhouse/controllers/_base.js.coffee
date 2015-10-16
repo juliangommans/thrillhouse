@@ -67,3 +67,40 @@
       else
         console.log "owner is not known"
 
+    getOffset: (element) ->
+      top = 0
+      left = 0
+      loop
+        top += element.offsetTop or 0
+        left += element.offsetLeft or 0
+        element = element.offsetParent
+        unless element
+          break
+      {
+        top: top
+        left: left
+      }
+
+    getNewLocation: (a,b) ->
+      y = (@getOffset(b[0]).top - @getOffset(a[0]).top - 20)
+      x = (@getOffset(b[0]).left - @getOffset(a[0]).left)
+      {
+        top: y
+        left: x
+      }
+
+
+
+    # getOffset: (el) ->
+    #   _x = 0
+    #   _y = 0
+    #   while el and !isNaN(el.offsetLeft) and !isNaN(el.offsetTop)
+    #     _x += el.offsetLeft - (el.scrollLeft)
+    #     _y += el.offsetTop - (el.scrollTop)
+    #     el = el.offsetParent
+    #   {
+    #     top: _y
+    #     left: _x
+    #   }
+
+
