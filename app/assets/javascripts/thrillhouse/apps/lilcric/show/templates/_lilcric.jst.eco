@@ -2,7 +2,10 @@
   <div id="bowler" class="col-xs-2">
     <div id="ball"> </div>
   </div>
-  <div class="col-xs-7">
+  <div class="col-xs-4">
+  </div>
+  <div class="countdown col-xs-1"></div>
+  <div class="col-xs-3">
   </div>
   <div id="batsman" class="person col-xs-1">
   </div>
@@ -14,7 +17,23 @@
 <div class="row">
   <div class="col-xs-1">
   </div>
-  <div id="pitch" class="col-xs-10">
+  <div class="pitch col-xs-2">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div id="short-loc" class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div id="good-loc" class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div id="full-loc" class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
   </div>
   <div class="col-xs-1">
   </div>
@@ -22,10 +41,10 @@
 <div id="below-pitch" class="row">
   <div class="pitch-segments col-xs-2">
   </div>
-  <div id="short-pitch" class="pitch-segments col-xs-4">
+  <div id="short-pitch" class="pitch-segments col-xs-3">
     SHORT
   </div>
-  <div id="good-pitch" class="pitch-segments col-xs-2">
+  <div id="good-pitch" class="pitch-segments col-xs-3">
     GOOD
   </div>
   <div id="full-pitch" class="pitch-segments col-xs-2">

@@ -81,15 +81,35 @@
         left: left
       }
 
-    getNewLocation: (a,b) ->
-      y = (@getOffset(b[0]).top - @getOffset(a[0]).top - 20)
+    getNewLocation: (a,b,c) ->
+      y = (@getOffset(b[0]).top - @getOffset(a[0]).top - c)
       x = (@getOffset(b[0]).left - @getOffset(a[0]).left)
       {
         top: y
         left: x
       }
 
-
+    countdown: (@fun, num) ->
+      timer = =>
+        $('.countdown').html("<span>#{num}</span>")
+        if num--
+          $('.countdown')
+            .animate(
+              fontSize: "200%"
+              color: "red"
+              ,
+              250
+            )
+            .animate(
+              fontSize: "100%"
+              color: "green"
+              ,
+              250
+            )
+          setTimeout timer, 500
+        else
+          @fun()
+      timer()
 
     # getOffset: (el) ->
     #   _x = 0
