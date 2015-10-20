@@ -5,6 +5,8 @@
     initialize: (options) ->
       console.log "OPTIONS", options
       @results = @getResult()
+      @results.speed = options.speed.pick
+      @results
 
     getResult: ->
       @getPitch(@options.pitch)

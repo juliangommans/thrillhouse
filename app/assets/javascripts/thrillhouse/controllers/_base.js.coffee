@@ -93,6 +93,10 @@
       timer = =>
         $('.countdown').html("<span>#{num}</span>")
         if num--
+          $('.countdown').css(
+            color: "black"
+            opacity: "1"
+          )
           $('.countdown')
             .animate(
               fontSize: "200%"
@@ -108,6 +112,7 @@
             )
           setTimeout timer, 500
         else
+          $('.countdown').empty()
           @fun()
       timer()
 

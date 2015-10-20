@@ -17,7 +17,6 @@
     template: 'lilcric/score/_shot'
     tagName: "td"
     onRender: ->
-      console.log "this is the errrvrything", @
       wickets = new Score.Wicket
         model: @model
       wickets.render()
@@ -26,6 +25,16 @@
   class Score.Wicket extends App.Views.ItemView
     template: 'lilcric/score/_wicket'
     tagName: "td"
+    onRender: ->
+      speeds = new Score.Speed
+        model: @model
+      speeds.render()
+      @$el.append(speeds.el)
+
+  class Score.Speed extends App.Views.ItemView
+    template: 'lilcric/score/_speed'
+    tagName: "td"
+
 
   class Score.Runs extends App.Views.CompositeView
     template: 'lilcric/score/runs_layout' #'lilcric/score/runs'

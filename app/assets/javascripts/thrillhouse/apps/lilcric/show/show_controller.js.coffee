@@ -17,7 +17,7 @@
         150: "fast"
         animateBefore: 0
         animateAfter: 0
-        pick: ""
+        pick: 0
       @goodPitch =
         type: "good"
         bounce: -75
@@ -49,6 +49,7 @@
         runs: "Runs"
         action: "Shot"
         wicket: "Wicket?"
+        speed: "Speed(kph)"
 
     createScoreModel: (options) ->
       runs = new App.Entities.Model
@@ -56,6 +57,7 @@
         wicket: options.wicket
         comment: options.comment
         action: options.action
+        speed: options.speed
       @scoresCollection.add runs
       runs
 
@@ -72,7 +74,6 @@
       @total = 0
       @renderTotal()
       @createFirstScoreColumn()
-      $('.countdown').empty()
 
     showScores: ->
       scoresView = @getScoresView()
@@ -84,11 +85,11 @@
       animateSpeed = (200 - speed) * 7
       @speeds.animateBefore = animateSpeed
       @speeds.animateAfter = animateSpeed
-      @speeds.pick = @speeds[speed]
+      @speeds.pick = speed
       speed
-
+####################################
     caluclateSpeeds: (speed) ->
-
+####################################
     getBallPitch: ->
       pitch = _.sample([@shortPitch,@fullPitch,@goodPitch])
       switch pitch.type
@@ -105,13 +106,14 @@
       pitch
 
     setupOver: (args) ->
-      deliveries = 6
-      deliveryDelay = 5000
+      deliveries = 5
+      deliveryDelay = 4000
       @overExecution(deliveryDelay, deliveries)
 
     overExecution: (delay, balls) ->
       console.log "over execution", delay
       over = =>
+        # @resetDelivery()
         @countdown(@setupDelivery,3)
         if balls--
           setTimeout over, delay
@@ -120,21 +122,22 @@
       over()
 
     bowlOneBall: (args) ->
+      # @resetDelivery()
       @countdown(@setupDelivery,3)
 
     setupDelivery: ->
       ballSpeed = @getBallSpeed()
       @currentPitch = @getBallPitch()
-      console.log "THIS IS THE PITCH", @currentPitch
-      console.log "and this is the SPEEEED", @speeds
+      # console.log "THIS IS THE PITCH", @currentPitch
+      # console.log "and this is the SPEEEED", @speeds
       @liveBall = true
       preBounce = @getNewLocation($("#ball"),$("##{@currentPitch.type}-loc"), 10)
       postBounce = @getNewLocation($("#ball"),$("#batsman"), @currentPitch.bounce)
       @animateBall(preBounce, postBounce, ballSpeed)
 
     animateBall: (preBounce, postBounce, ballSpeed) ->
-      endOfDelivery = @speeds.animateBefore + @speeds.animateAfter
-      console.log "bounce locations", preBounce, postBounce
+      endOfDelivery = 200 + @speeds.animateBefore + @speeds.animateAfter
+      # console.log "bounce locations", preBounce, postBounce
       $("#ball")
         .animate(
           left: "#{preBounce.left}px"
@@ -197,11 +200,52 @@
     calculateScore: (shot) ->
       @createScoreModel(shot)
       @total += shot.runs
-      extraComment = ""
-      if shot.comment
-        extraComment = "and you #{shot.comment}"
-      alert "You got #{shot.runs} runs from your #{shot.action} #{extraComment}"
+      @displayResult(shot)
+      # extraComment = ""
+      # if shot.comment
+      #   extraComment = "and you #{shot.comment}"
+      # if shot.wicket
+      #   alert "WICKET - #{extraComment}"#You got #{shot.runs} runs from your #{shot.action} #{extraComment}"
       @shot = 0
+
+    displayResult: (shot) ->
+      if shot.runs is 6
+        size = "300%"
+        color = "orange"
+      else if shot.runs is 4
+        size = "250%"
+        color = "purple"
+      else if shot.wicket
+        color = "red"
+        size = "200%"
+      else
+        size = "200%"
+        color = "blue"
+      @animateResult(shot,size,color)
+
+    animateResult: (shot, size, color) ->
+      console.log "size and color", size, color
+      if shot.wicket
+        outcome = "WICKET"
+      else
+        outcome = "#{shot.runs}"
+      $('.countdown').empty()
+      $('.countdown').html(outcome)
+      $('.countdown').css(
+          color: color
+        )
+      $('.countdown')
+        .animate(
+          fontSize: size
+          ,
+          800
+        )
+        .animate(
+          fontSize: "100%"
+          opacity: "0"
+          ,
+          400
+        )
 
     getResults: (action) ->
       App.request "lilcric:results",
