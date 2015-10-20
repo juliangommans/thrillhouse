@@ -6,14 +6,14 @@
     <div class="col-xs-2">
       <button id="js-one-over" class="btn btn-sm btn-danger">Bowl One Over</button>
     </div>
-    <div class="col-xs-2"></div>
-    <div class="col-xs-2"></div>
-    <div class="countdown col-xs-1"></div>
     <div class="col-xs-2">
-      <span>Countdown to Delivery</span>
+      <button id="js-reset" class="btn btn-sm btn-danger">Reset</button></div>
+    <div class="col-xs-2"></div>
+    <div class="col-xs-1"></div>
+    <div class="col-xs-2">
+      <span>Total Runs:</span>
     </div>
-    <div class="countdown col-xs-1">
-
+    <div class="total-runs col-xs-1">
     </div>
   </div>
 </div>

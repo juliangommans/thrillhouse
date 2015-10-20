@@ -28,21 +28,56 @@
         type: "full"
         bounce: -125
       @currentPitch = {}
-      @scoreTally = []
       @shot = 0
+      @scoresCollection = @createCollection()
+      @createFirstScoreColumn()
+      @total = 0
 
       @listenTo @layout, 'show', =>
         @showControls()
         @showPitch()
+        @showScores()
 
       @show @layout
 
-    showControls: ->
-      controlsView = @getControlsView()
-      @listenTo controlsView, "bowl:one:ball", @bowlOneBall
-      @listenTo controlsView, "bowl:one:over", @setupOver
+    createCollection: ->
+      scores = new App.Entities.Collection
+      scores
 
-      @layout.controlRegion.show controlsView
+    createFirstScoreColumn: ->
+      @createScoreModel
+        runs: "Runs"
+        action: "Shot"
+        wicket: "Wicket?"
+
+    createScoreModel: (options) ->
+      runs = new App.Entities.Model
+        runs: options.runs
+        wicket: options.wicket
+        comment: options.comment
+        action: options.action
+      @scoresCollection.add runs
+      runs
+
+    showControls: ->
+      @controlsView = @getControlsView()
+      @listenTo @controlsView, "bowl:one:ball", @bowlOneBall
+      @listenTo @controlsView, "bowl:one:over", @setupOver
+      @listenTo @controlsView, "reset:game", @resetGame
+
+      @layout.controlRegion.show @controlsView
+
+    resetGame: ->
+      @scoresCollection.reset()
+      @total = 0
+      @renderTotal()
+      @createFirstScoreColumn()
+      $('.countdown').empty()
+
+    showScores: ->
+      scoresView = @getScoresView()
+      console.log "this is scoresView", scoresView
+      @layout.bottomRegion.show scoresView.view
 
     getBallSpeed: ->
       speed = _.sample([110,130,150])
@@ -55,7 +90,7 @@
     caluclateSpeeds: (speed) ->
 
     getBallPitch: ->
-      pitch = @shortPitch# _.sample([@shortPitch,@fullPitch,@goodPitch])
+      pitch = _.sample([@shortPitch,@fullPitch,@goodPitch])
       switch pitch.type
         when "short"
           @speeds.animateBefore /= 1.1
@@ -74,7 +109,6 @@
       deliveryDelay = 5000
       @overExecution(deliveryDelay, deliveries)
 
-
     overExecution: (delay, balls) ->
       console.log "over execution", delay
       over = =>
@@ -84,7 +118,6 @@
         else
           console.log "over is over... over"
       over()
-
 
     bowlOneBall: (args) ->
       @countdown(@setupDelivery,3)
@@ -120,7 +153,11 @@
     finishDelivery: =>
       @liveBall = false
       @selectShot()
+      @renderTotal()
       @resetDelivery()
+
+    renderTotal: ->
+      $('.total-runs').html(@total)
 
     resetDelivery: ->
       $("#ball").animate(
@@ -148,42 +185,36 @@
 
     selectShot: ->
       if @shot is 0
-        alert "booo you offered no challenge, BOOOOOO....."
+        shot = {runs: 0, wicket: false, action: "leave", comment: "booo you offered no challenge, BOOOOOO....."}
+        alert shot.comment
+        @createScoreModel(shot)
       else
         action = @keycodes[@shot]
-        switch @currentPitch.type
-          when "short"
-            @calculateScore(action)
-          else
-            alert "you broke all of the things"
+        shot = @getResults(action)
+        console.log "shot", shot
+        @calculateScore(shot.results)
 
-        console.log "you performed a #{action}"
-
-    calculateScore: (action) ->
-      shot = @getScore(action)
-      @scoreTally.push(shot)
+    calculateScore: (shot) ->
+      @createScoreModel(shot)
+      @total += shot.runs
       extraComment = ""
       if shot.comment
         extraComment = "and you #{shot.comment}"
-      alert "You got #{shot.runs} runs from your #{action} #{extraComment}"
+      alert "You got #{shot.runs} runs from your #{shot.action} #{extraComment}"
       @shot = 0
 
-    getScore: (action) ->
-      switch action
-        when "pull"
-          {runs: 4, wicket: false, comment: ""}
-        when "cut"
-          {runs: 2, wicket: false, comment: ""}
-        when "hook"
-          {runs: 6, wicket: false, comment: ""}
-        when "drive"
-          {runs: 0, wicket: true, comment: "were caught in the slips"}
-        when "block"
-          {runs: 0, wicket: false, comment: "copped one right between the eyes"}
-
+    getResults: (action) ->
+      App.request "lilcric:results",
+        action: action
+        pitch: @currentPitch.type
+        speed: @speeds
 
     getLayout: ->
       new Show.Layout
+
+    getScoresView: ->
+      App.request 'lilcric:score',
+        collection: @scoresCollection
 
     getControlsView: ->
       new Show.Controls

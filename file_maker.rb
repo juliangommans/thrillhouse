@@ -618,8 +618,8 @@ end
 options = {
   title: "Thrillhouse",
   appname: "lilcric",
-  branchname: "show",
-  routable: true,
+  branchname: "results",
+  routable: false,
   custom: "/thrillhouse"
 }
 

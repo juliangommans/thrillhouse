@@ -13,9 +13,11 @@
     ui:
       ball: "#js-one-bowl"
       over: "#js-one-over"
+      reset: "#js-reset"
     triggers:
       'click @ui.ball': 'bowl:one:ball'
       'click @ui.over': 'bowl:one:over'
+      'click @ui.reset': 'reset:game'
 
   class Show.Layout extends App.Views.Layout
     template: 'lilcric/show/show_layout'
