@@ -27,9 +27,12 @@
       @fullPitch =
         type: "full"
         bounce: -125
+      @overCount = 1
+      @ballCounter = 0
       @currentPitch = {}
       @shot = 0
       @scoresCollection = @createCollection()
+      @oversCollection = new App.Entities.Collection
       @createFirstScoreColumn()
       @total = 0
 
@@ -37,6 +40,8 @@
         @showControls()
         @showPitch()
         @showScores()
+        # @showBallScores()
+        # @showOversScores()
 
       @show @layout
 
@@ -70,15 +75,22 @@
       @layout.controlRegion.show @controlsView
 
     resetGame: ->
-      @scoresCollection.reset()
+      @resetBallScores()
+      @oversCollection.reset()
+      @ballCounter = 0
+      @overCount = 1
       @total = 0
       @renderTotal()
+
+    resetBallScores: ->
+      @scoresCollection.reset()
       @createFirstScoreColumn()
 
     showScores: ->
-      scoresView = @getScoresView()
-      console.log "this is scoresView", scoresView
-      @layout.bottomRegion.show scoresView.view
+      ballView = @getBallView()
+      @layout.ballRegion.show ballView.view
+      overView = @getOversView()
+      @layout.overRegion.show overView.view
 
     getBallSpeed: ->
       speed = _.sample([110,130,150])
@@ -113,7 +125,6 @@
     overExecution: (delay, balls) ->
       console.log "over execution", delay
       over = =>
-        # @resetDelivery()
         @countdown(@setupDelivery,3)
         if balls--
           setTimeout over, delay
@@ -122,7 +133,6 @@
       over()
 
     bowlOneBall: (args) ->
-      # @resetDelivery()
       @countdown(@setupDelivery,3)
 
     setupDelivery: ->
@@ -156,11 +166,15 @@
     finishDelivery: =>
       @liveBall = false
       @selectShot()
+      @ballCounter += 1
       @renderTotal()
       @resetDelivery()
 
     renderTotal: ->
       $('.total-runs').html(@total)
+      if @ballCounter >= 6
+        @getOverStats()
+        @ballCounter = 0
 
     resetDelivery: ->
       $("#ball").animate(
@@ -169,6 +183,25 @@
         ,
         100
         )
+
+    getOverStats: ->
+      overTotal = @scoresCollection.getTotal('runs')
+      srate = Math.round(overTotal/6*100)
+      wickets = @scoresCollection.filter( (x) ->
+        x.get("wicket")
+      ).length - 1
+      @buildOver(overTotal, srate, wickets)
+
+    buildOver: (overTotal, srate, wickets) ->
+      over = new App.Entities.Model
+        over: @overCount
+        runs: overTotal
+        strike_rate: srate
+        wickets: wickets
+      @oversCollection.add over
+      @resetBallScores()
+      @overCount += 1
+      over
 
     showPitch: ->
       pitchView = @getPitchView()
@@ -256,9 +289,15 @@
     getLayout: ->
       new Show.Layout
 
-    getScoresView: ->
+    getBallView: ->
       App.request 'lilcric:score',
         collection: @scoresCollection
+        table: "ball"
+
+    getOversView: ->
+      App.request 'lilcric:score',
+        collection: @oversCollection
+        table: "overs"
 
     getControlsView: ->
       new Show.Controls

@@ -1,21 +1,15 @@
-<div id="over-totals" class="table table-hover cric-tables">
-  <table>
+<div id="over-totals" class="cric-tables">
+  <table class="table table-hover">
     <thead>
       <row>
-        <th>1</th>
-        <th>2</th>
-        <th>3</th>
-        <th>4</th>
-        <th>5</th>
-        <th>6</th>
-        <th>7</th>
-        <th>8</th>
-        <th>9</th>
-        <th>10</th>
+        <th>Over</th>
+        <th>Runs</th>
+        <th>S/R</th>
+        <th>W</th>
       </row>
     </thead>
-    <tbody>
-      <tr id="overs-region"></tr>
+    <tbody id="over-score-region">
+      <!-- <tr id="overs-region"></tr> -->
     </tbody>
   </table>
 </div>

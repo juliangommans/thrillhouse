@@ -4,8 +4,11 @@
 
     initialize: (options) ->
       console.log "OPTIONS", options
+      kph = options.speed.pick
+      @speed = options.speed[kph]
+      console.log "speed in the results cont", @speed
       @results = @getResult()
-      @results.speed = options.speed.pick
+      @results.speed = kph
       @results
 
     getResult: ->

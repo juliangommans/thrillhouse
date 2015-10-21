@@ -3,51 +3,20 @@
   class Score.Controller extends App.Controllers.Base
 
     initialize: (options) ->
-      @view = @getRunsView(options.collection)
-      # @collection = options.collection
-      # @listenTo @view, "show", =>
-      #   @showRuns()
-      #   @showShots()
-      #   @showWickets()
-
+      console.log "options", options
+      if options.table is "ball"
+        @view = @getRunsView(options.collection)
+      else if options.table is "overs"
+        @view = @getOversView(options.collection)
+      else
+        alert "mate, you picked the wrong table (LilcricApp/score)", options
       @view
-
-    # showRuns: ->
-    #   @runs = @collection.filter( (model) ->
-    #     model.get('runs')
-    #   )
-    #   runsView = @getRunsView()
-    #   @view.runRegion.show runsView
-
-    # showWickets: ->
-    #   @wickets = @collection.filter( (model) ->
-    #     model.get('wicket')
-    #   )
-    #   wicketsView = @getWicketsView()
-
-    #   @view.wicketRegion.show wicketsView
-
-    # showShots: ->
-    #   @shots = @collection.filter( (model) ->
-    #     model.get('action')
-    #   )
-    #   shotsView = @getShotsView()
-
-    #   @view.shotRegion.show shotsView
 
     getRunsView: (collection) ->
       new Score.Runs
-        collection: collection #@runs
+        collection: collection
 
-    # getWicketsView: ->
-    #   new Score.Wickets
-    #     collection: @wickets
-
-    # getShotsView: ->
-    #   new Score.Shots
-    #     collection: @shots
-
-    # getRunsLayout: ->
-    #   new Score.RunsLayout
-
-
+    getOversView: (collection) ->
+      console.log "we're in the overs VIEW"
+      new Score.Overs
+        collection: collection

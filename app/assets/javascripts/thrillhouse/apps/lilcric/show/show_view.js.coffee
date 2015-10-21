@@ -24,5 +24,7 @@
     regions:
       playRegion: '#play-region'
       bottomRegion: '#bottom-region'
+      ballRegion: '#ball-region'
+      overRegion: '#over-region'
       controlRegion: '#control-region'
 

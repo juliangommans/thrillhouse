@@ -11,7 +11,7 @@
         <th>6</th>
       </tr>
     </thead>
-    <tbody id="score-region">
+    <tbody id="run-score-region">
    <!--    <tr id="runs-region" class="success"></tr>
       <tr id="wickets-region" class="warning"></tr>
       <tr id="shots-region" class="info"></tr>
