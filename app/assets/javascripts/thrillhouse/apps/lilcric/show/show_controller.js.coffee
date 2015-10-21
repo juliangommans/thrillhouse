@@ -35,13 +35,13 @@
       @oversCollection = new App.Entities.Collection
       @createFirstScoreColumn()
       @total = 0
+      @totalBalls = 0
+      @totalSR = 0
 
       @listenTo @layout, 'show', =>
         @showControls()
         @showPitch()
         @showScores()
-        # @showBallScores()
-        # @showOversScores()
 
       @show @layout
 
@@ -80,6 +80,8 @@
       @ballCounter = 0
       @overCount = 1
       @total = 0
+      @totalSR = 0
+      @totalBalls = 0
       @renderTotal()
 
     resetBallScores: ->
@@ -171,6 +173,7 @@
       @resetDelivery()
 
     renderTotal: ->
+      $('.strike-rate').html(@totalSR)
       $('.total-runs').html(@total)
       if @ballCounter >= 6
         @getOverStats()
@@ -186,21 +189,23 @@
 
     getOverStats: ->
       overTotal = @scoresCollection.getTotal('runs')
+      speeds = Math.round(@scoresCollection.getTotal('speed')/6)
       srate = Math.round(overTotal/6*100)
       wickets = @scoresCollection.filter( (x) ->
         x.get("wicket")
       ).length - 1
-      @buildOver(overTotal, srate, wickets)
+      @buildOver(overTotal, srate, wickets, speeds)
+      @resetBallScores()
+      @overCount += 1
 
-    buildOver: (overTotal, srate, wickets) ->
+    buildOver: (overTotal, srate, wickets, speeds) ->
       over = new App.Entities.Model
         over: @overCount
         runs: overTotal
         strike_rate: srate
+        average_speed: speeds
         wickets: wickets
       @oversCollection.add over
-      @resetBallScores()
-      @overCount += 1
       over
 
     showPitch: ->
@@ -233,7 +238,9 @@
     calculateScore: (shot) ->
       @createScoreModel(shot)
       @total += shot.runs
+      @totalBalls += 1
       @displayResult(shot)
+      @totalSR = Math.round(@total/@totalBalls*100)
       # extraComment = ""
       # if shot.comment
       #   extraComment = "and you #{shot.comment}"

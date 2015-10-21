@@ -5,6 +5,7 @@
         <th>Over</th>
         <th>Runs</th>
         <th>S/R</th>
+        <th>Avg Speed</th>
         <th>W</th>
       </row>
     </thead>
