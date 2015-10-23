@@ -26,6 +26,15 @@
     template: 'lilcric/score/_wicket'
     tagName: "td"
     onRender: ->
+      length = new Score.Length
+        model: @model
+      length.render()
+      @$el.append(length.el)
+
+  class Score.Length extends App.Views.ItemView
+    template: 'lilcric/score/_length'
+    tagName: "td"
+    onRender: ->
       speeds = new Score.Speed
         model: @model
       speeds.render()

@@ -2,5 +2,5 @@
 <td><%= @over %></td>
 <td><%= @runs %></td>
 <td><%= @strike_rate %></td>
-<td><%= @average_speed %></td>
+<!-- <td><%= @average_speed %></td> -->
 <td><%= @wickets %></td>

@@ -3,30 +3,11 @@
   class Show.Controller extends App.Controllers.Base
 
     initialize: ->
+      options = App.request "get:lilcric:data"
+      { @keycodes, @speeds, @goodPitch, @shortPitch, @fullPitch } = options
+      @reporting = 0
       @layout = @getLayout()
       @liveBall = false
-      @keycodes =
-        32: "block"
-        37: "pull"
-        38: "hook"
-        39: "cut"
-        40: "drive"
-      @speeds =
-        110: "slow"
-        130: "medium"
-        150: "fast"
-        animateBefore: 0
-        animateAfter: 0
-        pick: 0
-      @goodPitch =
-        type: "good"
-        bounce: -75
-      @shortPitch =
-        type: "short"
-        bounce: -25
-      @fullPitch =
-        type: "full"
-        bounce: -125
       @overCount = 1
       @ballCounter = 0
       @currentPitch = {}
@@ -54,25 +35,30 @@
         runs: "Runs"
         action: "Shot"
         wicket: "Wicket?"
+        pitch: "Length"
         speed: "Speed(kph)"
 
     createScoreModel: (options) ->
-      runs = new App.Entities.Model
+      delivery = new App.Entities.Model
         runs: options.runs
         wicket: options.wicket
         comment: options.comment
+        pitch: options.pitch
         action: options.action
         speed: options.speed
-      @scoresCollection.add runs
-      runs
+      @scoresCollection.add delivery
+      delivery
 
     showControls: ->
       @controlsView = @getControlsView()
       @listenTo @controlsView, "bowl:one:ball", @bowlOneBall
       @listenTo @controlsView, "bowl:one:over", @setupOver
       @listenTo @controlsView, "reset:game", @resetGame
+      @listenTo @controlsView, "reporting:options", (value) =>
+        @reporting = value
 
       @layout.controlRegion.show @controlsView
+      $("#prematch-modal").modal('show');
 
     resetGame: ->
       @resetBallScores()
@@ -232,7 +218,6 @@
       else
         action = @keycodes[@shot]
         shot = @getResults(action)
-        console.log "shot", shot
         @calculateScore(shot.results)
 
     calculateScore: (shot) ->
@@ -241,19 +226,15 @@
       @totalBalls += 1
       @displayResult(shot)
       @totalSR = Math.round(@total/@totalBalls*100)
-      # extraComment = ""
-      # if shot.comment
-      #   extraComment = "and you #{shot.comment}"
-      # if shot.wicket
-      #   alert "WICKET - #{extraComment}"#You got #{shot.runs} runs from your #{shot.action} #{extraComment}"
       @shot = 0
+      @reportingCheck(shot)
 
     displayResult: (shot) ->
       if shot.runs is 6
-        size = "300%"
+        size = "400%"
         color = "orange"
       else if shot.runs is 4
-        size = "250%"
+        size = "300%"
         color = "purple"
       else if shot.wicket
         color = "red"
@@ -264,7 +245,6 @@
       @animateResult(shot,size,color)
 
     animateResult: (shot, size, color) ->
-      console.log "size and color", size, color
       if shot.wicket
         outcome = "WICKET"
       else
@@ -278,14 +258,35 @@
         .animate(
           fontSize: size
           ,
-          800
+          700
         )
         .animate(
           fontSize: "100%"
           opacity: "0"
           ,
-          400
+          300
         )
+
+    reportingCheck: (shot) ->
+      console.log "this is reporting", @reporting
+      switch @reporting
+        when 2
+          @reportBall(shot)
+        when 1
+          if shot.wicket
+            @reportBall(shot)
+          else
+            console.log "this is shot", shot
+        when 0
+          console.log "nothing to report"
+        else
+          console.log "why was there no reporting option (between 0 and 2)"
+
+    reportBall: (shot) ->
+      comment = ""
+      if shot.comment
+        comment += ", you #{shot.comment}"
+      alert "You got #{shot.runs} runs with a #{shot.action}#{comment}."
 
     getResults: (action) ->
       App.request "lilcric:results",

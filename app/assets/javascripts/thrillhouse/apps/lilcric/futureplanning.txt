@@ -1,0 +1,8 @@
+What to do in THE FUTURE???
+-----------------------------
+* Add modal? or some popup to explain rules at the start and give options (alert after every ball or not, etc.)
+* Reafactor sheeeeit
+//-- * Vary shot results based on speed. --//
+* Add animation/more visual distinction to the batsman.
+* Combo shots? (like "down up" for ramp shot)
+* Bowling aspect/gameplay, -> might need a reskin (birds eye view) for bowling areas.
