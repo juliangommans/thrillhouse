@@ -17,6 +17,5 @@
         collection: collection
 
     getOversView: (collection) ->
-      console.log "we're in the overs VIEW"
       new Score.Overs
         collection: collection

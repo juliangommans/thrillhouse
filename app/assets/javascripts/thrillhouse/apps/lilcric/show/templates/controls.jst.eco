@@ -8,15 +8,12 @@
     </div>
     <div class="col-xs-2">
       <button id="js-reset" class="btn btn-sm btn-danger">Reset</button></div>
-    <div class="col-xs-2">
-      <span>Strike Rate:</span>
+    <div class="col-xs-3">
+      <span>Strike Rate:</span><span class="strike-rate"> 0 ()0</span>
     </div>
-    <div class="strike-rate col-xs-1">0</div>
-    <div class="col-xs-2">
-      <span>Total Runs:</span>
+    <div class="col-xs-3">
+      <span>Total Runs:</span><span class="total-runs"> 0 (0)</span>
     </div>
-    <div class="total-runs col-xs-1">0</div>
-  </div>
 </div>
 
 <div class="modal" id="prematch-modal">
@@ -62,7 +59,7 @@
         </div>
 
       <div class="modal-footer">
-        <button type="button" id="close-modal" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="close-modal" class="btn btn-default" data-dismiss="modal">Okay</button>
       </div>
     </div>
 

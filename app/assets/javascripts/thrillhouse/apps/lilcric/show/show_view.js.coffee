@@ -16,13 +16,13 @@
       reset: "#js-reset"
       options: "#js-options"
     events:
-      'change @ui.options': "testing"#"reporting:options"
+      'change @ui.options': "reporting"
     triggers:
       'click @ui.ball': 'bowl:one:ball'
       'click @ui.over': 'bowl:one:over'
       'click @ui.reset': 'reset:game'
 
-    testing: (args, view) ->
+    reporting: (args, view) ->
       @triggerMethod("reporting:options", args.currentTarget.selectedIndex)
 
   class Show.Layout extends App.Views.Layout

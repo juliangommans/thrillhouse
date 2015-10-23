@@ -1,6 +1,6 @@
 <%= console.log @ %>
 <td><%= @over %></td>
-<td><%= @runs %></td>
+<td><%= @runs %> (<%= @before_penalties %>)</td>
 <td><%= @strike_rate %></td>
 <!-- <td><%= @average_speed %></td> -->
 <td><%= @wickets %></td>

@@ -16,8 +16,11 @@
       @oversCollection = new App.Entities.Collection
       @createFirstScoreColumn()
       @total = 0
-      @totalBalls = 0
+      @unfilteredTotal = 0
       @totalSR = 0
+      @unfilteredSR = 0
+      @totalBalls = 0
+      @wicketPenalty = 10
 
       @listenTo @layout, 'show', =>
         @showControls()
@@ -66,6 +69,8 @@
       @ballCounter = 0
       @overCount = 1
       @total = 0
+      @unfilteredTotal = 0
+      @unfilteredSR = 0
       @totalSR = 0
       @totalBalls = 0
       @renderTotal()
@@ -87,9 +92,7 @@
       @speeds.animateAfter = animateSpeed
       @speeds.pick = speed
       speed
-####################################
-    caluclateSpeeds: (speed) ->
-####################################
+
     getBallPitch: ->
       pitch = _.sample([@shortPitch,@fullPitch,@goodPitch])
       switch pitch.type
@@ -126,8 +129,6 @@
     setupDelivery: ->
       ballSpeed = @getBallSpeed()
       @currentPitch = @getBallPitch()
-      # console.log "THIS IS THE PITCH", @currentPitch
-      # console.log "and this is the SPEEEED", @speeds
       @liveBall = true
       preBounce = @getNewLocation($("#ball"),$("##{@currentPitch.type}-loc"), 10)
       postBounce = @getNewLocation($("#ball"),$("#batsman"), @currentPitch.bounce)
@@ -159,8 +160,8 @@
       @resetDelivery()
 
     renderTotal: ->
-      $('.strike-rate').html(@totalSR)
-      $('.total-runs').html(@total)
+      $('.strike-rate').html(" #{@totalSR} (#{@unfilteredSR})")
+      $('.total-runs').html(" #{@total} (#{@unfilteredTotal})")
       if @ballCounter >= 6
         @getOverStats()
         @ballCounter = 0
@@ -174,20 +175,25 @@
         )
 
     getOverStats: ->
-      overTotal = @scoresCollection.getTotal('runs')
-      speeds = Math.round(@scoresCollection.getTotal('speed')/6)
-      srate = Math.round(overTotal/6*100)
       wickets = @scoresCollection.filter( (x) ->
-        x.get("wicket")
-      ).length - 1
-      @buildOver(overTotal, srate, wickets, speeds)
+        x.get("wicket")).length - 1
+      overTotal = @scoresCollection.getTotal('runs')
+      afterWickets = overTotal - @wicketPenalty * wickets
+      speeds = Math.round(@scoresCollection.getTotal('speed')/6)
+      srate = Math.round(afterWickets/6*100)
+      @buildOver(afterWickets, srate, wickets, overTotal, speeds)
+      alert "You have completed over #{@overcount}, your stats are: \n
+      Runs: #{afterWickets} (#{overTotal}) \n
+      Strike Rate: #{srate} \n
+      Wickets: #{wickets}"
       @resetBallScores()
       @overCount += 1
 
-    buildOver: (overTotal, srate, wickets, speeds) ->
+    buildOver: (afterWickets, srate, wickets, overTotal, speeds) ->
       over = new App.Entities.Model
         over: @overCount
-        runs: overTotal
+        runs: afterWickets
+        before_penalties: overTotal
         strike_rate: srate
         average_speed: speeds
         wickets: wickets
@@ -212,7 +218,8 @@
 
     selectShot: ->
       if @shot is 0
-        shot = {runs: 0, wicket: false, action: "leave", comment: "booo you offered no challenge, BOOOOOO....."}
+        console.log "this is the speeds yo", @speeds
+        shot = {runs: 0, wicket: false, speed: @speeds[@speeds.pick], pitch: @currentPitch.type, action: "leave", comment: "booo you offered no challenge, BOOOOOO....."}
         alert shot.comment
         @createScoreModel(shot)
       else
@@ -223,9 +230,11 @@
     calculateScore: (shot) ->
       @createScoreModel(shot)
       @total += shot.runs
+      @unfilteredTotal += shot.runs
       @totalBalls += 1
       @displayResult(shot)
       @totalSR = Math.round(@total/@totalBalls*100)
+      @unfilteredSR = Math.round(@unfilteredTotal/@totalBalls*100)
       @shot = 0
       @reportingCheck(shot)
 
@@ -247,6 +256,7 @@
     animateResult: (shot, size, color) ->
       if shot.wicket
         outcome = "WICKET"
+        @total -= @wicketPenalty
       else
         outcome = "#{shot.runs}"
       $('.countdown').empty()
