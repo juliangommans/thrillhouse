@@ -9,7 +9,7 @@
     <div class="col-xs-2">
       <button id="js-reset" class="btn btn-sm btn-danger">Reset</button></div>
     <div class="col-xs-3">
-      <span>Strike Rate:</span><span class="strike-rate"> 0 ()0</span>
+      <span>Strike Rate:</span><span class="strike-rate"> 0 (0)</span>
     </div>
     <div class="col-xs-3">
       <span>Total Runs:</span><span class="total-runs"> 0 (0)</span>

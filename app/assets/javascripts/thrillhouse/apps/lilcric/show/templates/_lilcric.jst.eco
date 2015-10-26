@@ -3,17 +3,30 @@
     <div id="ball"> </div>
   </div>
   <div class="col-xs-3">
+    <div id="back-swing" class="bat"></div>
+    <div id="down-swing" class="bat"></div>
+    <div id="fore-swing" class="bat"></div>
   </div>
   <div class="result-display col-xs-1">
   </div>
   <div class="countdown col-xs-1"></div>
   <div class="col-xs-2">
   </div>
-  <div id="batsman" class="person col-xs-1">
+  <div class="col-xs-1">
+    <div id="batsman" class="person">
+      <div id="head"></div>
+      <div id="torso"></div>
+      <div class="legs">
+        <div id="left-leg"></div>
+        <div id="right-leg"></div>
+      </div>
+    </div>
   </div>
-  <div id="wicket-col" class="col-xs-2">
+  <div id="wicket-col" class="col-xs-1">
     <div id="empty-wicket"></div>
     <div id="wicket"></div>
+  </div>
+  <div class="col-xs-1">
   </div>
 </div>
 <div class="row">

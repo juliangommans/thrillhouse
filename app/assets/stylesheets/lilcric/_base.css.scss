@@ -34,11 +34,43 @@
 
   .person {
     height: 150px;
-    width: 15px;
+    width: 30px;
     margin: auto;
     background-color: black;
   }
 
+  #head {
+    height: 20%;
+    width: 30px;
+    border: 1px solid white;
+  }
+
+  #torso {
+    height: 45%;
+    width: 30px;
+    border: 1px solid white;
+  }
+
+  #left-leg {
+    display: inline-block;
+    height: 100%;
+    width: 13px;
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  #right-leg {
+    display: inline-block;
+    height: 100%;
+    width: 13px;
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  .legs {
+    height: 35%;
+    width: 30px;
+  }
 
   #empty-wicket{
     height: 60px;
@@ -49,6 +81,30 @@
     width: 8px;
     margin: auto;
     background-color: brown;
+  }
+
+  .bat {
+    background-color: burlywood;
+    position: absolute;
+    z-index: 20;
+  }
+
+  #back-swing{
+    width: 70px;
+    height: 12px;
+    // display: none;
+  }
+
+  #down-swing{
+    width: 12px;
+    height: 70px;
+    // display: none;
+  }
+
+  #fore-swing{
+    width: 70px;
+    height: 12px;
+    // display: none;
   }
 
   #ball {

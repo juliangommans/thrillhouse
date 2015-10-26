@@ -21,6 +21,8 @@
       @unfilteredSR = 0
       @totalBalls = 0
       @wicketPenalty = 10
+      @batLeft = 0
+      @batTop = 0
 
       @listenTo @layout, 'show', =>
         @showControls()
@@ -28,6 +30,8 @@
         @showScores()
 
       @show @layout
+
+      @getSetBatPosition()
 
     createCollection: ->
       scores = new App.Entities.Collection
@@ -103,7 +107,7 @@
           @speeds.animateAfter /= 1.1
           @speeds.animateBefore *= 1.11
         when "good"
-          console.log "all good homie"
+          console.log "good ball, no speed change"
         else
           console.log "NOT ALL GOOD AT ALL"
       pitch
@@ -114,7 +118,6 @@
       @overExecution(deliveryDelay, deliveries)
 
     overExecution: (delay, balls) ->
-      console.log "over execution", delay
       over = =>
         @countdown(@setupDelivery,3)
         if balls--
@@ -123,18 +126,57 @@
           console.log "over is over... over"
       over()
 
+    getSetBatPosition: ->
+      @resetBat("show")
+      @placeBat(true)
+      batposition = @getNewLocation($("#down-swing"), $("#torso"), 0)
+      @batTop = batposition.top + 37.5
+      @batLeft = batposition.left + 15
+      @placeBat(false)
+      $("#fore-swing")[0].style.left = (@batLeft - 70) + "px"
+      @resetBat("hide")
+      $('#back-swing').show()
+
+    resetBat: (action) ->
+      for item in [0..2]
+        bat = $('.bat')[item]
+        if action is "show"
+          $(bat).show()
+        else
+          $(bat).hide()
+
+    placeBat: (reset) ->
+      if reset
+        @batLeft = 0
+        @batTop = 0
+      for item in [0..2]
+        bat = $('.bat')[item]
+        bat.style.left = @batLeft+"px"
+        bat.style.top = @batTop+"px"
+
+    animateBat: ->
+      setTimeout(@downBat, @speeds.animateBefore)
+    downBat: =>
+      $('#back-swing').hide()
+      $('#down-swing').show()
+      setTimeout(@upBat, @speeds.animateAfter)
+    upBat: =>
+      $('#down-swing').hide()
+      $('#fore-swing').show()
+
     bowlOneBall: (args) ->
       @countdown(@setupDelivery,3)
 
     setupDelivery: ->
-      ballSpeed = @getBallSpeed()
+      @getBallSpeed()
       @currentPitch = @getBallPitch()
       @liveBall = true
       preBounce = @getNewLocation($("#ball"),$("##{@currentPitch.type}-loc"), 10)
       postBounce = @getNewLocation($("#ball"),$("#batsman"), @currentPitch.bounce)
-      @animateBall(preBounce, postBounce, ballSpeed)
+      @animateBall(preBounce, postBounce)
 
-    animateBall: (preBounce, postBounce, ballSpeed) ->
+    animateBall: (preBounce, postBounce) ->
+      @animateBat()
       endOfDelivery = 200 + @speeds.animateBefore + @speeds.animateAfter
       # console.log "bounce locations", preBounce, postBounce
       $("#ball")
@@ -157,6 +199,7 @@
       @selectShot()
       @ballCounter += 1
       @renderTotal()
+      @getSetBatPosition()
       @resetDelivery()
 
     renderTotal: ->
@@ -218,7 +261,6 @@
 
     selectShot: ->
       if @shot is 0
-        console.log "this is the speeds yo", @speeds
         shot = {runs: 0, wicket: false, speed: @speeds[@speeds.pick], pitch: @currentPitch.type, action: "leave", comment: "booo you offered no challenge, BOOOOOO....."}
         alert shot.comment
         @createScoreModel(shot)
@@ -278,7 +320,6 @@
         )
 
     reportingCheck: (shot) ->
-      console.log "this is reporting", @reporting
       switch @reporting
         when 2
           @reportBall(shot)

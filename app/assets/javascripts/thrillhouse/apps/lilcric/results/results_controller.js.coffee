@@ -3,7 +3,6 @@
   class Results.Controller extends App.Controllers.Base
 
     initialize: (options) ->
-      console.log "OPTIONS", options
       kph = options.speed.pick
       @speed = options.speed[kph]
       @results = @getResult()
