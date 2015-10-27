@@ -5,24 +5,39 @@
     initialize: ->
 
 
-
       @layout = @getLayout()
+
       @listenTo @layout, 'show', =>
-        @mapSize()
+        @mapHeaderView()
+        @mapSidebarView()
       @show @layout
 
-    mapSize: ->
-      $('#map-editor-modal').modal('show')
-      size = modalSize
-      @mapeditorView()
 
+    renderMapTemplate: (args) ->
+      console.log "this is the map template args", args
+
+    mapHeaderView: ->
+      mapHeaderView = @getMapHeaderView()
+      @listenTo mapHeaderView, "reporting:options", @renderMapTemplate
+
+      @listenTo mapHeaderView, "show", ->
+        $('#map-editor-modal').modal('show')
+
+      @listenTo mapHeaderView, "hide:modal", ->
+        $('.modal-backdrop').remove();
+
+      @layout.mapHeaderRegion.show mapHeaderView
+
+    mapSidebarView: ->
+      mapSidebarView = @getMapHeaderView()
+
+      @layout.mapSidebarRegion.show mapSidebarView
 
     getLayout: ->
       new Mapeditor.Layout
 
-    mapeditorView: ->
-      mapeditorView = @getMapeditorView()
-      @layout.mapeditorRegion.show mapeditorView
+    getSidebarView: ->
+      new Mapeditor.Sidebar
 
-    getMapeditorView: ->
-      new Mapeditor.Lilrpg
+    getMapHeaderView: ->
+      new Mapeditor.Header

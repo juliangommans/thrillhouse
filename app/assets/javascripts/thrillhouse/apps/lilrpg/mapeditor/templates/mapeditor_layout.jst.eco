@@ -1,4 +1,8 @@
-<div id="map-heade-regionr"></div>
-<div id="map-region"></div>
-<div id="map-sidebar-region"></div>
-<div id="map-ui-region"></div>
+<div id="map-wrapper">
+  <div id="map-header-region"></div>
+  <div id='map-body-wrapper'>
+    <div id="map-region"></div>
+    <div id="map-sidebar-region"></div>
+  </div>
+  <div id="map-ui-region"></div>
+</div>

@@ -25,6 +25,12 @@
       @listenTo showView, "get:lil:cric", ->
         App.request "lilcric:show"
 
+      @listenTo showView, "get:lil:rpg", ->
+        App.request "lilrpg:show"
+
+      @listenTo showView, "get:lil:rpg:map", ->
+        App.request "lilrpg:mapeditor"
+
       @layout.listRegion.show showView
 
     panelView: ->

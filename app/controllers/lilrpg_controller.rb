@@ -3,6 +3,6 @@ class LilrpgController < ApplicationController
   def show
   end
 
-  def edit
+  def mapedit
   end
 end

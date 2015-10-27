@@ -1,0 +1,25 @@
+<div>This is the header - testing.. </div>
+<div id="map-editor-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Map Editor</h3>
+      </div>
+      <div class="modal-body">
+        <h4>Options</h4>
+        <p>Please pick a map size</p>
+        <select class="form-control" id="js-options">
+          <option value="12">Small (12x12)</option>
+          <option value="24">Medium (24x24)</option>
+          <option value="48">Large (48x48)</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="close-modal" class="btn btn-default" data-dismiss="modal">Okay</button>
+      </div>
+    </div>
+
+  </div>
+</div>

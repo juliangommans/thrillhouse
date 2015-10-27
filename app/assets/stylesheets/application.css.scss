@@ -8,6 +8,10 @@
 @import "lilcric/base";
 @import "lilcric/score";
 
+@import "lilrpg/base";
+@import "lilrpg/mapeditor";
+
+
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
@@ -100,6 +104,16 @@ ul, ol, dl {  list-style-type: none;  }
 .generic-padding {
   padding: 5px;
 }
+
+#home-list {
+  padding-top: 20px;
+}
+
+#nav-bar {
+  width: 450px;
+  margin: auto;
+}
+
 // .test {
 //   border: 1px solid black;
 // }

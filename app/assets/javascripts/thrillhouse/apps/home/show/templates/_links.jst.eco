@@ -1,3 +1,9 @@
+<ul id="home-list" class="list-group">
+  <li class="list-group-item"><a href="#" id="lil-cric">Lil Cric</a></li>
+
+  <li class="list-group-item"><a href="#" id="lil-rpg">Play Lil RPG</a></li>
+  <li class="list-group-item"><a href="#" id="lil-rpg-map">Lil RPG Map Editor</a></li>
+</ul>
 <div class="dropdown">
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">BattleDome
     <span class="caret"></span>
@@ -18,7 +24,9 @@
   </ul>
 <div>
 
-<a href="#" id="lil-cric">Lil Cric</a>
+
+
+
 
 
 
