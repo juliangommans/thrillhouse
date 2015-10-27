@@ -15,12 +15,14 @@
       over: "#js-one-over"
       reset: "#js-reset"
       options: "#js-options"
+      close: "#close-modal"
     events:
       'change @ui.options': "reporting"
     triggers:
       'click @ui.ball': 'bowl:one:ball'
       'click @ui.over': 'bowl:one:over'
       'click @ui.reset': 'reset:game'
+      'click @ui.close': 'hide:modal'
 
     reporting: (args, view) ->
       @triggerMethod("reporting:options", args.currentTarget.selectedIndex)

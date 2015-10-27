@@ -14,6 +14,7 @@
 
 
   App.reqres.setHandler 'lilcric:show', ->
+    App.navigate Routes.lilcric_path()
     API.show()
 
   App.reqres.setHandler 'lilcric:score', (options) ->

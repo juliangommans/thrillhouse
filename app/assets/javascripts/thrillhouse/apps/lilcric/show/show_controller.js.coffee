@@ -31,6 +31,8 @@
 
       @show @layout
 
+      $(window).resize( =>
+        @getSetBatPosition())
       @getSetBatPosition()
 
     createCollection: ->
@@ -64,8 +66,14 @@
       @listenTo @controlsView, "reporting:options", (value) =>
         @reporting = value
 
+      @listenTo @controlsView, "show", ->
+        $("#prematch-modal").modal('show');
+
+      @listenTo @controlsView, "hide:modal", ->
+        $('.modal-backdrop').remove();
+
       @layout.controlRegion.show @controlsView
-      $("#prematch-modal").modal('show');
+
 
     resetGame: ->
       @resetBallScores()
@@ -224,20 +232,22 @@
       afterWickets = overTotal - @wicketPenalty * wickets
       speeds = Math.round(@scoresCollection.getTotal('speed')/6)
       srate = Math.round(afterWickets/6*100)
-      @buildOver(afterWickets, srate, wickets, overTotal, speeds)
-      alert "You have completed over #{@overcount}, your stats are: \n
+      beforeSrate = Math.round(overTotal/6*100)
+      @buildOver(afterWickets, srate, beforeSrate, wickets, overTotal, speeds)
+      alert "You have completed over #{@overCount}, your stats are: \n
       Runs: #{afterWickets} (#{overTotal}) \n
-      Strike Rate: #{srate} \n
+      Strike Rate: #{srate} (#{beforeSrate})\n
       Wickets: #{wickets}"
       @resetBallScores()
       @overCount += 1
 
-    buildOver: (afterWickets, srate, wickets, overTotal, speeds) ->
+    buildOver: (afterWickets, srate, beforeSrate, wickets, overTotal, speeds) ->
       over = new App.Entities.Model
         over: @overCount
         runs: afterWickets
         before_penalties: overTotal
         strike_rate: srate
+        before_wickets_sr: beforeSrate
         average_speed: speeds
         wickets: wickets
       @oversCollection.add over
@@ -246,6 +256,7 @@
     showPitch: ->
       pitchView = @getPitchView()
       @listenTo pitchView, "batter:action", @recordBattingAction
+      @listenTo pitchView, "resize", @getSetBatPosition
 
       @layout.playRegion.show pitchView
 
