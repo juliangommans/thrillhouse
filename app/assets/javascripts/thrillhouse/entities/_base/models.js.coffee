@@ -35,3 +35,10 @@
 
     saveError: (model, xhr, options) ->
       @set _errors: $.parseJSON(xhr.responseText)?.errors unless xhr.status is 500 or xhr.status is 404
+
+    getThisObjectClass: ->
+      string = ""
+      string += "#{@get('class1')} "
+      string += "#{@get('class2')} "
+      string += "#{@get('class3')}"
+      string

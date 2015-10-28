@@ -17,7 +17,7 @@
 
   App.reqres.setHandler 'lilrpg:mapeditor', ->
     App.navigate Routes.lilrpg_mapedit_path()
-    API.show()
+    API.mapeditor()
 
   App.addInitializer ->
     new LilrpgApp.Router

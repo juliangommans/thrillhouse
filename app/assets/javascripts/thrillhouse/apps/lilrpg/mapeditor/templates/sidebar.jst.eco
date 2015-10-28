@@ -8,9 +8,6 @@
   </div>
   <div id="map-sidebar-body">
     <ul id="insertables" class="list-group">
-      <li class="list-group-item">Wall</li>
-      <li class="list-group-item">Thing</li>
-      <li class="list-group-item">Other Wall</li>
     </ul>
   </div>
 </div>

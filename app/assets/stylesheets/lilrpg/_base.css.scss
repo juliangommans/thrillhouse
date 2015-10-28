@@ -1,0 +1,22 @@
+.cell {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+}
+
+.wall {
+  z-index: 3;
+  background-color: saddlebrown;
+}
+
+.vertical-wall {
+  height: 20px;
+  width: 8px;
+  margin: 0px 6px;
+}
+
+.horizontal-wall {
+  height: 8px;
+  width: 20px;
+  margin: 6px 0px;
+}

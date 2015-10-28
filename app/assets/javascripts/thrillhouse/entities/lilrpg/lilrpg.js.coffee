@@ -1,25 +1,25 @@
-@Thrillhouse.module 'Entities', (Entities, App, Backbone, Marionette, $, _) ->
+@Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
 
-  class Entities.Lilrpg extends App.Entities.Model
+  class LilrpgApp.Lilrpg extends App.Entities.Model
     urlRoot: -> Routes.lilrpg_index_path()
 
-  class Entities.LilrpgCollection extends App.Entities.Collection
-    model: Entities.Lilrpg
+  class LilrpgApp.LilrpgCollection extends App.Entities.Collection
+    model: LilrpgApp.Lilrpg
     url: -> Routes.lilrpg_index_path()
 
   API =
     getLilrpgs: ->
-      lilrpgs = new Entities.LilrpgCollection
+      lilrpgs = new LilrpgApp.LilrpgCollection
       lilrpgs.fetch
         reset: true
       lilrpgs
     getLilrpg: (id) ->
-      lilrpg = new Entities.Lilrpg
+      lilrpg = new LilrpgApp.Lilrpg
         id: id
       lilrpg.fetch()
       lilrpg
     newLilrpg: ->
-      new Entities.Lilrpg
+      new LilrpgApp.Lilrpg
 
   App.reqres.setHandler 'lilrpg:entities', ->
     API.getLilrpgs()
