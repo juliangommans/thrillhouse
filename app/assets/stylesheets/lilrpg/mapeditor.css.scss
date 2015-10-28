@@ -1,22 +1,23 @@
-#battledome-wrapper {
+#map-wrapper {
   height: 513px;
   position: relative;
   background-color: pink;
   width: 100%;
 
   #map-sidebar-region {
-    width: 20%;
+    width: 25%;
     height: 512px;
     right: 0;
+    display: inline-block;
     position: absolute;
     overflow-y: auto;
     background-color: blue;
-    color: white;
     text-align: center;
     font-size: 75%;
   }
   #map-region {
     width: 75%;
+    display: inline-block;
     background-color: yellow;
     height: 365px;
   }

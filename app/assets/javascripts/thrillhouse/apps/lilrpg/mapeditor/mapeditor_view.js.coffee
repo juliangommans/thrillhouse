@@ -9,15 +9,15 @@
   class Mapeditor.Header extends App.Views.ItemView
     template: 'lilrpg/mapeditor/header'
     ui:
-      options: "#js-options"
+      options: "#js-map-options"
       close: "#close-modal"
     events:
       'change @ui.options': "mapOptions"
     triggers:
       'click @ui.close': "hide:modal"
 
-   mapOptions: (args, view) ->
-      @triggerMethod("map:options", args.currentTarget.selectedIndex)
+    mapOptions: (args, view) ->
+      @triggerMethod("map:options", args.currentTarget.value)
 
   class Mapeditor.Layout extends App.Views.Layout
     template: 'lilrpg/mapeditor/mapeditor_layout'

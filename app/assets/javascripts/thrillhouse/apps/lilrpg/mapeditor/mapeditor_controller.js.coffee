@@ -3,7 +3,8 @@
   class Mapeditor.Controller extends App.Controllers.Base
 
     initialize: ->
-
+      console.log "for my sanity"
+      @mapSize = 12
 
       @layout = @getLayout()
 
@@ -12,13 +13,10 @@
         @mapSidebarView()
       @show @layout
 
-
-    renderMapTemplate: (args) ->
-      console.log "this is the map template args", args
-
     mapHeaderView: ->
       mapHeaderView = @getMapHeaderView()
-      @listenTo mapHeaderView, "reporting:options", @renderMapTemplate
+      @listenTo mapHeaderView, "map:options", (value) =>
+        @mapSize = parseInt(value)
 
       @listenTo mapHeaderView, "show", ->
         $('#map-editor-modal').modal('show')
@@ -29,7 +27,7 @@
       @layout.mapHeaderRegion.show mapHeaderView
 
     mapSidebarView: ->
-      mapSidebarView = @getMapHeaderView()
+      mapSidebarView = @getSidebarView()
 
       @layout.mapSidebarRegion.show mapSidebarView
 

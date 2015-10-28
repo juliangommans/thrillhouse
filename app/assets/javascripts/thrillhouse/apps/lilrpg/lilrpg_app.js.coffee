@@ -3,7 +3,7 @@
   class LilrpgApp.Router extends Marionette.AppRouter
     appRoutes:
       'lilrpg' : 'show'
-      'lilrpg/mapeditor' : "mapeditor"
+      'lilrpg/mapedit' : "mapeditor"
 
   API =
     show: ->
