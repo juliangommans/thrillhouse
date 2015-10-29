@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151013005058) do
+ActiveRecord::Schema.define(version: 20151029005120) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
@@ -61,6 +61,14 @@ ActiveRecord::Schema.define(version: 20151013005058) do
 
   add_index "effects", ["buff_id"], name: "index_effects_on_buff_id"
   add_index "effects", ["move_id"], name: "index_effects_on_move_id"
+
+  create_table "lil_rpg_map_editors", force: true do |t|
+    t.string   "name"
+    t.integer  "size"
+    t.text     "map"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "move_lists", force: true do |t|
     t.integer  "move_id"

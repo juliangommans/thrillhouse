@@ -1,4 +1,4 @@
-<div id="map-editor-modal" class="modal fade" role="dialog">
+<div id="map-editor-size-modal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
 
@@ -7,18 +7,22 @@
         <h3 class="modal-title">Map Editor</h3>
       </div>
       <div class="modal-body">
-        <h4>Options</h4>
+        <h4>Options: </h4>
         <p>Please pick a map size</p>
         <select class="form-control" id="js-map-options">
+          <option value="8">Extra Small (8x8)</option>
           <option value="12">Small (12x12)</option>
-          <option value="24">Medium (24x24)</option>
-          <option value="48">Large (48x48)</option>
+          <option value="16">Medium (16x16)</option>
+          <option value="20">Large (20x20)</option>
+          <option value="24">Extra Large (24x24)</option>
         </select>
       </div>
       <div class="modal-footer">
-        <button type="button" id="close-modal" class="btn btn-default" data-dismiss="modal">Okay</button>
+        <button type="button" id="close-size-modal" class="btn btn-default" data-dismiss="modal">Okay</button>
       </div>
     </div>
 
   </div>
 </div>
+
+

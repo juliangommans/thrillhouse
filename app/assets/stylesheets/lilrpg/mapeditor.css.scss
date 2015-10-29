@@ -1,8 +1,17 @@
 #map-wrapper {
   height: 513px;
   position: relative;
-  background-color: pink;
   width: 100%;
+
+  a {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+  }
+
+  #map-ui{
+    padding: 10px;
+  }
 
   #map-sidebar-region {
     width: 25%;
@@ -18,10 +27,10 @@
   #map-region {
     width: 75%;
     display: inline-block;
-    background-color: yellow;
     height: 365px;
     overflow: auto;
     white-space: nowrap;
+    padding: 10px;
   }
 
   .map-cell {
@@ -54,6 +63,10 @@
 
   .selected {
     background-color: lightgray;
+  }
+
+  .modal {
+    text-align: center;
   }
 
 }

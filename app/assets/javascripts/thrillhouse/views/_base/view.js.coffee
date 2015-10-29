@@ -26,3 +26,14 @@
       $(args.currentTarget).popover('show')
     hideData: (args) ->
       $(args.currentTarget).popover('hide')
+
+    returnFalse: ->
+      return false
+
+    selected: (args, classname) ->
+      classname or= 'selected'
+      if $(args.currentTarget).hasClass(classname)
+        $(args.currentTarget).removeClass(classname)
+      else
+        $(".#{classname}").removeClass(classname)
+        $(args.currentTarget).addClass(classname)

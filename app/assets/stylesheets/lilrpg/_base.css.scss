@@ -20,3 +20,37 @@
   width: 20px;
   margin: 6px 0px;
 }
+
+.enemy {
+  margin: 2px;
+  background-color: red;
+  z-index: 2;
+}
+
+.simple-melee {
+  border-radius: 4px;
+  border: 8px solid red;
+}
+
+.simple-ranged {
+  border-radius: 3px;
+  width: 15px;
+  height: 15px;
+  border: 3px solid orange;
+}
+
+.player {
+  background-color: green;
+  z-index: 2;
+  margin: 2px;
+  border-radius: 4px;
+  border: 8px solid green;
+}
+
+.tresure-chest {
+  background-color: yellow;
+  height: 8px;
+  width: 14px;
+  margin: 6px 3px;
+  border: 2px solid gray;
+}
