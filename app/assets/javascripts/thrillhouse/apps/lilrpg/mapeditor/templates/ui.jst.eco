@@ -1,6 +1,6 @@
 <div id="map-ui">
   <div id="buttons">
-    <button id="new-map" class="btn btn-default">New Map</button>
+    <button id="new-map" class="btn btn-info">New Map</button>
     <button id="save-map" class="btn btn-success">Save Map</button>
     <button id="load-map" class="btn btn-warning">Load Map</button>
     <button id="clear-map" class="btn btn-danger">Clear Map</button>
