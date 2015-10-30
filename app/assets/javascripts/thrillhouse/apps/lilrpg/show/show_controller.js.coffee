@@ -3,27 +3,74 @@
   class Show.Controller extends App.Controllers.Base
 
     initialize: ->
+      @player = App.request "lilrpg:player:entity"
+      @controls = App.request "lilrpg:player:controls"
 
-      @layout = @getLayout()
-      @listenTo @layout, 'show', =>
-        @showView()
-        @dialogView()
-      @show @layout
+      App.execute "when:fetched", [@controls, @player], =>
+
+
+        @layout = @getLayout()
+        @listenTo @layout, 'show', =>
+          @showView()
+          @dialogView()
+
+        @show @layout
+
+    setPlayerLocation: ->
+      location = parseInt($(".player").parent().attr('id'))
+      console.log "location", $(".player").parent().attr('id')
+      @player.set location: location
+
+    filterKey: (key) ->
+      if key.action is "move"
+        @player.move(key)
+        @movePlayer()
+
+    movePlayer: ->
+      newLocation = $("##{@player.get('location')}")
+    # check validity of newLocation
+      if @outOfBounds(newLocation)
+        @setPlayerLocation()
+      else
+        playerObj = $(".player").clone()
+        $(".player").parent().empty()
+        newLocation.append(playerObj)
+
+    outOfBounds: (newLocation) ->
+
+
+    setBoundaries: ->
+      @lowerBoundaries = [11]
+      @upperBoundaries = []
+      multiplier = 10
+      if @map.size > 9
+        multiplier = 100
+      for num in [1..@map.size]
+        x = num * multiplier + @map.size
+        @upperBoundaries.push(x)
+
 
     sortPlayerAction: ->
       event.preventDefault()
-      console.log "this is your KEY", event.keyCode
+      pressedKey = @controls.get("#{event.keyCode}")
+      @setPlayerLocation()
+      if pressedKey
+        @filterKey(pressedKey)
+
+      console.log "this is your pressed key", @controls.get("#{event.keyCode}")
 
     setLoadedMap: (selectedID) ->
       console.log "setting the loaded map"
       @map = @mapList.find((map) ->
         map.get('id') is selectedID
       )
+      @setBoundaries()
 
     loadSelectedMap: ->
       console.log "this be the map", @map
       $("#map-area").empty()
       $("#map-area").append(@map.get('map'))
+      @setPlayerLocation()
 
 #### Views ####
 
