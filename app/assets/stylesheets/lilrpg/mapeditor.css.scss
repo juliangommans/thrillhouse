@@ -1,4 +1,4 @@
-#map-wrapper {
+#map-editor-wrapper {
   height: 513px;
   position: relative;
   width: 100%;
@@ -45,19 +45,18 @@
       left: -1px;
       bottom: -1px;
       right: -1px;
-      border: 1px #888 solid;
+      border: 1px solid lightgray;
   }
 
   .map-cell:hover {
     background-color: lightgray;
   }
+
   .map-cell:active {
     background-color: gray;
   }
 
   .map-row {
-    display: block;
-    height: 20px;
     margin-bottom: 2px;
   }
 
@@ -67,6 +66,10 @@
 
   .modal {
     text-align: center;
+  }
+
+  #sidebar-object-icon {
+    float: left;
   }
 
 }

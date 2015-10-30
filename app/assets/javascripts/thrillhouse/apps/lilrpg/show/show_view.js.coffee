@@ -3,10 +3,42 @@
   class Show.Lilrpg extends App.Views.ItemView
     template: 'lilrpg/show/_lilrpg'
 
+  class Show.Dialog extends App.Views.ItemView
+    template: 'lilrpg/show/dialog'
+    ui:
+      loadMap: "#load-modal"
+    triggers:
+      'click @ui.loadMap': 'load:selected:map'
+
+  class Show.LoadMap extends App.Views.ItemView
+    template: 'lilrpg/show/load_map'
+    tagName: "option"
+
+  class Show.LoadMaps extends App.Views.CompositeView
+    template: 'lilrpg/show/load_maps'
+    childView: Show.LoadMap
+    childViewContainer: "#load-select"
+    events:
+      'change #load-select': "getId"
+
+    getId: (e) ->
+      e.preventDefault
+      target = e.currentTarget[e.currentTarget.selectedIndex]
+      id = $($(target).children()).data("id")
+      @trigger "load:selected:map", id
+
   class Show.Show extends App.Views.ItemView
     template: 'lilrpg/show/_show'
+
+    onRender: ->
+      $(document).keydown (e) =>
+        e.preventDefault()
+        @trigger "player:action"
+
 
   class Show.Layout extends App.Views.Layout
     template: 'lilrpg/show/show_layout'
     regions:
+      invRegion: '#inventory-region'
       showRegion: '#show-region'
+      dialogRegion: '#dialog-region'

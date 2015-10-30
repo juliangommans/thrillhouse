@@ -1,4 +1,4 @@
-<div id="map-wrapper">
+<div id="map-editor-wrapper">
   <div id="map-header-region"></div>
   <div id='map-body-wrapper'>
     <div id="map-region"></div>

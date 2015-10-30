@@ -1,0 +1,3 @@
+<select class="form-control" id="load-select">
+  <option>Please Select a Map</option>
+</select>
