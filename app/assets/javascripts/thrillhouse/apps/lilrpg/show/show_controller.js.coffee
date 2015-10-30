@@ -40,14 +40,6 @@
 
 
     setBoundaries: ->
-      @lowerBoundaries = [11]
-      @upperBoundaries = []
-      multiplier = 10
-      if @map.size > 9
-        multiplier = 100
-      for num in [1..@map.size]
-        x = num * multiplier + @map.size
-        @upperBoundaries.push(x)
 
 
     sortPlayerAction: ->

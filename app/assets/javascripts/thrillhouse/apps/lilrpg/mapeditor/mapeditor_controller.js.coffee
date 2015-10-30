@@ -16,18 +16,29 @@
 
     buildMap: ->
       mapObject = ""
+      leftBoundaries = []
+      rightBoundaries = []
       for row in [1..@mapSize]
         mapRow = "<div id='row-#{row}' class='map-row'>"
         for cell in [1..@mapSize]
-          mapCell = "<div id='#{row}#{cell}' class='map-cell cell'></div>"
+          cellNum = "#{row}#{cell}"
+          mapCell = "<div id='#{cellNum}' class='map-cell cell'></div>"
           mapRow += mapCell
+          if cell is @mapSize
+            rightBoundaries.push(parseInt(cellNum))
+          else if cell is 1
+            leftBoundaries.push(parseInt(cellNum))
         mapRow += "</div>"
         mapObject += mapRow
-      @renderMapTemplate(mapObject)
+      @renderMapTemplate(mapObject,leftBoundaries,rightBoundaries)
 
-    renderMapTemplate: (map) ->
+    renderMapTemplate: (map, left, right) ->
       $('#save-map-name').val('')
       @map = App.request "new:lilrpg:map:entity"
+      @map.set(
+        leftBoundaries: left
+        rightBoundaries: right
+      )
       $('#map-area').empty()
       $('#map-area').append(map)
 
@@ -48,6 +59,7 @@
       @saveToServer()
 
     saveToServer: ->
+      console.log "map is now", @map
       @map.save {},
         success: (model) ->
           console.log "success", model
