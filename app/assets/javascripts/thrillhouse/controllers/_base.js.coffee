@@ -2,6 +2,9 @@
 
   class Controllers.Base extends Marionette.Controller
 
+    onBeforeDestroy: ->
+      console.log "this is before destroying CAPS", @
+
     constructor: (options = {}) ->
       @region = options.region or App.request 'default:region'
       super options
@@ -115,17 +118,4 @@
           $('.countdown').empty()
           @fun()
       timer()
-
-    # getOffset: (el) ->
-    #   _x = 0
-    #   _y = 0
-    #   while el and !isNaN(el.offsetLeft) and !isNaN(el.offsetTop)
-    #     _x += el.offsetLeft - (el.scrollLeft)
-    #     _y += el.offsetTop - (el.scrollTop)
-    #     el = el.offsetParent
-    #   {
-    #     top: _y
-    #     left: _x
-    #   }
-
 

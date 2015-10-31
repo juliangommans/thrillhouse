@@ -84,6 +84,10 @@
   class LilrpgApp.LilrpgMap extends App.Entities.Model
     urlRoot: -> Routes.lil_rpg_map_editor_index_path()
 
+    initialize: ->
+      if @get('coordinates')
+        @set coordinates: JSON.parse(@get('coordinates'))
+
   class LilrpgApp.LilrpgMapCollection extends App.Entities.Collection
     model: LilrpgApp.LilrpgMap
     url: -> Routes.lil_rpg_map_editor_index_path()

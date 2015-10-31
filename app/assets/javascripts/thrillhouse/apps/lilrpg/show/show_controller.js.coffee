@@ -17,30 +17,21 @@
         @show @layout
 
     setPlayerLocation: ->
-      location = parseInt($(".player").parent().attr('id'))
+      location = $(".player").parent().attr('id')
       console.log "location", $(".player").parent().attr('id')
       @player.set location: location
 
     filterKey: (key) ->
       if key.action is "move"
-        @player.move(key)
+        @player.move(key,@map)
         @movePlayer()
 
     movePlayer: ->
       newLocation = $("##{@player.get('location')}")
     # check validity of newLocation
-      if @outOfBounds(newLocation)
-        @setPlayerLocation()
-      else
-        playerObj = $(".player").clone()
-        $(".player").parent().empty()
-        newLocation.append(playerObj)
-
-    outOfBounds: (newLocation) ->
-
-
-    setBoundaries: ->
-
+      playerObj = $(".player").clone()
+      $(".player").remove()
+      newLocation.append(playerObj)
 
     sortPlayerAction: ->
       event.preventDefault()
@@ -53,10 +44,9 @@
 
     setLoadedMap: (selectedID) ->
       console.log "setting the loaded map"
-      @map = @mapList.find((map) ->
+      @map = @loadMapList.find((map) ->
         map.get('id') is selectedID
       )
-      @setBoundaries()
 
     loadSelectedMap: ->
       console.log "this be the map", @map
@@ -75,22 +65,23 @@
     dialogView: ->
       dialogView = @getDialogView()
       @listenTo dialogView, "show", ->
-        @layout.addRegion("mapLoadLayout", "#map-load-select")
+        @test = new Backbone.Marionette.Region
+          el: "#map-load-list"
         @mapLoadView()
       @listenTo dialogView, "load:selected:map", @loadSelectedMap
+
       @layout.dialogRegion.show dialogView
 
     mapLoadView: ->
-      @mapList = App.request "lilrpg:map:entities"
-      App.execute "when:fetched", @mapList, =>
+      @loadMapList = App.request "lilrpg:map:entities"
+      App.execute "when:fetched", @loadMapList, =>
         loadView = @getMapLoadView()
         @listenTo loadView, "show", ->
-          $('#load-map-modal-bloop').modal('show')
+          $('#load-map-modal').modal('show')
         @listenTo loadView, "load:selected:map", (id) =>
-          console.log "loading a map"
           @setLoadedMap(id)
 
-        @layout.mapLoadLayout.show loadView
+        @test.show loadView
 
     getLayout: ->
       new Show.Layout
@@ -100,7 +91,7 @@
 
     getMapLoadView: ->
       new Show.LoadMaps
-        collection: @mapList
+        collection: @loadMapList
 
     getShowView: ->
       new Show.Show

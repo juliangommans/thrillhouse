@@ -1,1 +1,1 @@
-attributes :id, :name, :size, :map
+attributes :id, :name, :size, :map, :coordinates

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151029005120) do
+ActiveRecord::Schema.define(version: 20151030162433) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 20151029005120) do
     t.text     "map"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "coordinates"
   end
 
   create_table "move_lists", force: true do |t|

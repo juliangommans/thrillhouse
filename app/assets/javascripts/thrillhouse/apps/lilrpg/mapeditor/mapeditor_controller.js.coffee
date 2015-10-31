@@ -16,31 +16,39 @@
 
     buildMap: ->
       mapObject = ""
-      leftBoundaries = []
-      rightBoundaries = []
+      coordinates = {}
       for row in [1..@mapSize]
         mapRow = "<div id='row-#{row}' class='map-row'>"
         for cell in [1..@mapSize]
-          cellNum = "#{row}#{cell}"
-          mapCell = "<div id='#{cellNum}' class='map-cell cell'></div>"
+          id = "cell-#{row}-#{cell}"
+    #### need a separator between row and cell for double didgits
+          mapCell = "<div id='#{id}' class='map-cell cell'></div>"
           mapRow += mapCell
-          if cell is @mapSize
-            rightBoundaries.push(parseInt(cellNum))
-          else if cell is 1
-            leftBoundaries.push(parseInt(cellNum))
+          coordinates[id] = 
+            x: row
+            y: cell
         mapRow += "</div>"
         mapObject += mapRow
-      @renderMapTemplate(mapObject,leftBoundaries,rightBoundaries)
+      @renderMapTemplate(mapObject, coordinates)
 
-    renderMapTemplate: (map, left, right) ->
+    renderMapTemplate: (map, coordinates) ->
       $('#save-map-name').val('')
       @map = App.request "new:lilrpg:map:entity"
-      @map.set(
-        leftBoundaries: left
-        rightBoundaries: right
-      )
+      @map.set coordinates: JSON.stringify(coordinates)
       $('#map-area').empty()
       $('#map-area').append(map)
+
+    buildBoundaries: ->
+      boundaries = []
+      for loc in [1..@mapSize]
+        boundaries.push 
+          right: @mapSize
+          left: loc
+
+      console.log "this is the boundaries", boundaries
+      boundaries
+
+
 
     placeObject: (args, domject) ->
       unless $(args.currentTarget)[0].children.length
@@ -59,7 +67,6 @@
       @saveToServer()
 
     saveToServer: ->
-      console.log "map is now", @map
       @map.save {},
         success: (model) ->
           console.log "success", model
@@ -117,14 +124,14 @@
       mapShowView = @getMapShowView()
       @listenTo mapShowView, "place:selected:object", (args, domject) =>
         @placeObject(args, domject)
-      @listenTo mapShowView, 'show', @buildMap
 
       @layout.mapRegion.show mapShowView
 
     mapUiView: ->
       uiView = @getMapUiView()
       @listenTo uiView, "show", ->
-        @layout.addRegion("mapLoadLayout", "#map-load-select")
+        @bob = new Backbone.Marionette.Region
+          el: "#map-load-select"
         @mapLoadView()
       @listenTo uiView, "save:current:map", @saveMap
       @listenTo uiView, "load:selected:map", @loadSelectedMap
@@ -139,7 +146,7 @@
         @listenTo loadView, "load:selected:map", (id) =>
           @setLoadedMap(id)
 
-        @layout.mapLoadLayout.show loadView
+        @bob.show loadView
 
     getLayout: ->
       new Mapeditor.Layout

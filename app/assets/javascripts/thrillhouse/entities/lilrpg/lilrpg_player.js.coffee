@@ -1,17 +1,29 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
   class LilrpgApp.Player extends App.Entities.Model
 
-    move: (options) ->
+    move: (keypress,map) ->
       location = @get('location')
-      { key, direction, spaces } = options
-      if key is "up" or key is "down"
-        if location.length > 2
-          direction * 10
-      if spaces > 1
-        direction * spaces
-      location = location + direction
-      console.log "location", location
-      @set location: location
+      coords = map.get('coordinates')
+      newCoords = "cell-"
+      { key, direction, spaces } = keypress
+      if coords[location]
+        cell = coords[location]
+        if key is "up" or key is "down"
+          newCoords += (cell.x + direction).toString()
+          newCoords += "-"
+          newCoords += (cell.y).toString()
+        else if key is "left" or key is "right"
+          newCoords += (cell.x).toString()
+          newCoords += "-"
+          newCoords += (cell.y + direction).toString()
+      else
+        console.log "you're out of bounds", cell
+      unless coords[newCoords]
+        newCoords = location
+        console.log "you tried to move out of bounds", newCoords
+
+
+      @set location: newCoords
 
   class LilrpgApp.Controls extends App.Entities.Model
 
@@ -34,7 +46,7 @@
       38:
         key: "up"
         action: "move"
-        direction: -10
+        direction: -1
         spaces: 1
         code: 38
       39:
@@ -46,7 +58,7 @@
       40:
         key: "down"
         action: "move"
-        direction: +10
+        direction: +1
         spaces: 1
         code: 40
       81:

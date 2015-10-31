@@ -28,7 +28,7 @@ class LilRpgMapEditorController < ApplicationController
   private
 
   def map_params
-    params.require(:lil_rpg_map_editor).permit(:id, :name, :size, :map)
+    params.require(:lil_rpg_map_editor).permit(:id, :name, :coordinates, :size, :map)
   end
 
   def fetch_map
