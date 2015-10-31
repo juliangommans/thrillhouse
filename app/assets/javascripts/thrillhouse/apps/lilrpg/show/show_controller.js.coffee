@@ -8,7 +8,6 @@
 
       App.execute "when:fetched", [@controls, @player], =>
 
-
         @layout = @getLayout()
         @listenTo @layout, 'show', =>
           @showView()
@@ -28,10 +27,14 @@
 
     movePlayer: ->
       newLocation = $("##{@player.get('location')}")
-    # check validity of newLocation
-      playerObj = $(".player").clone()
-      $(".player").remove()
-      newLocation.append(playerObj)
+      illegalMoves = ['wall','character']
+      if $(newLocation[0].children[0]).hasAnyClass(illegalMoves)
+        console.log "something is in your way", newLocation
+        @setPlayerLocation()
+      else
+        playerObj = $(".player").clone()
+        $(".player").remove()
+        newLocation.append(playerObj)
 
     sortPlayerAction: ->
       event.preventDefault()
@@ -39,8 +42,6 @@
       @setPlayerLocation()
       if pressedKey
         @filterKey(pressedKey)
-
-      console.log "this is your pressed key", @controls.get("#{event.keyCode}")
 
     setLoadedMap: (selectedID) ->
       console.log "setting the loaded map"

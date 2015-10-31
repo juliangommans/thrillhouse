@@ -45,10 +45,7 @@
           right: @mapSize
           left: loc
 
-      console.log "this is the boundaries", boundaries
       boundaries
-
-
 
     placeObject: (args, domject) ->
       unless $(args.currentTarget)[0].children.length
