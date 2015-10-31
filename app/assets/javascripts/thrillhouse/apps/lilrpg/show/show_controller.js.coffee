@@ -17,7 +17,7 @@
 
     setPlayerLocation: ->
       location = $(".player").parent().attr('id')
-      console.log "location", $(".player").parent().attr('id')
+      # console.log "location", $(".player").parent().attr('id')
       @player.set location: location
 
     filterKey: (key) ->
@@ -35,6 +35,8 @@
         playerObj = $(".player").clone()
         $(".player").remove()
         newLocation.append(playerObj)
+      console.log "direction =", @player.get('direction')
+      console.log "location =", @player.get('location')
 
     sortPlayerAction: ->
       event.preventDefault()
