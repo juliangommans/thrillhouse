@@ -21,7 +21,6 @@
         mapRow = "<div id='row-#{row}' class='map-row'>"
         for cell in [1..@mapSize]
           id = "cell-#{row}-#{cell}"
-    #### need a separator between row and cell for double didgits
           mapCell = "<div id='#{id}' class='map-cell cell'></div>"
           mapRow += mapCell
           coordinates[id] = 

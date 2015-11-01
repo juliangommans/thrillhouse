@@ -6,8 +6,9 @@
 
     move: (keypress,map) ->
       location = @get('location')
-      console.log "does it?", $($("##{location}")[0].children[0]).hasAnyClass(@illegalMoves)
       direction = @get('direction')
+      @set oldLocation: location
+      @set oldDirection: direction
       coords = map.get('coordinates')
       newCoords = "cell-"
       newDirection = "cell-"
@@ -26,12 +27,37 @@
         console.log "you're out of bounds", cell
       unless coords[newCoords]
         newCoords = location
-        newDirection = direction
         console.log "you tried to move out of bounds", newCoords
 
-      unless $($("##{location}")[0].children[0]).hasAnyClass(@illegalMoves)
+      @checkIllegalMoves(newCoords,newDirection)
+
+    checkIllegalMoves: (newCoords,newDirection) ->
+      if $($("##{newCoords}")[0].children[0]).hasAnyClass(@illegalMoves)
+        @set location: @get('oldLocation')
+        @set direction: newCoords
+        if $("##{@get('direction')}").length
+          @set target: $("##{@get('direction')}")[0].children[0]
+        else
+          @set target: false
+        console.log "illegal move brah"
+        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
+      else
         @set direction: newDirection
-      @set location: newCoords
+        @set location: newCoords
+        if $("##{@get('direction')}").length
+          console.log $("##{@get('direction')}")
+          @set target: $("##{@get('direction')}")[0].children[0]
+        else
+          @set target: false
+        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
+
+    attack: (key) ->
+      console.log "key pressed", key
+      if @get('target')
+        console.log "this is your current target", @get('target')
+      else
+        console.log "it's empty", @get('target')
+
 
   class LilrpgApp.Controls extends App.Entities.Model
 
@@ -60,13 +86,13 @@
       39:
         key: "right"
         action: "move"
-        axisChange: +1
+        axisChange: 1
         spaces: 1
         code: 39
       40:
         key: "down"
         action: "move"
-        axisChange: +1
+        axisChange: 1
         spaces: 1
         code: 40
       81:

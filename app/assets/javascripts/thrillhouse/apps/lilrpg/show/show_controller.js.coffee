@@ -17,26 +17,21 @@
 
     setPlayerLocation: ->
       location = $(".player").parent().attr('id')
-      # console.log "location", $(".player").parent().attr('id')
       @player.set location: location
 
     filterKey: (key) ->
-      if key.action is "move"
-        @player.move(key,@map)
-        @movePlayer()
+      switch key.action
+        when "move"
+          @player.move(key,@map)
+          @movePlayer()
+        when "attack"
+          @player.attack(key)
 
     movePlayer: ->
-      newLocation = $("##{@player.get('location')}")
-      illegalMoves = ['wall','character']
-      if $(newLocation[0].children[0]).hasAnyClass(illegalMoves)
-        console.log "something is in your way", newLocation
-        @setPlayerLocation()
-      else
+      unless @player.get('location') is @player.get('oldLocation')
         playerObj = $(".player").clone()
         $(".player").remove()
-        newLocation.append(playerObj)
-      console.log "direction =", @player.get('direction')
-      console.log "location =", @player.get('location')
+        $("##{@player.get('location')}").append(playerObj)
 
     sortPlayerAction: ->
       event.preventDefault()
