@@ -54,18 +54,19 @@
           @set target: false
         console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
 
-    attack: (key,targetModel) ->
-      console.log "key pressed", key
+    attack: (key, targetModel) ->
+      console.log "args", key, targetModel
       console.log "target", @get('target')
       if @get('target')
         target = $(@get('target')).data('name')
         targetHealth = $("##{target}").children()
-        console.log "and children", targetHealth.children()
         targetHealth.each( (index, object) =>
-          if (index+1) > 
-          
+          if (index+1) > targetModel.get('health')
+            $(object).removeClass('positive-health')
+            $(object).addClass('negative-health')
+          else 
+            console.log "there should be less health", object
           )
-
       else
         console.log "it's empty", @get('target')
 

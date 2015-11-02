@@ -61,21 +61,32 @@
 }
 
 .health{
+  height: 8px;
+  width: 22px;
+  margin-top: 9px;
+  background-color: black;
+  border: 1px solid black;
+  border-radius: 1px;
   position: absolute;
 }
 
 .health-bar {
+  border: 1px solid red;
+  border-radius: 1px;
   height: 5px;
   width: 3px;
-  margin: 0px 1px;
+  margin-right: 1px;
+  margin-bottom: 10px;
   display: inline-block;
 }
 
 
 .positive-health {
-  background-color: green
+  border-color: lime;
+  background-color: lime
 }
 
 .negative-health {
+  border-color: red;
   background-color: red
 }

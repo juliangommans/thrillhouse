@@ -27,16 +27,17 @@
         @buildEnemies(enemiesJquery)
       else
         console.log "no enemies"
-      console.log "this should be your guy", @enemies
 
     buildEnemies: (list) ->
       list.each( (index, object) =>
         type = object.classList[0]
         char = App.request "lilrpg:#{type}:enemy"
         char.set id: (index+1)
+        char.set location: $(object).parent().attr('id')
         char.set name: "#{char.get('name')}-#{index+1}"
         @enemies.add char
         $(object).data("name",char.get('name'))
+        $(object).attr('id',char.get('id'))
         @setCharHealth(char, object)
       )
 
@@ -51,13 +52,18 @@
       $('body').append(health)
 
     filterKey: (key) ->
+      targetModel = @getTargetModel()
       switch key.action
         when "move"
           @player.move(key,@map)
           @movePlayer()
         when "attack"
           @dealDamage("attack")
-          @player.attack(key,@getTargetModel())
+          if targetModel.get('alive')
+            @player.attack(key,targetModel)
+          else
+            @cleanup(targetModel)
+
 
     movePlayer: ->
       unless @player.get('location') is @player.get('oldLocation')
@@ -66,19 +72,21 @@
         $("##{@player.get('location')}").append(playerObj)
 
     dealDamage: (action) ->
-      console.log "players damage", @player.damage[action]
       damage = @player.damage[action]
       target = @getTargetModel()
       enemyHp = target.get('health')
       enemyHp -= damage
+      target.set alive: false if enemyHp < 1
       target.set health: enemyHp
-      console.log "aftertarget", target
+
+    cleanup: (model) ->
+      $("##{model.get('name')}").remove()
+      $("##{model.get('id')}").remove()
+
 
     getTargetModel: ->
       @enemies.find((enemy) =>
         enemy.get('name') == $(@player.get('target')).data('name'))
-
-      # target.get('health') -= damage
 
     sortPlayerAction: ->
       event.preventDefault()
@@ -93,7 +101,6 @@
       )
 
     loadSelectedMap: ->
-      console.log "this be the map", @map
       $("#map-area").empty()
       $("#map-area").append(@map.get('map'))
       @setPlayerLocation()
