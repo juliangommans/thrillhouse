@@ -3,6 +3,9 @@
 
     initialize: ->
       @illegalMoves = ['wall','enemy']
+      @damage =
+        attack: 1
+        fireBall: 2
 
     move: (keypress,map) ->
       location = @get('location')
@@ -51,10 +54,18 @@
           @set target: false
         console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
 
-    attack: (key) ->
+    attack: (key,targetModel) ->
       console.log "key pressed", key
+      console.log "target", @get('target')
       if @get('target')
-        console.log "this is your current target", @get('target')
+        target = $(@get('target')).data('name')
+        targetHealth = $("##{target}").children()
+        console.log "and children", targetHealth.children()
+        targetHealth.each( (index, object) =>
+          if (index+1) > 
+          
+          )
+
       else
         console.log "it's empty", @get('target')
 

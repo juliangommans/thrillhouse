@@ -5,15 +5,17 @@
       $(document).find("[data-name=#{@get('name')}")
 
   class LilrpgApp.SimpleMeleeEnemy extends LilrpgApp.Enemy
-  	defaults:
-  		health: 3
-  		damage: 1
-  		range: 1
-  		name: "TestSubject"
+    defaults:
+      health: 3
+      maxHealth: 3
+      damage: 1
+      range: 1
+      name: "TestSubject"
 
   class LilrpgApp.SimpleRangedEnemy extends LilrpgApp.Enemy
     defaults:
       health: 2
+      maxHealth: 2
       damage: 1
       range: 3
       name: "TestSubject"

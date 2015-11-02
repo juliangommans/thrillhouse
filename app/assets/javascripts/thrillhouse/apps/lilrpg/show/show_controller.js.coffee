@@ -34,18 +34,18 @@
         type = object.classList[0]
         char = App.request "lilrpg:#{type}:enemy"
         char.set id: (index+1)
-        char.set name: "#{char.get('name')} #{index+1}"
+        char.set name: "#{char.get('name')}-#{index+1}"
         @enemies.add char
-        console.log "object is", object
         $(object).data("name",char.get('name'))
         @setCharHealth(char, object)
       )
 
     setCharHealth: (char, object) ->
       location = @getOffset(object)
-      console.log "location location location", location
+      if $("##{char.get('name')}").length
+        $("##{char.get('name')}").remove()
       health = "<div id=#{char.get('name')} class='health' style='left:#{location.left-3}px;top:#{location.top-15}px;'>"
-      for hp in [1..char.get('health')]
+      for hp in [1..char.get('maxHealth')]
         health += "<div class='health-bar positive-health'></div>"
       health += "</div>"
       $('body').append(health)
@@ -56,13 +56,29 @@
           @player.move(key,@map)
           @movePlayer()
         when "attack"
-          @player.attack(key)
+          @dealDamage("attack")
+          @player.attack(key,@getTargetModel())
 
     movePlayer: ->
       unless @player.get('location') is @player.get('oldLocation')
         playerObj = $(".player").clone()
         $(".player").remove()
         $("##{@player.get('location')}").append(playerObj)
+
+    dealDamage: (action) ->
+      console.log "players damage", @player.damage[action]
+      damage = @player.damage[action]
+      target = @getTargetModel()
+      enemyHp = target.get('health')
+      enemyHp -= damage
+      target.set health: enemyHp
+      console.log "aftertarget", target
+
+    getTargetModel: ->
+      @enemies.find((enemy) =>
+        enemy.get('name') == $(@player.get('target')).data('name'))
+
+      # target.get('health') -= damage
 
     sortPlayerAction: ->
       event.preventDefault()
