@@ -2,7 +2,7 @@
   class LilrpgApp.Player extends App.Entities.Model
 
     initialize: ->
-      @illegalMoves = ['wall','character']
+      @illegalMoves = ['wall','enemy']
 
     move: (keypress,map) ->
       location = @get('location')
@@ -61,10 +61,7 @@
 
   class LilrpgApp.Controls extends App.Entities.Model
 
-    initialize: ->
-      @set(@controls())
-
-    controls: ->
+    defaults:
       32:
         key: "space"
         action: "block"

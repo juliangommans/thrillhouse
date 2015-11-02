@@ -57,5 +57,25 @@
   height: 8px;
   width: 14px;
   margin: 6px 3px;
-  border: 2px solid gray;
+  border: 1px solid gray;
+}
+
+.health{
+  position: absolute;
+}
+
+.health-bar {
+  height: 5px;
+  width: 3px;
+  margin: 0px 1px;
+  display: inline-block;
+}
+
+
+.positive-health {
+  background-color: green
+}
+
+.negative-health {
+  background-color: red
 }

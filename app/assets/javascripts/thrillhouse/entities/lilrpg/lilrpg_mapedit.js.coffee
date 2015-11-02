@@ -15,14 +15,14 @@
 
     buildVerticalWall: ->
       wall = new App.Entities.Model
-        class1: "vertical-wall "
+        class1: "vertical-wall"
         class2: "wall"
         class3: ""
         name: "Vertical Wall"
 
     buildHorizontalWall: ->
       wall = new App.Entities.Model
-        class1: "horizontal-wall "
+        class1: "horizontal-wall"
         class2: "wall"
         class3: ""
         name: "Horizontal Wall"
@@ -43,21 +43,21 @@
 
     buildSimpleMeleeEnemy: ->
       enemy = new App.Entities.Model
-        class1: "simple-melee "
-        class2: "enemy "
+        class1: "simple-melee"
+        class2: "enemy"
         class3: "character"
         name: "Simple Melee Enemy"
 
     buildSimpleRangedEnemy: ->
       enemy = new App.Entities.Model
-        class1: "simple-ranged "
-        class2: "enemy "
+        class1: "simple-ranged"
+        class2: "enemy"
         class3: "character"
         name: "Simple Ranged Enemy"
 
     buildPlayer: ->
       player = new App.Entities.Model
-        class1: "player "
+        class1: "player"
         class2: "character"
         class3: ""
         name: "Player (you)"
@@ -76,7 +76,7 @@
 
     buildTreasureChest: ->
       treasure = new App.Entities.Model
-        class1: "item "
+        class1: "item"
         class2: "tresure-chest"
         class3: ""
         name: "Treasure Chest"

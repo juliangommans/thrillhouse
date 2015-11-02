@@ -19,6 +19,37 @@
       location = $(".player").parent().attr('id')
       @player.set location: location
 
+    fetchEnemies: ->
+      enemiesJquery = $('.enemy')
+      console.log "list", enemiesJquery
+      if enemiesJquery.length > 0
+        @enemies = new App.Entities.Collection
+        @buildEnemies(enemiesJquery)
+      else
+        console.log "no enemies"
+      console.log "this should be your guy", @enemies
+
+    buildEnemies: (list) ->
+      list.each( (index, object) =>
+        type = object.classList[0]
+        char = App.request "lilrpg:#{type}:enemy"
+        char.set id: (index+1)
+        char.set name: "#{char.get('name')} #{index+1}"
+        @enemies.add char
+        console.log "object is", object
+        $(object).data("name",char.get('name'))
+        @setCharHealth(char, object)
+      )
+
+    setCharHealth: (char, object) ->
+      location = @getOffset(object)
+      console.log "location location location", location
+      health = "<div id=#{char.get('name')} class='health' style='left:#{location.left-3}px;top:#{location.top-15}px;'>"
+      for hp in [1..char.get('health')]
+        health += "<div class='health-bar positive-health'></div>"
+      health += "</div>"
+      $('body').append(health)
+
     filterKey: (key) ->
       switch key.action
         when "move"
@@ -41,7 +72,6 @@
         @filterKey(pressedKey)
 
     setLoadedMap: (selectedID) ->
-      console.log "setting the loaded map"
       @map = @loadMapList.find((map) ->
         map.get('id') is selectedID
       )
@@ -51,6 +81,7 @@
       $("#map-area").empty()
       $("#map-area").append(@map.get('map'))
       @setPlayerLocation()
+      @fetchEnemies()
 
 #### Views ####
 
