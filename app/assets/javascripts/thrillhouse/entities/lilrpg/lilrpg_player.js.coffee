@@ -1,6 +1,16 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
   class LilrpgApp.Player extends App.Entities.Model
 
+    defaults:
+      health: 5
+      maxHealth: 5
+      range: 1
+      attackSpeed: 1000
+      moveSpeed: 200
+      shield: 3
+      actionCd: false
+      alive: true
+
     initialize: ->
       @illegalMoves = ['wall','enemy']
       @damage =
@@ -8,6 +18,7 @@
         fireBall: 2
 
     move: (keypress,map) ->
+      @setActionCd(@get('moveSpeed'))
       location = @get('location')
       direction = @get('direction')
       @set oldLocation: location
@@ -33,6 +44,13 @@
         console.log "you tried to move out of bounds", newCoords
 
       @checkIllegalMoves(newCoords,newDirection)
+      @movePlayer()
+
+     movePlayer: ->
+      unless @get('location') is @get('oldLocation')
+        playerObj = $(".player").clone()
+        $(".player").remove()
+        $("##{@get('location')}").append(playerObj)
 
     checkIllegalMoves: (newCoords,newDirection) ->
       if $($("##{newCoords}")[0].children[0]).hasAnyClass(@illegalMoves)
@@ -42,33 +60,45 @@
           @set target: $("##{@get('direction')}")[0].children[0]
         else
           @set target: false
-        console.log "illegal move brah"
         console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
       else
         @set direction: newDirection
         @set location: newCoords
         if $("##{@get('direction')}").length
-          console.log $("##{@get('direction')}")
           @set target: $("##{@get('direction')}")[0].children[0]
         else
           @set target: false
         console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
 
     attack: (key, targetModel) ->
-      console.log "args", key, targetModel
-      console.log "target", @get('target')
-      if @get('target')
-        target = $(@get('target')).data('name')
-        targetHealth = $("##{target}").children()
-        targetHealth.each( (index, object) =>
-          if (index+1) > targetModel.get('health')
-            $(object).removeClass('positive-health')
-            $(object).addClass('negative-health')
-          else 
-            console.log "there should be less health", object
-          )
-      else
-        console.log "it's empty", @get('target')
+      @setActionCd(@get('attackSpeed'))
+      console.log "for sanity here is your target", @get('target').classList
+      @dealDamage(key, targetModel)
+      target = $(@get('target')).data('name')
+      targetHealth = $("##{target}").children()
+      targetHealth.each( (index, object) =>
+        if (index+1) > targetModel.get('health')
+          $(object).removeClass('positive-health')
+          $(object).addClass('negative-health')
+        else 
+          console.log "there should be less health", object
+        )
+
+
+    dealDamage: (key, target) ->
+      damage = @damage[key.action]
+      enemyHp = target.get('health')
+      enemyHp -= damage
+      target.set alive: false if enemyHp < 1
+      target.set health: enemyHp
+    #fire damage animation 
+
+    setActionCd: (time) ->
+      @set actionCd: true
+      setTimeout(@resetAction,time)
+
+    resetAction: =>
+      @set actionCd: false
 
 
   class LilrpgApp.Controls extends App.Entities.Model

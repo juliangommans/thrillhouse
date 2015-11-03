@@ -39,7 +39,11 @@
         $(object).data("name",char.get('name'))
         $(object).attr('id',char.get('id'))
         @setCharHealth(char, object)
+        @runAi(char)
       )
+
+    runAi: (model) ->      
+      model.pulse(@map.get('coordinates'),@player)
 
     setCharHealth: (char, object) ->
       location = @getOffset(object)
@@ -55,34 +59,21 @@
       targetModel = @getTargetModel()
       switch key.action
         when "move"
-          @player.move(key,@map)
-          @movePlayer()
+          unless @player.get('actionCd')
+            @player.move(key,@map)
         when "attack"
-          @dealDamage("attack")
-          if targetModel.get('alive')
-            @player.attack(key,targetModel)
-          else
-            @cleanup(targetModel)
-
-
-    movePlayer: ->
-      unless @player.get('location') is @player.get('oldLocation')
-        playerObj = $(".player").clone()
-        $(".player").remove()
-        $("##{@player.get('location')}").append(playerObj)
-
-    dealDamage: (action) ->
-      damage = @player.damage[action]
-      target = @getTargetModel()
-      enemyHp = target.get('health')
-      enemyHp -= damage
-      target.set alive: false if enemyHp < 1
-      target.set health: enemyHp
+          unless @player.get('actionCd') 
+            if targetModel
+              if @player.get('target').classList[1] is "enemy"
+                @player.attack(key,targetModel)
+                unless targetModel.get('alive')
+                  @cleanup(targetModel)
 
     cleanup: (model) ->
       $("##{model.get('name')}").remove()
       $("##{model.get('id')}").remove()
-
+      @player.set target: false
+      @enemies.remove(model)
 
     getTargetModel: ->
       @enemies.find((enemy) =>
@@ -117,7 +108,7 @@
     dialogView: ->
       dialogView = @getDialogView()
       @listenTo dialogView, "show", ->
-        @test = new Backbone.Marionette.Region
+        @dialogMaps = new Backbone.Marionette.Region
           el: "#map-load-list"
         @mapLoadView()
       @listenTo dialogView, "load:selected:map", @loadSelectedMap
@@ -133,7 +124,7 @@
         @listenTo loadView, "load:selected:map", (id) =>
           @setLoadedMap(id)
 
-        @test.show loadView
+        @dialogMaps.show loadView
 
     getLayout: ->
       new Show.Layout
