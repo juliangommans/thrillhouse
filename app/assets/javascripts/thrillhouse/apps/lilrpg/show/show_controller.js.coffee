@@ -11,6 +11,7 @@
         @listenTo @layout, 'show', =>
           @showView()
           @dialogView()
+          @playerHealthView()
 
         @show @layout
 
@@ -45,12 +46,16 @@
     runAi: (model) ->      
       model.pulse(@map.get('coordinates'),@player)
 
+#### needs a way to cleanup on page change - possibles:
+# tie it straight to the enemy dom-element
+# append it to "main view", needs offset and some math
     setCharHealth: (char, object) ->
       location = @getOffset(object)
+      total = char.get('maxHealth')
       if $("##{char.get('name')}").length
         $("##{char.get('name')}").remove()
-      health = "<div id=#{char.get('name')} class='health' style='left:#{location.left-3}px;top:#{location.top-15}px;'>"
-      for hp in [1..char.get('maxHealth')]
+      health = "<div id=#{char.get('name')} class='health' style='width:#{total*4+2};left:#{location.left-3}px;top:#{location.top-15}px;'>"
+      for hp in [1..total]
         health += "<div class='health-bar positive-health'></div>"
       health += "</div>"
       $('body').append(health)
@@ -93,13 +98,23 @@
     loadSelectedMap: ->
       $("#map-area").empty()
       $("#map-area").append(@map.get('map'))
+      @afterMapLoadTasks()
+
+    afterMapLoadTasks: ->
       @getPlayer()
+      @setupPlayerHealthBars()
       @fetchEnemies()
 
     getPlayer: ->
       @player = App.request "lilrpg:player:entity", 
         map: @map
       @setPlayerLocation()
+
+    setupPlayerHealthBars: ->
+      hp = @player.get('maxHealth')
+      healthObj = "<div class='health-bar positive-health'></div>"
+      for i in [1..hp]
+        $('#player-health-bars').append(healthObj)
 
 #### Views ####
 
@@ -108,6 +123,11 @@
       @listenTo showView, "player:action", @sortPlayerAction
 
       @layout.showRegion.show showView
+
+    playerHealthView: ->
+      healthView = @getPlayerHealthView()
+
+      @layout.healthRegion.show healthView
 
     dialogView: ->
       dialogView = @getDialogView()
@@ -139,6 +159,9 @@
     getMapLoadView: ->
       new Show.LoadMaps
         collection: @loadMapList
+
+    getPlayerHealthView: ->
+      new Show.PlayerHealth
 
     getShowView: ->
       new Show.Show

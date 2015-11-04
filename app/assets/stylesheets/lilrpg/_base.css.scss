@@ -62,11 +62,12 @@
 
 .health{
   height: 8px;
-  width: 22px;
   margin-top: 9px;
+// these three things don't need to exist without gridlines
   background-color: black;
   border: 1px solid black;
   border-radius: 1px;
+
   position: absolute;
 }
 
@@ -82,13 +83,13 @@
 
 
 .positive-health {
-  border-color: lime;
-  background-color: lime
+  border-color: green;
+  background-color: lime;
 }
 
 .negative-health {
-  border-color: red;
-  background-color: red
+  border-color: crimson;
+  background-color: red;
 }
 
 .fireball {

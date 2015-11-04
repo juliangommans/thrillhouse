@@ -1,5 +1,5 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
-  class LilrpgApp.Player extends App.Entities.Model
+  class LilrpgApp.Player extends App.Entities.LilrpgModel
 
     defaults:
       health: 5
@@ -18,6 +18,14 @@
       @damage =
         attack: 1
         fireBall: 2
+      @listenTo @, "change", @checkHealth
+      
+    checkHealth: (args) ->
+      healthBars = $('#player-health-bars').children()
+      @modifyTargetHealth(healthBars, @)
+      unless @get('alive')
+        alert "bitch, you ded"
+      
 
     move: (keypress) ->
       @setActionCd(@get('moveSpeed'))
@@ -81,7 +89,8 @@
           $(object).removeClass('positive-health')
           $(object).addClass('negative-health')
         )
-      @deadOrAlive(model)
+      unless model is @
+        @deadOrAlive(model)
 
     dealDamage: (type, target) ->
       damage = @damage[type]
@@ -97,7 +106,7 @@
         @cleanup(targetModel)
 
     cleanup: (model) ->
-      console.log "cleanup this fulla",model
+      console.log "cleanup, isle 6"
       $("##{model.get('name')}").remove()
       $("##{model.get('id')}").remove()
       @set target: false
@@ -112,7 +121,7 @@
     fireBall: (spaces) ->
       route = @getProjectileCoords(spaces)
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
-      fireballObj = "<div class='fireball' style='left:#{absoluteLoc.left+10}px;top:#{absoluteLoc.top+10}px;'></div>"
+      fireballObj = "<div class='fireball' style='left:#{absoluteLoc.left+5}px;top:#{absoluteLoc.top+5}px;'></div>"
       destination = @getElementByLoc(route[route.length-1])
       $('body').append(fireballObj)
       @animateSpell('fireball', destination, route)
@@ -123,8 +132,8 @@
       absoluteDest = @getOffset(destination[0])
       
       $(".#{spell}").animate(
-        left: absoluteDest.left+10
-        top: (absoluteDest.top+10)
+        left: absoluteDest.left+5
+        top: absoluteDest.top+5
         ,
         spellSpeed * route.length
         ,
@@ -163,10 +172,6 @@
       @dealDamage("fireBall",target)
       healthBars = $("##{target.get('name')}").children()
       @modifyTargetHealth(healthBars, target)
-
-    cleanupSpellSprite: (spell) ->
-      $(".#{spell}").stop()
-      $(".#{spell}").remove()
 
     getProjectileCoords: (spaces) ->
       array = []
@@ -210,9 +215,6 @@
               range += 1
       range
 
-    getElementByLoc: (loc) ->
-      $("#cell-#{loc.x}-#{loc.y}")
-
     setActionCd: (time) ->
       @set actionCd: true
       setTimeout(@resetAction,time)
@@ -220,84 +222,9 @@
     resetAction: =>
       @set actionCd: false
 
-  class LilrpgApp.Controls extends App.Entities.Model
-
-    defaults:
-      32:
-        key: "space"
-        action: "block"
-        axisChange: 0
-        spaces: 0
-        code: 32
-      37:
-        key: "left"
-        action: "move"
-        axisChange: -1
-        spaces: 1
-        code: 37
-      38:
-        key: "up"
-        action: "move"
-        axisChange: -1
-        spaces: 1
-        code: 38
-      39:
-        key: "right"
-        action: "move"
-        axisChange: 1
-        spaces: 1
-        code: 39
-      40:
-        key: "down"
-        action: "move"
-        axisChange: 1
-        spaces: 1
-        code: 40
-      81:
-        key: "Q"
-        action: "spell"
-        axisChange: 0
-        spaces: 3
-        code: 81
-      87:
-        key: "W"
-        action: "spell"
-        axisChange: 0
-        spaces: 1
-        code: 87
-      82:
-        key: "R"
-        action: "spell"
-        axisChange: 0
-        spaces: 3
-        code: 82
-      65:
-        key: "A"
-        action: "attack"
-        axisChange: 0
-        spaces: 1
-        code: 65
-      83:
-        key: "S"
-        action: "attack"
-        axisChange: 0
-        spaces: 3
-        code: 83
-      68:
-        key: "D"
-        action: "block"
-        axisChange: 0
-        spaces: 0
-        code: 68
-
   API =
     player: (options) ->
       new LilrpgApp.Player options
-    controls: ->
-      new LilrpgApp.Controls
-
-  App.reqres.setHandler "lilrpg:player:controls", ->
-    API.controls()
 
   App.reqres.setHandler "lilrpg:player:entity", (options) ->
     API.player options 

@@ -1,4 +1,5 @@
 <div id="map-editor-wrapper">
+	<div id="player-health"></div>
   <div id="show-region"></div>
   <div id="inventory-region"></div>
   <div id="dialog-region"></div>

@@ -1,5 +1,5 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
-  class LilrpgApp.Enemy extends App.Entities.Model
+  class LilrpgApp.Enemy extends App.Entities.LilrpgModel
 
     getLoc: (range) ->
       [{

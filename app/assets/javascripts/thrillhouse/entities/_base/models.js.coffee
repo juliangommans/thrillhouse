@@ -36,6 +36,15 @@
     saveError: (model, xhr, options) ->
       @set _errors: $.parseJSON(xhr.responseText)?.errors unless xhr.status is 500 or xhr.status is 404
 
+  class Entities.LilrpgModel extends Entities.Model 
+
+    getElementByLoc: (loc) ->
+      $("#cell-#{loc.x}-#{loc.y}")
+
+    cleanupSpellSprite: (spell) ->
+      $(".#{spell}").stop()
+      $(".#{spell}").remove()
+
     getOffset: (element) ->
       top = 0
       left = 0
