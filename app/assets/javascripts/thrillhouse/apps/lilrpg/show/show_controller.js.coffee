@@ -24,6 +24,7 @@
       if enemiesJquery.length > 0
         @enemies = new App.Entities.Collection
         @buildEnemies(enemiesJquery)
+        @player.set enemies: @enemies
       else
         console.log "no enemies"
 
@@ -68,11 +69,11 @@
             @player.spell(key,targetModel,@deadOrAlive)
 
     sanityCheck: (targetModel) ->
-      x = false
-      if targetModel
+      bool = false
+      if targetModel?
         if @player.get('target').classList[1] is "enemy"
-          x = true
-      x
+          bool = true
+      bool
 
     deadOrAlive: (targetModel) ->
       unless targetModel.get('alive')
@@ -107,7 +108,8 @@
       @fetchEnemies()
 
     getPlayer: ->
-      @player = App.request "lilrpg:player:entity", @map
+      @player = App.request "lilrpg:player:entity", 
+        map: @map
       @setPlayerLocation()
 
 #### Views ####

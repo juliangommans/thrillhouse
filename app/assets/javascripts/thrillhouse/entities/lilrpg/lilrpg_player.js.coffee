@@ -11,14 +11,13 @@
       actionCd: false
       alive: true
 
-    initialize: (map) ->
-      @map = map
-      @coords = map.get('coordinates')
+    initialize: (options) ->
+      { @map } = options
+      @coords = @map.get('coordinates')
       @illegalMoves = ['wall','enemy']
       @damage =
         attack: 1
         fireBall: 2
-
 
     move: (keypress) ->
       @setActionCd(@get('moveSpeed'))
@@ -43,7 +42,6 @@
         console.log "you're out of bounds", cell
       unless @coords[newCoords]
         newCoords = location
-        console.log "you tried to move out of bounds", newCoords
       @set facing: 
         direction: key
         axis: axisChange
@@ -72,67 +70,125 @@
 
     attack: (key, targetModel) ->
       @setActionCd(@get('attackSpeed'))
-      console.log "for sanity here is your target", @get('target').classList
       @dealDamage(key, targetModel)
-      target = $(@get('target')).data('name')
+      target = targetModel.get('name')
       targetHealth = $("##{target}").children()
+      @modifyTargetHealth(targetHealth)
+
+    modifyTargetHealth: (targetHealth, model) ->
       targetHealth.each( (index, object) =>
-        if (index+1) > targetModel.get('health')
+        if (index+1) > model.get('health')
           $(object).removeClass('positive-health')
           $(object).addClass('negative-health')
-        else 
-          console.log "there should be less health", object
         )
 
     spell: (keypress, targetModel, callback) ->
       @setActionCd(@get('attackSpeed'))
       { key, spaces } = keypress
-      console.log "you are facing", @get('facing')
       if key is "Q"
         @fireBall(spaces)
 
     fireBall: (spaces) ->
-      facing = @get('facing')
-      loc = @coords[@get('location')]
-      distance = spaces*facing.axis
-      console.log "loc & distance", loc, distance
-      if facing.direction is "up" or facing.direction is "down"
-        loc.x += distance
-      else if facing.direction is "left" or facing.direction is "right"
-        loc.y += distance
+      route = @getProjectileCoords(spaces)
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
       fireballObj = "<div class='fireball' style='left:#{absoluteLoc.left+10}px;top:#{absoluteLoc.top+10}px;'></div>"
-      destination = @getElementByLoc(loc)
+      destination = @getElementByLoc(route[route.length-1])
       $('body').append(fireballObj)
-      @animateSpell(fireballObj, destination)
+      @animateSpell('fireball', destination, route)
 
-    animateSpell: (spell,destination) ->
-      console.log "destination", destination[0], "location", $("##{@get('location')}")[0]
+    animateSpell: (spell, destination, route) ->
+      spellSpeed = 500
+      @checkRoute(route,spell,spellSpeed)
       absoluteDest = @getOffset(destination[0])
       
-      $('.fireball').animate(
+      $(".#{spell}").animate(
         left: absoluteDest.left+10
         top: (absoluteDest.top+10)
         ,
-        3000
+        spellSpeed*route.length
         ,
         ->
-          $('.fireball').remove()
+          $(".#{spell}").remove()
         )
 
+    checkRoute: (route,spell,spellSpeed) ->
+      count = -1
+      time = spellSpeed
+      total = route.length
+      simulateTravelTime = =>
+        unless count < 0 or count > (route.length-1)
+          cell = @getElementByLoc(route[count])
+          if cell.children().length
+            console.log "cell.children", cell.children()
+            if cell.children()[0].classList[1] is "enemy"
+              @hitTarget(cell,spell)
+        if count >= total
+          return
+        else
+          count++
+        setTimeout simulateTravelTime, time
+      simulateTravelTime()
+
+    hitTarget: (target,spell) ->
+      $(".#{spell}").stop()
+      $(".#{spell}").remove()
+      @enemies = @get('enemies')
+      target = @get('enemies').find( (enemy) ->
+        enemy.get('id') is parseInt($(target.children()[0]).attr('id'))
+        )
+      console.log "target model is THIS", target
+      @dealDamage("fireBall",target)
+      healthBars = $("##{target.get('name')}").children()
+      @modifyTargetHealth(healthBars, target)
+
+    getProjectileCoords: (spaces) ->
+      array = []
+      facing = @get('facing')
+      range = @getRange(spaces, facing)
+      currentLocation = @coords[@get('location')]
+      for i in [1..range]
+        if facing.direction is "up" or facing.direction is "down"
+          temp = 
+            x: currentLocation.x + facing.axis*i
+            y: currentLocation.y
+        else if facing.direction is "left" or facing.direction is "right"
+          temp = 
+            x: currentLocation.x
+            y: currentLocation.y + facing.axis*i
+        array.push(temp)
+      array
+
+    getRange: (spaces, facing) ->
+      loc = @coords[@get('location')]
+      console.log "spaces, loc and facing", spaces, loc, facing
+      x = loc.x
+      y = loc.y
+      range = 0
+      for i in [1..spaces]
+        switch facing.direction
+          when "up"
+            unless x is 1 
+              x -= 1
+              range += 1
+          when "down"
+            unless x is @map.get('size') 
+              x += 1
+              range += 1
+          when "left"
+            unless y is 1 
+              y -= 1
+              range += 1
+          when "right"
+            unless y is @map.get('size')
+              y += 1
+              range += 1
+      range
+
     getElementByLoc: (loc) ->
-      if loc.x < 1
-        loc.x = 1
-      if loc.y < 1
-        loc.y = 1
-      if loc.x > @map.get('size')
-        loc.x = @map.get('size') 
-      if loc.y > @map.get('size') 
-        loc.y = @map.get('size') 
       $("#cell-#{loc.x}-#{loc.y}")
 
-    dealDamage: (key, target) ->
-      damage = @damage[key.action]
+    dealDamage: (type, target) ->
+      damage = @damage[type]
       enemyHp = target.get('health')
       enemyHp -= damage
       target.set alive: false if enemyHp < 1
@@ -145,7 +201,6 @@
 
     resetAction: =>
       @set actionCd: false
-
 
   class LilrpgApp.Controls extends App.Entities.Model
 
@@ -218,15 +273,15 @@
         code: 68
 
   API =
-    player: (map) ->
-      new LilrpgApp.Player map
+    player: (options) ->
+      new LilrpgApp.Player options
     controls: ->
       new LilrpgApp.Controls
 
   App.reqres.setHandler "lilrpg:player:controls", ->
     API.controls()
 
-  App.reqres.setHandler "lilrpg:player:entity", (map) ->
-    API.player(map)
+  App.reqres.setHandler "lilrpg:player:entity", (options) ->
+    API.player options 
 
 
