@@ -3,7 +3,6 @@
   class Show.Controller extends App.Controllers.Base
 
     initialize: ->
-      @player = App.request "lilrpg:player:entity"
       @controls = App.request "lilrpg:player:controls"
 
       App.execute "when:fetched", [@controls, @player], =>
@@ -57,17 +56,27 @@
 
     filterKey: (key) ->
       targetModel = @getTargetModel()
-      switch key.action
-        when "move"
-          unless @player.get('actionCd')
-            @player.move(key,@map)
-        when "attack"
-          unless @player.get('actionCd') 
-            if targetModel
-              if @player.get('target').classList[1] is "enemy"
-                @player.attack(key,targetModel)
-                unless targetModel.get('alive')
-                  @cleanup(targetModel)
+      unless @player.get('actionCd')
+        switch key.action
+          when "move"
+            @player.move(key)
+          when "attack"
+            if @sanityCheck(targetModel)
+              @player.attack(key,targetModel)
+              @deadOrAlive()
+          when "spell"
+            @player.spell(key,targetModel,@deadOrAlive)
+
+    sanityCheck: (targetModel) ->
+      x = false
+      if targetModel
+        if @player.get('target').classList[1] is "enemy"
+          x = true
+      x
+
+    deadOrAlive: (targetModel) ->
+      unless targetModel.get('alive')
+        @cleanup(targetModel)
 
     cleanup: (model) ->
       $("##{model.get('name')}").remove()
@@ -94,8 +103,12 @@
     loadSelectedMap: ->
       $("#map-area").empty()
       $("#map-area").append(@map.get('map'))
-      @setPlayerLocation()
+      @getPlayer()
       @fetchEnemies()
+
+    getPlayer: ->
+      @player = App.request "lilrpg:player:entity", @map
+      @setPlayerLocation()
 
 #### Views ####
 
