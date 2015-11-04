@@ -70,10 +70,10 @@
 
     attack: (key, targetModel) ->
       @setActionCd(@get('attackSpeed'))
-      @dealDamage(key, targetModel)
+      @dealDamage("attack", targetModel)
       target = targetModel.get('name')
       targetHealth = $("##{target}").children()
-      @modifyTargetHealth(targetHealth)
+      @modifyTargetHealth(targetHealth,targetModel)
 
     modifyTargetHealth: (targetHealth, model) ->
       targetHealth.each( (index, object) =>
@@ -81,6 +81,27 @@
           $(object).removeClass('positive-health')
           $(object).addClass('negative-health')
         )
+      @deadOrAlive(model)
+
+    dealDamage: (type, target) ->
+      damage = @damage[type]
+      console.log "damage", damage
+      enemyHp = target.get('health')
+      enemyHp -= damage
+      target.set alive: false if enemyHp < 1
+      target.set health: enemyHp
+    #fire damage animation 
+
+    deadOrAlive: (targetModel) ->
+      unless targetModel.get('alive')
+        @cleanup(targetModel)
+
+    cleanup: (model) ->
+      console.log "cleanup this fulla",model
+      $("##{model.get('name')}").remove()
+      $("##{model.get('id')}").remove()
+      @set target: false
+      @get('enemies').remove(model)
 
     spell: (keypress, targetModel, callback) ->
       @setActionCd(@get('attackSpeed'))
@@ -105,7 +126,7 @@
         left: absoluteDest.left+10
         top: (absoluteDest.top+10)
         ,
-        spellSpeed*route.length
+        spellSpeed * route.length
         ,
         ->
           $(".#{spell}").remove()
@@ -122,6 +143,10 @@
             console.log "cell.children", cell.children()
             if cell.children()[0].classList[1] is "enemy"
               @hitTarget(cell,spell)
+              return
+            else
+              @cleanupSpellSprite(spell)
+              return
         if count >= total
           return
         else
@@ -130,16 +155,18 @@
       simulateTravelTime()
 
     hitTarget: (target,spell) ->
-      $(".#{spell}").stop()
-      $(".#{spell}").remove()
+      @cleanupSpellSprite(spell)
       @enemies = @get('enemies')
       target = @get('enemies').find( (enemy) ->
         enemy.get('id') is parseInt($(target.children()[0]).attr('id'))
         )
-      console.log "target model is THIS", target
       @dealDamage("fireBall",target)
       healthBars = $("##{target.get('name')}").children()
       @modifyTargetHealth(healthBars, target)
+
+    cleanupSpellSprite: (spell) ->
+      $(".#{spell}").stop()
+      $(".#{spell}").remove()
 
     getProjectileCoords: (spaces) ->
       array = []
@@ -160,7 +187,6 @@
 
     getRange: (spaces, facing) ->
       loc = @coords[@get('location')]
-      console.log "spaces, loc and facing", spaces, loc, facing
       x = loc.x
       y = loc.y
       range = 0
@@ -186,14 +212,6 @@
 
     getElementByLoc: (loc) ->
       $("#cell-#{loc.x}-#{loc.y}")
-
-    dealDamage: (type, target) ->
-      damage = @damage[type]
-      enemyHp = target.get('health')
-      enemyHp -= damage
-      target.set alive: false if enemyHp < 1
-      target.set health: enemyHp
-    #fire damage animation 
 
     setActionCd: (time) ->
       @set actionCd: true

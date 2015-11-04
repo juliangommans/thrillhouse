@@ -64,9 +64,8 @@
           when "attack"
             if @sanityCheck(targetModel)
               @player.attack(key,targetModel)
-              @deadOrAlive()
           when "spell"
-            @player.spell(key,targetModel,@deadOrAlive)
+            @player.spell(key,targetModel)
 
     sanityCheck: (targetModel) ->
       bool = false
@@ -74,16 +73,6 @@
         if @player.get('target').classList[1] is "enemy"
           bool = true
       bool
-
-    deadOrAlive: (targetModel) ->
-      unless targetModel.get('alive')
-        @cleanup(targetModel)
-
-    cleanup: (model) ->
-      $("##{model.get('name')}").remove()
-      $("##{model.get('id')}").remove()
-      @player.set target: false
-      @enemies.remove(model)
 
     getTargetModel: ->
       @enemies.find((enemy) =>
