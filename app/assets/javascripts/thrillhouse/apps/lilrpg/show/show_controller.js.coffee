@@ -124,7 +124,7 @@
       showView = @getShowView()
       @listenTo showView, "player:action", @sortPlayerAction
 
-      @layout.showRegion.show showView
+      @layout.lilrpgPlayRegion.show showView
 
     playerHealthView: ->
       healthView = @getPlayerHealthView()

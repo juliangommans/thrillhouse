@@ -36,7 +36,7 @@
     saveError: (model, xhr, options) ->
       @set _errors: $.parseJSON(xhr.responseText)?.errors unless xhr.status is 500 or xhr.status is 404
 
-  class Entities.LilrpgModel extends Entities.Model 
+  class Entities.LilrpgModel extends Entities.Model
 
     getElementByLoc: (loc) ->
       $("#cell-#{loc.x}-#{loc.y}")

@@ -40,5 +40,5 @@
     regions:
       healthRegion: '#player-health'
       invRegion: '#inventory-region'
-      showRegion: '#show-region'
+      lilrpgPlayRegion: '#lilrpg-play-region'
       dialogRegion: '#dialog-region'

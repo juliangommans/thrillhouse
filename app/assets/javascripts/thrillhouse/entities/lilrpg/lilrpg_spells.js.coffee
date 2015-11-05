@@ -33,7 +33,7 @@
       className: "thunderbolt"
       range: 3
       cooldown: 4000
-      speed: 300
+      speed: 100
       damage: 1
       stun: false
       onCd: false

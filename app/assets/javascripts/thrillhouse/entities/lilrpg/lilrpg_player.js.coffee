@@ -190,15 +190,17 @@
             $(".#{className}").fadeIn(spell.get("speed"))
           )
       else
-        $(".#{className}").fadeIn(spell.get("speed")
-          , ->
-            $(".#{className}").fadeOut(spell.get("speed")
-              , ->
-                @cleanupSpellSprite(className)
+        $(".#{className}").fadeIn(spell.get("speed")*3
+          , =>
+            $(".#{className}").fadeOut(spell.get("speed")*3
+              , =>
                 if target?
-                  @hitTarget(spell, target)
+                  @hitTarget(target, spell)
+                else
+                  @cleanupSpellSprite(spell.get('className'))
               )
           )
+
 
     checkRoute: (route,spell,spellSpeed) ->
       count = -1
@@ -207,7 +209,6 @@
         unless count < 0 or count > (route.length-1)
           cell = @getElementByLoc(route[count])
           if cell.children().length
-            console.log "cell.children", cell.children()
             if cell.children()[0].classList[1] is "enemy"
               @hitTarget(cell,spell)
               return
@@ -222,6 +223,7 @@
       simulateTravelTime()
 
     hitTarget: (target,spell) ->
+      @cleanupSpellSprite(spell.get('className'))
       @enemies = @get('enemies')
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
       @dealDamage(spell,target)
