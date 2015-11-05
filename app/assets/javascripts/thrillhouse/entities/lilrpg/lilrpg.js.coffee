@@ -52,12 +52,12 @@
         axisChange: 0
         spaces: 1
         code: 87
-      82:
-        key: "R"
+      69:
+        key: "E"
         action: "spell"
         axisChange: 0
         spaces: 3
-        code: 82
+        code: 69
       65:
         key: "A"
         action: "attack"

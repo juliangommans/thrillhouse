@@ -43,7 +43,7 @@
         @runAi(char)
       )
 
-    runAi: (model) ->      
+    runAi: (model) ->
       model.pulse(@map.get('coordinates'),@player)
 
 #### needs a way to cleanup on page change - possibles:
@@ -62,14 +62,16 @@
 
     filterKey: (key) ->
       targetModel = @getTargetModel()
-      unless @player.get('actionCd')
-        switch key.action
-          when "move"
+      switch key.action
+        when "move"
+          unless @player.get('moveCd')
             @player.move(key)
-          when "attack"
+        when "attack"
+          unless @player.get('actionCd')
             if @sanityCheck(targetModel)
               @player.attack(key,targetModel)
-          when "spell"
+        when "spell"
+          unless @player.get('actionCd')
             @player.spell(key,targetModel)
 
     sanityCheck: (targetModel) ->
@@ -106,7 +108,7 @@
       @fetchEnemies()
 
     getPlayer: ->
-      @player = App.request "lilrpg:player:entity", 
+      @player = App.request "lilrpg:player:entity",
         map: @map
       @setPlayerLocation()
 
