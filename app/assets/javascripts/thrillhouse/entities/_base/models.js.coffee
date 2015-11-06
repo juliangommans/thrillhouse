@@ -38,6 +38,15 @@
 
   class Entities.LilrpgModel extends Entities.Model
 
+
+    rotate: (object, rotateSpeed) ->
+      object.css WebkitTransform: 'rotate(' + @degree + 'deg)'
+      object.css '-moz-transform': 'rotate(' + @degree + 'deg)'
+      @rotationTimer = setTimeout(( =>
+        @degree += rotateSpeed
+        @rotate(object, rotateSpeed)
+      ), 1)
+
     getElementByLoc: (loc) ->
       $("#cell-#{loc.x}-#{loc.y}")
 

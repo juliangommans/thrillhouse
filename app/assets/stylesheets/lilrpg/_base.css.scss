@@ -117,7 +117,7 @@
 
 }
 
-.left {
+.lightning-left {
   position: absolute;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
@@ -126,7 +126,7 @@
   border-right: 10px solid yellow;
 }
 
-.right {
+.lightning-right {
   position: absolute;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
@@ -135,4 +135,39 @@
   border-left: 10px solid yellow;
 }
 
+.direction {
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid yellow;
+}
 
+.right {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-left: 8px solid white;
+}
+
+.left {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid white;
+  border-left: 8px solid transparent;
+
+}
+
+.down {
+  border-top: 8px solid white;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+
+}
+
+.up {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid white;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+
+}

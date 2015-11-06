@@ -13,6 +13,7 @@
       onCd: false
       type: 'projectile'
       target: 'enemy'
+      rotate: false
 
   class LilrpgApp.Icicle extends LilrpgApp.Spell
 
@@ -26,6 +27,11 @@
       onCd: false
       type: 'projectile'
       target: 'enemy'
+      rotate: true
+  #### higher rotate speed is faster rotation animation
+  #### basically how many degrees change per milisecond
+      rotateSpeed: 10
+
 
   class LilrpgApp.ThunderBolt extends LilrpgApp.Spell
 
@@ -39,7 +45,24 @@
       onCd: false
       type: 'instant'
       target: 'enemy'
-      extraDom: "<div class='left'></div><div class='right'></div>"
+      extraDom: "<div class='lightning-left'></div><div class='lightning-right'></div>"
+      rotate: false
+
+   class LilrpgApp.Teleport extends LilrpgApp.Spell
+
+    defaults:
+      className: "teleport"
+      range: 3
+      cooldown: 20000
+      speed: 100
+      damage: 0
+      stun: false
+      onCd: false
+      type: 'instant'
+      target: 'player'
+      # extraDom: "<div class='left'></div><div class='right'></div>"
+      rotate: false
+
 
   API =
     fireball: ->

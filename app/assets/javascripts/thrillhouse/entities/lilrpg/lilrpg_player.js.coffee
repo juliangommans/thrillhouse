@@ -6,11 +6,12 @@
       maxHealth: 5
       range: 1
       actionSpeed: 750
-      moveSpeed: 250
+      moveSpeed: 100
       shield: 3
       moveCd: false
       actionCd: false
       alive: true
+      facing: {}
 
     initialize: (options) ->
       { @map } = options
@@ -28,6 +29,7 @@
           Q: fireball
           W: icicle
           E: thunderbolt
+          # S: teleport
         console.log "spellses?", @get('spells')
 
     checkHealth: (args) ->
@@ -61,13 +63,24 @@
         console.log "you're out of bounds", cell
       unless @coords[newCoords]
         newCoords = location
+      @setFacing(key, axisChange)
+      console.log "directions new-old", newDirection, @get('oldDirection')
+      if @get('facing').direction is @get('facing').oldDirection
+        @checkIllegalMoves(newCoords,newDirection)
+        @movePlayer()
+      else
+        @set direction: newCoords
+
+    setFacing: (key, axisChange) ->
+      oldDirection = @get('facing').direction
       @set facing:
+        oldDirection: oldDirection
         direction: key
         axis: axisChange
-      @checkIllegalMoves(newCoords,newDirection)
-      @movePlayer()
+      $(".player").removeClass(@get("facing").oldDirection)
+      $(".player").addClass(key)
 
-     movePlayer: ->
+    movePlayer: ->
       unless @get('location') is @get('oldLocation')
         playerObj = $(".player").clone()
         $(".player").remove()
@@ -106,7 +119,7 @@
         @deadOrAlive(model)
 
     dealDamage: (source, target) ->
-      if damage is "attack"
+      if source is "attack"
         damage = @damage[source]
       else
         damage = source.get('damage')
@@ -161,18 +174,22 @@
       @animateInstant(spell, domObject, target)
 
     animateProjectile: (spell, destination, route) ->
+      @degree = 0
       className = spell.get('className')
       spellSpeed = spell.get('speed')
       @checkRoute(route,spell,spellSpeed)
       absoluteDest = @getOffset(destination[0])
+      if spell.get('rotate')
+        @rotate($(".#{className}"),spell.get('rotateSpeed'))
 
       $(".#{className}").animate(
         left: absoluteDest.left+5
         top: absoluteDest.top+5
         ,
         spellSpeed * route.length
-        ,
         ->
+          if spell.get('rotate')
+            clearTimeout(@rotationTimer)
           $(".#{className}").remove()
         )
 
