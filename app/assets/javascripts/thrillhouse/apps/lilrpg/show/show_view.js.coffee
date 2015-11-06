@@ -3,6 +3,17 @@
   class Show.PlayerHealth extends App.Views.ItemView
     template: 'lilrpg/show/player_health'
 
+  class Show.Inventory extends App.Views.ItemView
+    template: 'lilrpg/show/inventory'
+
+  class Show.Spell extends App.Views.ItemView
+    template: 'lilrpg/show/spell'
+
+  class Show.Spells extends App.Views.CompositeView
+    template: 'lilrpg/show/spells'
+    childView: Show.Spell
+    childViewContainer: '#spells-collection'
+
   class Show.Dialog extends App.Views.ItemView
     template: 'lilrpg/show/dialog'
     ui:

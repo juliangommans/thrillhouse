@@ -12,6 +12,7 @@
           @showView()
           @dialogView()
           @playerHealthView()
+          @inventoryView()
 
         @show @layout
 
@@ -106,6 +107,9 @@
       @getPlayer()
       @setupPlayerHealthBars()
       @fetchEnemies()
+      App.execute "when:fetched", @player, =>
+        @loadSpellsView()
+
 
     getPlayer: ->
       @player = App.request "lilrpg:player:entity",
@@ -130,6 +134,20 @@
       healthView = @getPlayerHealthView()
 
       @layout.healthRegion.show healthView
+
+    inventoryView: ->
+      invView = @getInventoryView()
+      @listenTo invView, "show", ->
+        @spellRegion = new Backbone.Marionette.Region
+          el: "#spell-display"
+
+      @layout.invRegion.show invView
+
+    loadSpellsView: ->
+      collection = @player.get('spellCollection')
+      spellsView = @getSpellsView(collection)
+
+      @spellRegion.show spellsView
 
     dialogView: ->
       dialogView = @getDialogView()
@@ -164,6 +182,13 @@
 
     getPlayerHealthView: ->
       new Show.PlayerHealth
+
+    getInventoryView: ->
+      new Show.Inventory
+
+    getSpellsView: (collection) ->
+      new Show.Spells
+        collection: collection
 
     getShowView: ->
       new Show.Show

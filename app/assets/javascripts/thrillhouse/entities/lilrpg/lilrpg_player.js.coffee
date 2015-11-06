@@ -19,17 +19,22 @@
       @illegalMoves = ['wall','enemy']
       @damage =
         attack: 1
-        fireBall: 2
       @listenTo @, "change", @checkHealth
       fireball = App.request "lilrpg:fireball:spell"
       icicle = App.request "lilrpg:icicle:spell"
       thunderbolt = App.request "lilrpg:thunderbolt:spell"
-      App.execute "when:fetched", [fireball,icicle,thunderbolt], =>
+      teleport = App.request "lilrpg:teleport:spell"
+      spellArray = [fireball,icicle,thunderbolt,teleport]
+      spellCollection = new App.Entities.Collection
+
+      App.execute "when:fetched", spellArray, =>
         @set spells:
           Q: fireball
           W: icicle
           E: thunderbolt
-          # S: teleport
+          S: teleport
+        spellCollection.add spellArray
+        @set spellCollection: spellCollection
         console.log "spellses?", @get('spells')
 
     checkHealth: (args) ->
@@ -147,6 +152,7 @@
       { key } = keypress
       spell = @get('spells')[key]
       unless spell.get('onCd')
+        @spellCd(spell)
         route = @getProjectileCoords(spell.get('range'))
         @setActionCd(@get('actionSpeed'))
         if spell.get('type') is "projectile"
@@ -295,6 +301,17 @@
       range
 
 #### Cooldowns and Timers ####
+
+    spellCd: (spell) ->
+      spell.set onCd: true
+      spell.showCooldown()
+      setTimeout( =>
+        @resetSpell(spell)
+      , spell.get('cooldown'))
+
+    resetSpell: (spell) =>
+      console.log "reset",spell
+      spell.set onCd: false
 
     setMoveCd: (time) ->
       @set moveCd: true

@@ -15,3 +15,36 @@
 		border-width: 3px;
 	}
 }
+
+#lilrpg-play-region {
+  padding: 5px 10px;
+}
+
+#inventory-wrapper {
+  width: 100%;
+  padding: 10px;
+
+  #spell-display {
+
+
+  }
+
+  .cooldown-display {
+    margin: 10px;
+    position: relative;
+    display: inline-block;
+    width: 110px;
+    height: 40px;
+    border: 5px solid black;
+  }
+
+  .cooldown-animation {
+    position: absolute;
+    width: 100px;
+    height: 30px;
+    background-color: gray;
+    opacity: 0.8;
+    z-index: 10;
+  }
+}
+

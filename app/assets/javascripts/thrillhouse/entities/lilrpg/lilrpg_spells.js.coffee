@@ -1,6 +1,18 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
   class LilrpgApp.Spell extends App.Entities.LilrpgModel
 
+    showCooldown: ->
+      className = @get('className')
+      $("##{className}").prepend("<div class='cooldown-animation #{className}-cd'></div>")
+      $(".#{className}-cd").animate(
+        width: "0px"
+      ,
+        @get('cooldown')
+      ->
+        console.log "this is", @
+        @remove()
+        )
+
   class LilrpgApp.Fireball extends LilrpgApp.Spell
 
     defaults:
@@ -71,6 +83,8 @@
       new LilrpgApp.Icicle
     thunderbolt: ->
       new LilrpgApp.ThunderBolt
+    teleport: ->
+      new LilrpgApp.Teleport
 
   App.reqres.setHandler "lilrpg:fireball:spell", ->
     API.fireball()
@@ -80,3 +94,6 @@
 
   App.reqres.setHandler "lilrpg:thunderbolt:spell", ->
     API.thunderbolt()
+
+  App.reqres.setHandler "lilrpg:teleport:spell", ->
+    API.teleport()
