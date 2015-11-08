@@ -8,6 +8,9 @@
       App.execute "when:fetched", [@controls, @player], =>
 
         @layout = @getLayout()
+        @facingData =
+          directions: ['up','right','down','left']
+          axis: [-1,1,1,-1]
         @listenTo @layout, 'show', =>
           @showView()
           @dialogView()
@@ -19,6 +22,15 @@
     setPlayerLocation: ->
       location = $(".player").parent().attr('id')
       @player.set location: location
+      if $('.player').hasAnyClass(@facingData.directions).bool
+        direction = @facingData.directions[$('.player').hasAnyClass(@facingData.directions).index]
+        axis = @facingData.axis[$('.player').hasAnyClass(@facingData.directions).index]
+        @player.set facing:
+          oldDirection: direction
+          direction: direction
+          axis: axis
+
+      console.log "playerModel", @player
 
     fetchEnemies: ->
       enemiesJquery = $('.enemy')

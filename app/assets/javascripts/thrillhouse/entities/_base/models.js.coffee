@@ -38,7 +38,6 @@
 
   class Entities.LilrpgModel extends Entities.Model
 
-
     rotate: (object, rotateSpeed) ->
       object.css WebkitTransform: 'rotate(' + @degree + 'deg)'
       object.css '-moz-transform': 'rotate(' + @degree + 'deg)'

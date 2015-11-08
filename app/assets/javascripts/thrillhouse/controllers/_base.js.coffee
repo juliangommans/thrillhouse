@@ -3,7 +3,7 @@
   class Controllers.Base extends Marionette.Controller
 
     onBeforeDestroy: ->
-      console.log "this is before destroying CAPS", @
+      $('.health').remove()
 
     constructor: (options = {}) ->
       @region = options.region or App.request 'default:region'

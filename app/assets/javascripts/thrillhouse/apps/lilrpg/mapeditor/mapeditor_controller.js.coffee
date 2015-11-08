@@ -3,6 +3,8 @@
   class Mapeditor.Controller extends App.Controllers.Base
 
     initialize: ->
+      @directions = ['up', 'down', 'left','right']
+      @walls = ['vertical-wall', 'horizontal-wall']
       @mapSize = 8
       @mapName = ""
       @layout = @getLayout()
@@ -23,7 +25,7 @@
           id = "cell-#{row}-#{cell}"
           mapCell = "<div id='#{id}' class='map-cell cell'></div>"
           mapRow += mapCell
-          coordinates[id] = 
+          coordinates[id] =
             x: row
             y: cell
         mapRow += "</div>"
@@ -40,15 +42,50 @@
     buildBoundaries: ->
       boundaries = []
       for loc in [1..@mapSize]
-        boundaries.push 
+        boundaries.push
           right: @mapSize
           left: loc
 
       boundaries
 
     placeObject: (args, domject) ->
-      unless $(args.currentTarget)[0].children.length
-        $(args.currentTarget).append(domject)
+      if $(args.currentTarget)[0].children.length
+        @changeDirection(args,domject)
+      else
+        unless $('#map-area .player').length and domject.hasClass('player')
+          $(args.currentTarget).append(domject)
+        if domject.hasClass('character')
+          domject.addClass('up')
+
+    changeDirection: (args, domject) ->
+      target = $($(args.currentTarget)[0].children[0])
+      if target.hasAnyClass(@directions).bool
+        currentDirection = @directions[target.hasAnyClass(@directions).index]
+        @switchCharDirection(target, currentDirection)
+      else if target.hasAnyClass(@walls).bool
+        wall = @walls[target.hasAnyClass(@walls).index]
+        @switchWallDirection(target, wall)
+      else
+        console.log "directional logic failed"
+
+    switchWallDirection: (target, wall) ->
+      target.removeClass(wall)
+      if wall is @walls[0]
+        target.addClass(@walls[1])
+      else
+        target.addClass(@walls[0])
+
+    switchCharDirection: (target, currentDirection) ->
+      target.removeClass(currentDirection)
+      switch currentDirection
+        when "up"
+          target.addClass('right')
+        when "right"
+          target.addClass('down')
+        when "down"
+          target.addClass('left')
+        when "left"
+          target.addClass('up')
 
     saveMap: (args) ->
       mapfile = $("#map-area").clone()
@@ -80,7 +117,7 @@
       $("#map-area").append(@map.get('map'))
 
     clearMap: ->
-      $('.cell').empty()
+      $('#map-area .cell').empty()
       console.log "confirm captain", @map
 
 ##### Map Views #####

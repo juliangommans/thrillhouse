@@ -3,6 +3,12 @@ $.fn.hasAnyClass = ->
   i = 0
   while i < array.length
     if @hasClass(array[i])
-      return true
+      return {
+        bool: true
+        index: i
+      }
     i++
-  false
+  {
+    bool: false
+    index: i
+  }

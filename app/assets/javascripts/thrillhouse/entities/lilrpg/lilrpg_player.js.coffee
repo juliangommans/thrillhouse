@@ -6,7 +6,7 @@
       maxHealth: 5
       range: 1
       actionSpeed: 750
-      moveSpeed: 100
+      moveSpeed: 150
       shield: 3
       moveCd: false
       actionCd: false
@@ -92,7 +92,7 @@
         $("##{@get('location')}").append(playerObj)
 
     checkIllegalMoves: (newCoords,newDirection) ->
-      if $($("##{newCoords}")[0].children[0]).hasAnyClass(@illegalMoves)
+      if $($("##{newCoords}")[0].children[0]).hasAnyClass(@illegalMoves).bool
         @set location: @get('oldLocation')
         @set direction: newCoords
         console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
@@ -148,7 +148,7 @@
 
 #### Spells and Animations ####
 
-    spell: (keypress, targetModel, callback) ->
+    spell: (keypress, targetModel) ->
       { key } = keypress
       spell = @get('spells')[key]
       unless spell.get('onCd')
