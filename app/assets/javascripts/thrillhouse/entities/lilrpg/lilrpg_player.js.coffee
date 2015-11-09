@@ -124,13 +124,16 @@
         @deadOrAlive(model)
 
     dealDamage: (source, target) ->
+      stunned = false
       if source is "attack"
         damage = @damage[source]
       else
         damage = source.get('damage')
+        stunned = source.get('stun')
       console.log "damage", damage
       enemyHp = target.get('health')
       enemyHp -= damage
+      target.set stunned: true if stunned
       target.set alive: false if enemyHp < 1
       target.set health: enemyHp
     #fire damage animation

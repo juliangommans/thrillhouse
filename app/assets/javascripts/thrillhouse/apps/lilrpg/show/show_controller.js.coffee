@@ -6,7 +6,6 @@
       @controls = App.request "lilrpg:player:controls"
 
       App.execute "when:fetched", [@controls, @player], =>
-
         @layout = @getLayout()
         @facingData =
           directions: ['up','right','down','left']
@@ -22,39 +21,44 @@
     setPlayerLocation: ->
       location = $(".player").parent().attr('id')
       @player.set location: location
-      if $('.player').hasAnyClass(@facingData.directions).bool
-        direction = @facingData.directions[$('.player').hasAnyClass(@facingData.directions).index]
-        axis = @facingData.axis[$('.player').hasAnyClass(@facingData.directions).index]
-        @player.set facing:
+      @setModelFacingAttributes('.player', @player)
+
+    setModelFacingAttributes: (target, model) ->
+      if $(target).hasAnyClass(@facingData.directions).bool
+        direction = @facingData.directions[$(target).hasAnyClass(@facingData.directions).index]
+        axis = @facingData.axis[$(target).hasAnyClass(@facingData.directions).index]
+        model.set facing:
           oldDirection: direction
           direction: direction
           axis: axis
 
-      console.log "playerModel", @player
-
     fetchEnemies: ->
       enemiesJquery = $('.enemy')
-      console.log "list", enemiesJquery
       if enemiesJquery.length > 0
         @enemies = new App.Entities.Collection
         @buildEnemies(enemiesJquery)
         @player.set enemies: @enemies
+        console.log "enemies list", @enemies
       else
         console.log "no enemies"
 
     buildEnemies: (list) ->
       list.each( (index, object) =>
-        type = object.classList[0]
-        char = App.request "lilrpg:#{type}:enemy"
-        char.set id: (index+1)
-        char.set location: $(object).parent().attr('id')
-        char.set name: "#{char.get('name')}-#{index+1}"
-        @enemies.add char
+        char = @buildEnemyModel(index,object)
         $(object).data("name",char.get('name'))
         $(object).attr('id',char.get('id'))
         @setCharHealth(char, object)
         @runAi(char)
       )
+
+    buildEnemyModel:(index,object) ->
+        char = App.request "lilrpg:#{object.classList[0]}:enemy"
+        char.set id: (index+1)
+        char.set location: $(object).parent().attr('id')
+        char.set name: "#{char.get('name')}-#{index+1}"
+        @setModelFacingAttributes(object, char)
+        @enemies.add char
+        char
 
     runAi: (model) ->
       model.pulse(@map.get('coordinates'),@player)
