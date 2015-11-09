@@ -47,11 +47,43 @@
       ), 1)
 
     getElementByLoc: (loc) ->
-      $("#cell-#{loc.x}-#{loc.y}")
+      $("##{@buildCellName(loc)}")
+
+    buildCellName: (loc) ->
+      "cell-#{loc.x}-#{loc.y}"
 
     cleanupSpellSprite: (spell) ->
       $(".#{spell}").stop()
       $(".#{spell}").remove()
+
+    checkIllegalMoves: (newCoords) ->
+      illegalMoves = ['wall', 'enemy', 'player']
+      $($("##{newCoords}")[0].children[0]).hasAnyClass(illegalMoves).bool
+
+    getLoc: (range) ->
+      [{
+        direction: "left"
+        y: -range
+        x: 0
+        },{
+        direction: "down"
+        y: 0
+        x: range
+        },{
+        direction: "up"
+        y: 0
+        x: -range
+        },{
+        direction: "right"
+        y: range
+        x: 0
+      }]
+
+    buildLocation: (currentLoc,newLoc) ->
+      {
+        x: (currentLoc.x + newLoc.x)
+        y: (currentLoc.y + newLoc.y)
+      }
 
     getOffset: (element) ->
       top = 0

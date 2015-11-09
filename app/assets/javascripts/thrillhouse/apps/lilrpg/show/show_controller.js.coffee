@@ -62,20 +62,22 @@
 
     runAi: (model) ->
       model.pulse(@map.get('coordinates'),@player)
+      model.engageAi(@map.get('coordinates'),@player)
 
 #### needs a way to cleanup on page change - possibles:
 # tie it straight to the enemy dom-element
 # append it to "main view", needs offset and some math
     setCharHealth: (char, object) ->
-      location = @getOffset(object)
+      # location = @getOffset(object)
       total = char.get('maxHealth')
       if $("##{char.get('name')}").length
         $("##{char.get('name')}").remove()
-      health = "<div id=#{char.get('name')} class='health' style='width:#{total*4+2};left:#{location.left-3}px;top:#{location.top-15}px;'>"
+      health = "<div id=#{char.get('name')} class='health' style='width:#{total*4+2};'>" #left:#{location.left-3}px;top:#{location.top-15}px;'>"
       for hp in [1..total]
         health += "<div class='health-bar positive-health'></div>"
       health += "</div>"
-      $('body').append(health)
+      $("##{char.get('id')}").append(health)
+      # $('body').append(health)
 
     filterKey: (key) ->
       targetModel = @getTargetModel()

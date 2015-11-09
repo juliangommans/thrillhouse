@@ -12,29 +12,73 @@
       attackSpeed: 1500
       name: "TestSubject"
 
-    getLoc: (range) ->
-      [{
-        dir: "left"
-        x: -range
-        y: 0
-        },{
-        dir: "down"
-        x: 0
-        y: -range
-        },{
-        dir: "up"
-        x: 0
-        y: range
-        },{
-        dir: "right"
-        x: range
-        y: 0
-      }]
-
-    pulse: (coords,player) ->
+    engageAi: (coords,player) ->
       @player = player
       @coords = coords
       @location = coords[@get('location')]
+      @patrolLoop = setInterval(@patrol, 500)#@get('moveSpeed'))
+
+    patrol: =>
+      @breakPatrolLoop()
+      unless @get('stunned')
+        @set oldLocation: @get('location')
+
+        newCell = @checkCurrentDirection(1)
+        if @coords[newCell]
+          if @checkIllegalMoves(newCell)
+            @faceOtherDirection()
+          else
+            @moveToNewLoc(newCell)
+        else
+          @faceOtherDirection()
+
+
+    breakPatrolLoop: ->
+      unless @get('alive')
+        clearInterval(@patrolLoop)
+
+    moveToNewLoc: (cell) ->
+      @set location: cell
+      enemyObj = $("##{@get('id')}").clone()
+      $("##{@get('id')}").remove()
+      $("##{cell}").append(enemyObj)
+
+    faceOtherDirection: =>
+      newDirection = @oppositeDirection(@get('facing').direction)
+      @set facing:
+        oldDirection: @get('facing').direction
+        direction: newDirection
+        axis: @get('facing').axis
+      @changeDirectionClass()
+
+    changeDirectionClass: ->
+      enemyObj = $("##{@get('id')}")
+      enemyObj.removeClass(@get('facing').oldDirection)
+      enemyObj.addClass(@get('facing').direction)
+
+    oppositeDirection: (direction) ->
+      opposite = {
+        up: "down"
+        down: "up"
+        right: "left"
+        left: "right"
+      }
+      opposite[direction]
+
+    checkCurrentDirection: (range) ->
+      newLoc = @getLoc(range).find( (item) =>
+        item.direction is @get('facing').direction
+        )
+      # console.log "this is the next square in direction", newLoc, @coords[@get('location')]
+      currentLoc = @coords[@get('location')]
+      newLoc = @buildLocation(currentLoc,newLoc)
+      cell = @buildCellName(newLoc)
+      cell
+
+    pulse: (coords,player) ->
+      # @player = player
+      # @coords = coords
+      # @location = coords[@get('location')]
       @sensor = setInterval(@scanArea,@get('attackSpeed'))
 
     scanArea: =>

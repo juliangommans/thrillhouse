@@ -16,7 +16,6 @@
     initialize: (options) ->
       { @map } = options
       @coords = @map.get('coordinates')
-      @illegalMoves = ['wall','enemy']
       @damage =
         attack: 1
       @listenTo @, "change", @checkHealth
@@ -71,10 +70,24 @@
       @setFacing(key, axisChange)
       console.log "directions new-old", newDirection, @get('oldDirection')
       if @get('facing').direction is @get('facing').oldDirection
-        @checkIllegalMoves(newCoords,newDirection)
+        @confirmMove(newCoords,newDirection)
         @movePlayer()
       else
         @set direction: newCoords
+
+    confirmMove: (newCoords,newDirection) ->
+     if @checkIllegalMoves(newCoords)
+        @set location: @get('oldLocation')
+        @set direction: newCoords
+        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
+      else
+        @set direction: newDirection
+        @set location: newCoords
+      if $("##{@get('direction')}").length
+        @set target: $("##{@get('direction')}")[0].children[0]
+      else
+        @set target: false
+        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
 
     setFacing: (key, axisChange) ->
       oldDirection = @get('facing').direction
@@ -90,20 +103,6 @@
         playerObj = $(".player").clone()
         $(".player").remove()
         $("##{@get('location')}").append(playerObj)
-
-    checkIllegalMoves: (newCoords,newDirection) ->
-      if $($("##{newCoords}")[0].children[0]).hasAnyClass(@illegalMoves).bool
-        @set location: @get('oldLocation')
-        @set direction: newCoords
-        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
-      else
-        @set direction: newDirection
-        @set location: newCoords
-      if $("##{@get('direction')}").length
-        @set target: $("##{@get('direction')}")[0].children[0]
-      else
-        @set target: false
-        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
 
 #### Attack and Damage ####
 
@@ -157,6 +156,7 @@
       unless spell.get('onCd')
         @spellCd(spell)
         route = @getProjectileCoords(spell.get('range'))
+        console.log "this is the spells route", route
         @setActionCd(@get('actionSpeed'))
         if spell.get('type') is "projectile"
           @projectileSpell(spell, route)
@@ -234,12 +234,14 @@
       simulateTravelTime = =>
         unless count < 0 or count > (route.length-1)
           cell = @getElementByLoc(route[count])
+          if count > 0
+            previousCell = @getElementByLoc(route[count - 1])
           if cell.children().length
-            if cell.children()[0].classList[1] is "enemy"
-              @hitTarget(cell,spell)
-              return
-            else
-              @cleanupSpellSprite(spell.get('className'))
+            @checkCurrentCell(cell, spell)
+            return
+          else if previousCell?
+            if previousCell.children().length
+              @checkCurrentCell(previousCell, spell)
               return
         if count >= total
           return
@@ -247,6 +249,12 @@
           count++
         setTimeout simulateTravelTime, spellSpeed
       simulateTravelTime()
+
+    checkCurrentCell: (cell, spell) ->
+      if cell.children()[0].classList[1] is "enemy"
+        @hitTarget(cell,spell)
+      else
+        @cleanupSpellSprite(spell.get('className'))
 
     hitTarget: (target,spell) ->
       @cleanupSpellSprite(spell.get('className'))
@@ -264,6 +272,7 @@
     getProjectileCoords: (spaces) ->
       array = []
       facing = @get('facing')
+      console.log "facing for this spell", facing
       range = @getRange(spaces, facing)
       currentLocation = @coords[@get('location')]
       for i in [1..range]

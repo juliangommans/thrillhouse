@@ -59,15 +59,9 @@
   margin: 6px 3px;
   border: 2px solid gray;
 }
-
-.health{
-  height: 8px;
-  margin-top: 9px;
-// these three things don't need to exist without gridlines
-  background-color: black;
-  border: 1px solid black;
-  border-radius: 1px;
-
+.health {
+  height: 9px;
+  display: inline-block;
   position: absolute;
 }
 
@@ -76,10 +70,28 @@
   border-radius: 1px;
   height: 5px;
   width: 3px;
-  margin-right: 1px;
-  margin-bottom: 10px;
   display: inline-block;
 }
+// .health{
+//   height: 8px;
+//   margin-top: 9px;
+// // these three things don't need to exist without gridlines
+//   background-color: black;
+//   border: 1px solid black;
+//   border-radius: 1px;
+
+//   position: absolute;
+// }
+
+// .health-bar {
+//   border: 1px solid red;
+//   border-radius: 1px;
+//   height: 5px;
+//   width: 3px;
+//   margin-right: 1px;
+//   margin-bottom: 10px;
+//   display: inline-block;
+// }
 
 
 .positive-health {
