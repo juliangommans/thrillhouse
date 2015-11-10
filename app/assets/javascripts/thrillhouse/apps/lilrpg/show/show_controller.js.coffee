@@ -2,6 +2,9 @@
 
   class Show.Controller extends App.Controllers.Base
 
+    onBeforeDestroy: ->
+      $('.health').remove()
+
     initialize: ->
       @controls = App.request "lilrpg:player:controls"
 
@@ -61,7 +64,7 @@
         char
 
     runAi: (model) ->
-      model.pulse(@map.get('coordinates'),@player)
+      # model.pulse(@map.get('coordinates'),@player)
       model.engageAi(@map.get('coordinates'),@player)
 
 #### needs a way to cleanup on page change - possibles:

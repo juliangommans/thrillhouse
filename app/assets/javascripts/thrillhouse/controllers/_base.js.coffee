@@ -2,9 +2,6 @@
 
   class Controllers.Base extends Marionette.Controller
 
-    onBeforeDestroy: ->
-      $('.health').remove()
-
     constructor: (options = {}) ->
       @region = options.region or App.request 'default:region'
       super options

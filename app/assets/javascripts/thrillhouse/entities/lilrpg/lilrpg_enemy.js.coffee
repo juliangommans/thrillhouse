@@ -7,34 +7,34 @@
       damage: 1
       range: 1
       alive: true
-      moveSpeed: 130
+      moveSpeed: 1000
       stunned: false
-      attackSpeed: 1500
+      attackSpeed: 1200
       name: "TestSubject"
 
     engageAi: (coords,player) ->
       @player = player
       @coords = coords
       @location = coords[@get('location')]
-      @patrolLoop = setInterval(@patrol, 500)#@get('moveSpeed'))
+      @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
 
     patrol: =>
       @breakPatrolLoop()
+      @removeProxy()
       unless @get('stunned')
         @set oldLocation: @get('location')
 
         newCell = @checkCurrentDirection(1)
         if @coords[newCell]
           if @checkIllegalMoves(newCell)
-            @faceOtherDirection()
+            @checkFacingCell(newCell)
           else
             @moveToNewLoc(newCell)
         else
           @faceOtherDirection()
 
-
     breakPatrolLoop: ->
-      unless @get('alive')
+      unless $("##{@get('id')}").length
         clearInterval(@patrolLoop)
 
     moveToNewLoc: (cell) ->
@@ -42,6 +42,32 @@
       enemyObj = $("##{@get('id')}").clone()
       $("##{@get('id')}").remove()
       $("##{cell}").append(enemyObj)
+      nextCell = @checkCurrentDirection(1)
+      if @checkIllegalMoves(nextCell)
+        @checkFacingCell(nextCell)
+      @createProxyChar()
+
+    createProxyChar: ->
+      if @get('alive')
+        cell = @get('oldLocation')
+        delay = @get('moveSpeed')*0.33
+        dummy = "<div id='#{@get('id')}' class='#{@get('name')} dummy' ></div>"
+        unless $("##{cell}").children().length
+          $("##{cell}").append(dummy)
+          setInterval(@removeProxy,delay)
+
+    removeProxy: =>
+      if $(".#{@get('name')}").length
+        $(".#{@get('name')}").remove()
+
+    checkFacingCell: (newCell) ->
+      if @playerChecker(@coords[newCell])
+        @set target: @player.get('location')
+        clearInterval(@patrolLoop)
+        @swing = setInterval(@attackPlayer,@get('attackSpeed'))
+      else
+        @faceOtherDirection()
+    # else
 
     faceOtherDirection: =>
       newDirection = @oppositeDirection(@get('facing').direction)
@@ -56,15 +82,6 @@
       enemyObj.removeClass(@get('facing').oldDirection)
       enemyObj.addClass(@get('facing').direction)
 
-    oppositeDirection: (direction) ->
-      opposite = {
-        up: "down"
-        down: "up"
-        right: "left"
-        left: "right"
-      }
-      opposite[direction]
-
     checkCurrentDirection: (range) ->
       newLoc = @getLoc(range).find( (item) =>
         item.direction is @get('facing').direction
@@ -76,9 +93,6 @@
       cell
 
     pulse: (coords,player) ->
-      # @player = player
-      # @coords = coords
-      # @location = coords[@get('location')]
       @sensor = setInterval(@scanArea,@get('attackSpeed'))
 
     scanArea: =>
@@ -95,25 +109,41 @@
         newLoc =
           x: @location.x + item.x
           y: @location.y + item.y
-        @playerChecker(newLoc)
+        if @playerChecker(newLoc)
+          @attackPlayer()
 
     playerChecker: (newLoc) ->
       id = "#cell-#{newLoc.x}-#{newLoc.y}"
       if $(id).children().length
         object = $($(id).children()[0])
         if object.hasClass('player')
-          @attackPlayer()
+          true
+        else
+          false
+      else
+        false
 
-    attackPlayer: ->
-      playerHp = @player.get('health')
-      console.log "before", playerHp
-      playerHp -= @get('damage')
-      @player.set health: playerHp
+    attackPlayer: =>
+      if @get('target')
+        playerHp = @player.get('health')
+        console.log "before", playerHp
+        playerHp -= @get('damage')
+        @player.set health: playerHp
+        @postDamage()
+
+    postDamage: ->
+      @checkPlayerStillInRange()
       if @player.get('health') < 1
         @player.set alive: false
+      unless @player.get('alive') and @get('target')
+        clearInterval(@swing)
+      console.log "after", @player.get('health')
+
+    checkPlayerStillInRange: ->
+      unless $('.player').parent().attr('id') is @get('target')
+        @set target: false
 
       #fire damage animation
-      console.log "after", @player.get('health')
 
 
   class LilrpgApp.SimpleMeleeEnemy extends LilrpgApp.Enemy

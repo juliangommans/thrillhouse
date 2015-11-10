@@ -58,7 +58,8 @@
 
     checkIllegalMoves: (newCoords) ->
       illegalMoves = ['wall', 'enemy', 'player']
-      $($("##{newCoords}")[0].children[0]).hasAnyClass(illegalMoves).bool
+      if $("##{newCoords}")[0]?
+        $($("##{newCoords}")[0].children[0]).hasAnyClass(illegalMoves).bool
 
     getLoc: (range) ->
       [{
@@ -84,6 +85,16 @@
         x: (currentLoc.x + newLoc.x)
         y: (currentLoc.y + newLoc.y)
       }
+
+
+    oppositeDirection: (direction) ->
+      opposite = {
+        up: "down"
+        down: "up"
+        right: "left"
+        left: "right"
+      }
+      opposite[direction]
 
     getOffset: (element) ->
       top = 0

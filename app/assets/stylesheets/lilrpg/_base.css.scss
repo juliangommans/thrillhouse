@@ -27,12 +27,18 @@
 }
 
 .enemy {
-  margin: 2px;
-  background-color: red;
-  z-index: 2;
+}
+
+.dummy {
+  // background-color: blue;
+  // width: 5px;
+  // height: 5px;
 }
 
 .simple-melee {
+  margin: 2px;
+  background-color: red;
+  z-index: 2;
   border-radius: 4px;
   border: 8px solid red;
 }

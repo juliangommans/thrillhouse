@@ -68,7 +68,7 @@
       unless @coords[newCoords]
         newCoords = location
       @setFacing(key, axisChange)
-      console.log "directions new-old", newDirection, @get('oldDirection')
+      # console.log "directions new-old", newDirection, @get('oldDirection')
       if @get('facing').direction is @get('facing').oldDirection
         @confirmMove(newCoords,newDirection)
         @movePlayer()
@@ -79,7 +79,7 @@
      if @checkIllegalMoves(newCoords)
         @set location: @get('oldLocation')
         @set direction: newCoords
-        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
+        # console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
       else
         @set direction: newDirection
         @set location: newCoords
@@ -87,7 +87,7 @@
         @set target: $("##{@get('direction')}")[0].children[0]
       else
         @set target: false
-        console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
+        # console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
 
     setFacing: (key, axisChange) ->
       oldDirection = @get('facing').direction
@@ -144,6 +144,7 @@
     cleanup: (model) ->
       console.log "cleanup, isle 6"
       $("##{model.get('name')}").remove()
+      $(".#{model.get('name')}").remove()
       $("##{model.get('id')}").remove()
       @set target: false
       @get('enemies').remove(model)
@@ -234,15 +235,15 @@
       simulateTravelTime = =>
         unless count < 0 or count > (route.length-1)
           cell = @getElementByLoc(route[count])
-          if count > 0
-            previousCell = @getElementByLoc(route[count - 1])
+          # if count > 0
+          #   previousCell = @getElementByLoc(route[count - 1])
           if cell.children().length
             @checkCurrentCell(cell, spell)
             return
-          else if previousCell?
-            if previousCell.children().length
-              @checkCurrentCell(previousCell, spell)
-              return
+          # else if previousCell?
+          #   if previousCell.children().length
+          #     @checkCurrentCell(previousCell, spell)
+          #     return
         if count >= total
           return
         else
@@ -251,18 +252,28 @@
       simulateTravelTime()
 
     checkCurrentCell: (cell, spell) ->
-      if cell.children()[0].classList[1] is "enemy"
+      check = cell.children()[0].classList[1]
+      if check is "enemy" or check is "dummy"
         @hitTarget(cell,spell)
       else
         @cleanupSpellSprite(spell.get('className'))
 
     hitTarget: (target,spell) ->
-      @cleanupSpellSprite(spell.get('className'))
+      @checkTargetForDummy(target, spell)
       @enemies = @get('enemies')
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
       @dealDamage(spell,target)
       healthBars = $("##{target.get('name')}").children()
       @modifyTargetHealth(healthBars, target)
+
+    checkTargetForDummy: (target, spell) ->
+      if target.hasClass('dummy')
+        setTimeout( =>
+          @cleanupSpellSprite(spell.get('className'))
+        , spell.get('cooldown'))
+      else
+        @cleanupSpellSprite(spell.get('className'))
+
 
     findTargetModel: (identifier) ->
       @get('enemies').find( (enemy) ->
