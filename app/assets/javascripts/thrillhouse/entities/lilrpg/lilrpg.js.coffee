@@ -66,7 +66,7 @@
         code: 65
       83:
         key: "S"
-        action: "attack"
+        action: "spell"
         axisChange: 0
         spaces: 3
         code: 83

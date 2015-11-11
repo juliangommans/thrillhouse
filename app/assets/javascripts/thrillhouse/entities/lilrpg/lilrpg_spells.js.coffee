@@ -13,6 +13,33 @@
         @remove()
         )
 
+    getRange: (map, facing, playerLoc) ->
+      coords = map.get('coordinates')
+      max = map.get('size')
+      loc = coords[playerLoc]
+      x = loc.x
+      y = loc.y
+      range = 0
+      for i in [1..@get('range')]
+        switch facing.direction
+          when "up"
+            unless x is 1
+              x -= 1
+              range += 1
+          when "down"
+            unless x is max
+              x += 1
+              range += 1
+          when "left"
+            unless y is 1
+              y -= 1
+              range += 1
+          when "right"
+            unless y is max
+              y += 1
+              range += 1
+      range
+
   class LilrpgApp.Fireball extends LilrpgApp.Spell
 
     defaults:
@@ -65,7 +92,7 @@
     defaults:
       className: "teleport"
       range: 3
-      cooldown: 20000
+      cooldown: 2000
       speed: 100
       damage: 0
       stun: false

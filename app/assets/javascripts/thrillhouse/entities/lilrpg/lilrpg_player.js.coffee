@@ -156,13 +156,12 @@
       spell = @get('spells')[key]
       unless spell.get('onCd')
         @spellCd(spell)
-        route = @getProjectileCoords(spell.get('range'))
+        route = @getProjectileCoords(spell)
         console.log "this is the spells route", route
         @setActionCd(@get('actionSpeed'))
         if spell.get('type') is "projectile"
           @projectileSpell(spell, route)
         else if spell.get('type') is "instant"
-          console.log "you lightning bolted"
           @instantSpell(spell, route)
 
     projectileSpell: (spell, route) ->
@@ -174,14 +173,16 @@
 
     instantSpell: (spell, route) ->
       destination = @getElementByLoc(route[route.length-1])
-      absoluteLoc = @getOffset($(destination)[0])
-      domObject = "<div class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
-      console.log "before the finding of targets", destination
-      if destination.children().length
-        if destination.children()[0].classList[1] is "enemy"
-          target = destination
+      if spell.get('className') is "teleport"
+        @teleport(spell,route)
+      else
+        absoluteLoc = @getOffset($(destination)[0])
+        domObject = "<div class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
+        if destination.children().length
+          if destination.children()[0].classList[1] is "enemy"
+            target = destination
 
-      @animateInstant(spell, domObject, target)
+        @animateInstant(spell, domObject, target)
 
     animateProjectile: (spell, destination, route) ->
       @degree = 0
@@ -206,28 +207,37 @@
     animateInstant: (spell, domObject, target) ->
       extraDom = spell.get('extraDom')
       className = spell.get('className')
-      console.log "BEGIN ZE ANIMATION", spell, domObject
+      console.log "BEGIN ZE instant ANIMATION", spell, domObject
       $('body').append(domObject)
       if extraDom?
         $(".#{className}").append(extraDom)
 
-      if spell.get("target") is "player"
-        $(".#{className}").fadeOut(spell.get("speed")
-          , ->
-            $(".#{className}").fadeIn(spell.get("speed"))
-          )
-      else
-        $(".#{className}").fadeIn(spell.get("speed")*3
-          , =>
-            $(".#{className}").fadeOut(spell.get("speed")*3
-              , =>
-                if target?
-                  @hitTarget(target, spell)
-                else
-                  @cleanupSpellSprite(spell.get('className'))
-              )
-          )
 
+      $(".#{className}").fadeIn(spell.get("speed")*3
+        , =>
+          $(".#{className}").fadeOut(spell.get("speed")*3
+            , =>
+              if target?
+                @hitTarget(target, spell)
+              else
+                @cleanupSpellSprite(spell.get('className'))
+            )
+        )
+
+    teleport: (spell,route) ->
+      speed = spell.get("speed")
+      $(".player").fadeOut(speed*5
+        , =>
+          @checkRoute(route, spell, speed)
+        )
+
+    movePlayerInstantly: (cell, spell) ->
+      playerIcon = $(".player").clone()
+      $(".player").remove()
+      cell.append(playerIcon)
+      $(".player").fadeIn(spell.get("speed")*5)
+      @set location: $(cell.attr('id'))
+      console.log "location is", @
 
     checkRoute: (route,spell,spellSpeed) ->
       count = -1
@@ -235,26 +245,39 @@
       simulateTravelTime = =>
         unless count < 0 or count > (route.length-1)
           cell = @getElementByLoc(route[count])
-          # if count > 0
-          #   previousCell = @getElementByLoc(route[count - 1])
           if cell.children().length
+            if spell.get('className') is "teleport"
+              if count > 0
+                previousCell = @getElementByLoc(route[count - 1])
+                @checkCurrentCell(previousCell, spell)
+                console.log "we should be back a cell", previousCell
+                return
+              else
+                @checkCurrentCell($("##{@get('location')}"), spell)
+                return
+            else
+              @checkCurrentCell(cell, spell)
+              return
+        if count >= total
+          if spell.get('className') is "teleport"
+            console.log "what's going awn", route, route[count-1]
+            cell = @getElementByLoc(route[count-1])
             @checkCurrentCell(cell, spell)
             return
-          # else if previousCell?
-          #   if previousCell.children().length
-          #     @checkCurrentCell(previousCell, spell)
-          #     return
-        if count >= total
-          return
+          else
+            return
         else
           count++
         setTimeout simulateTravelTime, spellSpeed
       simulateTravelTime()
 
     checkCurrentCell: (cell, spell) ->
-      check = cell.children()[0].classList[1]
+      if cell.children().length
+        check = cell.children()[0].classList[1]
       if check is "enemy" or check is "dummy"
         @hitTarget(cell,spell)
+      else if spell.get('className') is "teleport"
+        @movePlayerInstantly(cell, spell)
       else
         @cleanupSpellSprite(spell.get('className'))
 
@@ -274,17 +297,17 @@
       else
         @cleanupSpellSprite(spell.get('className'))
 
-
     findTargetModel: (identifier) ->
       @get('enemies').find( (enemy) ->
         enemy.get('id') is identifier
         )
 
-    getProjectileCoords: (spaces) ->
+    getProjectileCoords: (spell) ->
+      spaces = spell.get('range')
       array = []
       facing = @get('facing')
-      console.log "facing for this spell", facing
-      range = @getRange(spaces, facing)
+      range = spell.getRange(@map, facing, @get('location'))
+      console.log "coords range is", range
       currentLocation = @coords[@get('location')]
       for i in [1..range]
         if facing.direction is "up" or facing.direction is "down"
@@ -296,32 +319,8 @@
             x: currentLocation.x
             y: currentLocation.y + facing.axis*i
         array.push(temp)
+      console.log "this is your array before it's a real arary", array
       array
-
-    getRange: (spaces, facing) ->
-      loc = @coords[@get('location')]
-      x = loc.x
-      y = loc.y
-      range = 0
-      for i in [1..spaces]
-        switch facing.direction
-          when "up"
-            unless x is 1
-              x -= 1
-              range += 1
-          when "down"
-            unless x is @map.get('size')
-              x += 1
-              range += 1
-          when "left"
-            unless y is 1
-              y -= 1
-              range += 1
-          when "right"
-            unless y is @map.get('size')
-              y += 1
-              range += 1
-      range
 
 #### Cooldowns and Timers ####
 
