@@ -9,7 +9,6 @@
       ,
         @get('cooldown')
       ->
-        console.log "this is", @
         @remove()
         )
 

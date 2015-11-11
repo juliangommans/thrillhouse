@@ -129,12 +129,13 @@
       else
         damage = source.get('damage')
         stunned = source.get('stun')
-      console.log "damage", damage
-      enemyHp = target.get('health')
-      enemyHp -= damage
-      target.set stunned: true if stunned
-      target.set alive: false if enemyHp < 1
-      target.set health: enemyHp
+      console.log "damage", damage, target
+      if target?
+        enemyHp = target.get('health')
+        enemyHp -= damage
+        target.set stunned: true if stunned
+        target.set alive: false if enemyHp < 1
+        target.set health: enemyHp
     #fire damage animation
 
     deadOrAlive: (targetModel) ->
@@ -156,6 +157,7 @@
       spell = @get('spells')[key]
       unless spell.get('onCd')
         @spellCd(spell)
+        @confirmHit = false
         route = @getProjectileCoords(spell)
         console.log "this is the spells route", route
         @setActionCd(@get('actionSpeed'))
@@ -207,15 +209,14 @@
     animateInstant: (spell, domObject, target) ->
       extraDom = spell.get('extraDom')
       className = spell.get('className')
-      console.log "BEGIN ZE instant ANIMATION", spell, domObject
       $('body').append(domObject)
       if extraDom?
         $(".#{className}").append(extraDom)
 
 
-      $(".#{className}").fadeIn(spell.get("speed")*3
+      $(".#{className}").fadeIn(spell.get("speed")*2
         , =>
-          $(".#{className}").fadeOut(spell.get("speed")*3
+          $(".#{className}").fadeOut(spell.get("speed")*2
             , =>
               if target?
                 @hitTarget(target, spell)
@@ -237,16 +238,36 @@
       cell.append(playerIcon)
       $(".player").fadeIn(spell.get("speed")*5)
       @set location: $(cell.attr('id'))
-      console.log "location is", @
+
+    realtimeCounter: (cell,spell) =>
+      count = 0
+      total = spell.get('speed')
+      milisecondCellChecker = =>
+        console.log "are you still going?", cell, cell.children().length
+        if cell.children().length
+          @checkCurrentCell(cell, spell)
+          @confirmHit = true
+          console.log "we hit it in the milisecondCellChecker"
+          return
+        if count >= total
+          return
+        else
+          count++
+        setTimeout milisecondCellChecker, 1
+      milisecondCellChecker()
+
+
 
     checkRoute: (route,spell,spellSpeed) ->
       count = -1
       total = route.length
       simulateTravelTime = =>
+        return if @confirmHit is true
         unless count < 0 or count > (route.length-1)
           cell = @getElementByLoc(route[count])
-          if cell.children().length
-            if spell.get('className') is "teleport"
+          console.log "just checking each cell", cell, cell.children().length
+          if spell.get('className') is "teleport"
+            if cell.children().length
               if count > 0
                 previousCell = @getElementByLoc(route[count - 1])
                 @checkCurrentCell(previousCell, spell)
@@ -255,12 +276,10 @@
               else
                 @checkCurrentCell($("##{@get('location')}"), spell)
                 return
-            else
-              @checkCurrentCell(cell, spell)
-              return
+          else if spell.get('type') is "projectile"
+            @realtimeCounter(cell,spell)
         if count >= total
           if spell.get('className') is "teleport"
-            console.log "what's going awn", route, route[count-1]
             cell = @getElementByLoc(route[count-1])
             @checkCurrentCell(cell, spell)
             return
@@ -284,6 +303,7 @@
     hitTarget: (target,spell) ->
       @checkTargetForDummy(target, spell)
       @enemies = @get('enemies')
+      console.log "target before finding model", target, $(target.children()[0])
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
       @dealDamage(spell,target)
       healthBars = $("##{target.get('name')}").children()
@@ -307,7 +327,6 @@
       array = []
       facing = @get('facing')
       range = spell.getRange(@map, facing, @get('location'))
-      console.log "coords range is", range
       currentLocation = @coords[@get('location')]
       for i in [1..range]
         if facing.direction is "up" or facing.direction is "down"
@@ -319,7 +338,6 @@
             x: currentLocation.x
             y: currentLocation.y + facing.axis*i
         array.push(temp)
-      console.log "this is your array before it's a real arary", array
       array
 
 #### Cooldowns and Timers ####
@@ -332,7 +350,6 @@
       , spell.get('cooldown'))
 
     resetSpell: (spell) =>
-      console.log "reset",spell
       spell.set onCd: false
 
     setMoveCd: (time) ->
