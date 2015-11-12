@@ -86,7 +86,7 @@
       targetModel = @getTargetModel()
       switch key.action
         when "move"
-          unless @player.get('moveCd')
+          unless @player.get('moveCd') or @player.get('actionCd')
             @player.move(key)
         when "attack"
           unless @player.get('actionCd')
@@ -105,7 +105,9 @@
 
     getTargetModel: ->
       @enemies.find((enemy) =>
-        enemy.get('name') == $(@player.get('target')).data('name'))
+        if @player.get('target')?
+          console.log enemy.get('name'), $(@player.get('target')).attr('id')
+          enemy.id == parseInt($(@player.get('target')).attr('id')))
 
     sortPlayerAction: ->
       event.preventDefault()

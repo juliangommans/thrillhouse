@@ -125,11 +125,12 @@
 
     attackPlayer: =>
       if @get('target')
-        playerHp = @player.get('health')
-        console.log "before", playerHp
-        playerHp -= @get('damage')
-        @player.set health: playerHp
-        @postDamage()
+        if @checkPlayerStillInRange()
+          playerHp = @player.get('health')
+          console.log "before", playerHp
+          playerHp -= @get('damage')
+          @player.set health: playerHp
+          @postDamage()
 
     postDamage: ->
       @checkPlayerStillInRange()
@@ -140,8 +141,11 @@
       console.log "after", @player.get('health')
 
     checkPlayerStillInRange: ->
-      unless $('.player').parent().attr('id') is @get('target')
+      if $('.player').parent().attr('id') is @get('target')
+        return true
+      else
         @set target: false
+        return false
 
       #fire damage animation
 

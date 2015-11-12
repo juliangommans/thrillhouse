@@ -42,9 +42,21 @@
       unless @get('alive')
         alert "bitch, you ded"
 
+    checkCss: ->
+      player = $('.player')
+      if player.css('opacity')?
+        player.css('opacity', "1")
+
+    changeTarget: ->
+      if $("##{@get('direction')}").length
+        @set target: $("##{@get('direction')}")[0].children[0]
+      else
+        @set target: false
+
 #### Movement methods ####
 
     move: (keypress) ->
+      @checkCss()
       @setMoveCd(@get('moveSpeed'))
       location = @get('location')
       direction = @get('direction')
@@ -83,10 +95,7 @@
       else
         @set direction: newDirection
         @set location: newCoords
-      if $("##{@get('direction')}").length
-        @set target: $("##{@get('direction')}")[0].children[0]
-      else
-        @set target: false
+      @changeTarget()
         # console.log "Loc =>", @get('location'), "Dir =>", @get('direction')
 
     setFacing: (key, axisChange) ->
@@ -97,6 +106,7 @@
         axis: axisChange
       $(".player").removeClass(@get("facing").oldDirection)
       $(".player").addClass(key)
+      @changeTarget()
 
     movePlayer: ->
       unless @get('location') is @get('oldLocation')
@@ -107,6 +117,7 @@
 #### Attack and Damage ####
 
     attack: (key, targetModel) ->
+      console.log "attack???"
       @setActionCd(@get('actionSpeed'))
       @dealDamage("attack", targetModel)
       target = targetModel.get('name')
@@ -123,6 +134,7 @@
         @deadOrAlive(model)
 
     dealDamage: (source, target) ->
+      console.log "source and target", source, target
       stunned = false
       if source is "attack"
         damage = @damage[source]
@@ -156,7 +168,8 @@
       { key } = keypress
       spell = @get('spells')[key]
       unless spell.get('onCd')
-        @spellCd(spell)
+        console.log spell.get('className')
+        @sortCooldowns(spell)
         @confirmHit = false
         route = @getProjectileCoords(spell)
         console.log "this is the spells route", route
@@ -165,6 +178,12 @@
           @projectileSpell(spell, route)
         else if spell.get('type') is "instant"
           @instantSpell(spell, route)
+
+    sortCooldowns: (spell) ->
+      if spell.get('className') is "teleport"
+        spell.set onCd: true
+      else
+        @spellCd(spell)
 
     projectileSpell: (spell, route) ->
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
@@ -213,8 +232,7 @@
       if extraDom?
         $(".#{className}").append(extraDom)
 
-
-      $(".#{className}").fadeIn(spell.get("speed")*2
+      $(".#{className}").fadeIn(spell.get("speed")
         , =>
           $(".#{className}").fadeOut(spell.get("speed")*2
             , =>
@@ -240,10 +258,10 @@
       @set location: $(cell.attr('id'))
 
     realtimeCounter: (cell,spell) =>
+      clearTimeout(@suicideTimeout)
       count = 0
       total = spell.get('speed')
       milisecondCellChecker = =>
-        console.log "are you still going?", cell, cell.children().length
         if cell.children().length
           @checkCurrentCell(cell, spell)
           @confirmHit = true
@@ -253,7 +271,7 @@
           return
         else
           count++
-        setTimeout milisecondCellChecker, 1
+        @suicideTimeout = setTimeout milisecondCellChecker, 1
       milisecondCellChecker()
 
 
