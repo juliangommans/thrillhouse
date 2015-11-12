@@ -100,7 +100,6 @@
         enemyCoords = @coords[@get('location')]
         for x in [1..@get('range')]
           @checkLoc(@getLoc(x))
-        # console.log "coords", enemyCoords
       else
         clearInterval(@sensor)
 

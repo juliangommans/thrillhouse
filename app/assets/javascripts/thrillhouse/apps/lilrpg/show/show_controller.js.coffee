@@ -83,30 +83,21 @@
       # $('body').append(health)
 
     filterKey: (key) ->
-      targetModel = @getTargetModel()
       switch key.action
         when "move"
           unless @player.get('moveCd') or @player.get('actionCd')
             @player.move(key)
         when "attack"
           unless @player.get('actionCd')
-            if @sanityCheck(targetModel)
-              @player.attack(key,targetModel)
+            @player.attack(key)
         when "spell"
           unless @player.get('actionCd')
-            @player.spell(key,targetModel)
-
-    sanityCheck: (targetModel) ->
-      bool = false
-      if targetModel?
-        if @player.get('target').classList[1] is "enemy"
-          bool = true
-      bool
+            @player.spell(key)
 
     getTargetModel: ->
       @enemies.find((enemy) =>
         if @player.get('target')?
-          console.log enemy.get('name'), $(@player.get('target')).attr('id')
+          console.log enemy.get('name'), @player.get('target')
           enemy.id == parseInt($(@player.get('target')).attr('id')))
 
     sortPlayerAction: ->
@@ -132,7 +123,6 @@
       @fetchEnemies()
       App.execute "when:fetched", @player, =>
         @loadSpellsView()
-
 
     getPlayer: ->
       @player = App.request "lilrpg:player:entity",

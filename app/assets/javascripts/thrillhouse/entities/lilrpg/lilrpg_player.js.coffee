@@ -46,12 +46,28 @@
       player = $('.player')
       if player.css('opacity')?
         player.css('opacity', "1")
+      # unless player.css('display')
+      #   player.css('display', 'block')
 
     changeTarget: ->
       if $("##{@get('direction')}").length
         @set target: $("##{@get('direction')}")[0].children[0]
       else
         @set target: false
+
+    sanityCheck: (targetModel) ->
+      bool = false
+      if targetModel?
+        if @get('target').classList[1] is "enemy"
+          bool = true
+      bool
+
+    getTargetModel: ->
+      target = @get('target')
+      if target?
+        if $(target).children().length
+          @findTargetModel(parseInt($(target).attr('id')))
+
 
 #### Movement methods ####
 
@@ -86,6 +102,7 @@
         @movePlayer()
       else
         @set direction: newCoords
+        @changeTarget()
 
     confirmMove: (newCoords,newDirection) ->
      if @checkIllegalMoves(newCoords)
@@ -106,7 +123,7 @@
         axis: axisChange
       $(".player").removeClass(@get("facing").oldDirection)
       $(".player").addClass(key)
-      @changeTarget()
+      # @changeTarget()
 
     movePlayer: ->
       unless @get('location') is @get('oldLocation')
@@ -116,13 +133,15 @@
 
 #### Attack and Damage ####
 
-    attack: (key, targetModel) ->
-      console.log "attack???"
-      @setActionCd(@get('actionSpeed'))
-      @dealDamage("attack", targetModel)
-      target = targetModel.get('name')
-      targetHealth = $("##{target}").children()
-      @modifyTargetHealth(targetHealth,targetModel)
+    attack: (key) ->
+      @changeTarget()
+      targetModel = @getTargetModel()
+      if @sanityCheck(targetModel)
+        @setActionCd(@get('actionSpeed'))
+        @dealDamage("attack", targetModel)
+        target = targetModel.get('name')
+        targetHealth = $("##{target}").children()
+        @modifyTargetHealth(targetHealth,targetModel)
 
     modifyTargetHealth: (targetHealth, model) ->
       targetHealth.each( (index, object) =>
@@ -164,12 +183,11 @@
 
 #### Spells and Animations ####
 
-    spell: (keypress, targetModel) ->
+    spell: (keypress) ->
       { key } = keypress
       spell = @get('spells')[key]
       unless spell.get('onCd')
-        console.log spell.get('className')
-        @sortCooldowns(spell)
+        console.log spell.get('className'), spell
         @confirmHit = false
         route = @getProjectileCoords(spell)
         console.log "this is the spells route", route
@@ -178,12 +196,6 @@
           @projectileSpell(spell, route)
         else if spell.get('type') is "instant"
           @instantSpell(spell, route)
-
-    sortCooldowns: (spell) ->
-      if spell.get('className') is "teleport"
-        spell.set onCd: true
-      else
-        @spellCd(spell)
 
     projectileSpell: (spell, route) ->
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
@@ -273,8 +285,6 @@
           count++
         @suicideTimeout = setTimeout milisecondCellChecker, 1
       milisecondCellChecker()
-
-
 
     checkRoute: (route,spell,spellSpeed) ->
       count = -1
