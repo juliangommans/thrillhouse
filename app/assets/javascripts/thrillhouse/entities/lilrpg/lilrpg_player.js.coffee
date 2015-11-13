@@ -40,14 +40,12 @@
       healthBars = $('#player-health-bars').children()
       @modifyTargetHealth(healthBars, @)
       unless @get('alive')
-        alert "bitch, you ded"
+        console.log "bitch, you ded"
 
     checkCss: ->
       player = $('.player')
       if player.css('opacity')?
         player.css('opacity', "1")
-      # unless player.css('display')
-      #   player.css('display', 'block')
 
     changeTarget: ->
       if $("##{@get('direction')}").length
@@ -175,6 +173,7 @@
 
     cleanup: (model) ->
       console.log "cleanup, isle 6"
+      clearInterval(model.swing)
       $("##{model.get('name')}").remove()
       $(".#{model.get('name')}").remove()
       $("##{model.get('id')}").remove()
@@ -188,6 +187,7 @@
       spell = @get('spells')[key]
       unless spell.get('onCd')
         console.log spell.get('className'), spell
+        @spellCd(spell)
         @confirmHit = false
         route = @getProjectileCoords(spell)
         console.log "this is the spells route", route
@@ -244,9 +244,9 @@
       if extraDom?
         $(".#{className}").append(extraDom)
 
-      $(".#{className}").fadeIn(spell.get("speed")
+      $(".#{className}").fadeIn(spell.get("speed")*2
         , =>
-          $(".#{className}").fadeOut(spell.get("speed")*2
+          $(".#{className}").fadeOut(spell.get("speed")*3
             , =>
               if target?
                 @hitTarget(target, spell)

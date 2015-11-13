@@ -67,9 +67,6 @@
       # model.pulse(@map.get('coordinates'),@player)
       model.engageAi(@map.get('coordinates'),@player)
 
-#### needs a way to cleanup on page change - possibles:
-# tie it straight to the enemy dom-element
-# append it to "main view", needs offset and some math
     setCharHealth: (char, object) ->
       # location = @getOffset(object)
       total = char.get('maxHealth')

@@ -2,8 +2,8 @@
   class LilrpgApp.Enemy extends App.Entities.LilrpgModel
 
     defaults:
-      health: 3
-      maxHealth: 3
+      health: 5
+      maxHealth: 5
       damage: 1
       range: 1
       alive: true
@@ -67,7 +67,6 @@
         @swing = setInterval(@attackPlayer,@get('attackSpeed'))
       else
         @faceOtherDirection()
-    # else
 
     faceOtherDirection: =>
       newDirection = @oppositeDirection(@get('facing').direction)
@@ -130,6 +129,9 @@
           playerHp -= @get('damage')
           @player.set health: playerHp
           @postDamage()
+      else
+        clearInterval(@swing)
+        @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
 
     postDamage: ->
       @checkPlayerStillInRange()
@@ -137,6 +139,7 @@
         @player.set alive: false
       unless @player.get('alive') and @get('target')
         clearInterval(@swing)
+        @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
       console.log "after", @player.get('health')
 
     checkPlayerStillInRange: ->

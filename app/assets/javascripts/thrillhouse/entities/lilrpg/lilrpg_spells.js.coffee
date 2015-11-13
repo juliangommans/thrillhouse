@@ -1,5 +1,13 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
   class LilrpgApp.Spell extends App.Entities.LilrpgModel
+    defaults:
+      peirce: false
+      onCd: false
+      range: 3
+      rotate: false
+      rotateSpeed: 10
+      stun: false
+      target: 'enemy'
 
     showCooldown: ->
       className = @get('className')
@@ -40,66 +48,48 @@
       range
 
   class LilrpgApp.Fireball extends LilrpgApp.Spell
-
-    defaults:
-      className: "fireball"
-      range: 3
-      cooldown: 10000
-      speed: 500
-      damage: 2
-      stun: false
-      onCd: false
-      type: 'projectile'
-      target: 'enemy'
-      rotate: false
+    initialize:->
+      @set
+        className: "fireball"
+        cooldown: 12000
+        speed: 500
+        damage: 2
+        type: 'projectile'
 
   class LilrpgApp.Icicle extends LilrpgApp.Spell
-
-    defaults:
-      className: "icicle"
-      range: 3
-      cooldown: 8000
-      speed: 400
-      damage: 1
-      stun: true
-      onCd: false
-      type: 'projectile'
-      target: 'enemy'
-      rotate: true
-  #### higher rotate speed is faster rotation animation
-  #### basically how many degrees change per milisecond
-      rotateSpeed: 10
+    initialize:->
+      @set
+        className: "icicle"
+        cooldown: 10000
+        speed: 400
+        damage: 1
+        stun: true
+        type: 'projectile'
+        rotate: true
+    #### higher rotate speed is faster rotation animation
+    #### basically how many degrees change per milisecond
 
 
   class LilrpgApp.ThunderBolt extends LilrpgApp.Spell
-
-    defaults:
-      className: "thunderbolt"
-      range: 3
-      cooldown: 4000
-      speed: 100
-      damage: 1
-      stun: false
-      onCd: false
-      type: 'instant'
-      target: 'enemy'
-      extraDom: "<div class='lightning-left'></div><div class='lightning-right'></div>"
-      rotate: false
+    initialize:->
+      @set
+        className: "thunderbolt"
+        cooldown: 6000
+        speed: 50
+        damage: 1
+        type: 'instant'
+        extraDom: "<div class='lightning-left'></div><div class='lightning-right'></div>"
 
    class LilrpgApp.Teleport extends LilrpgApp.Spell
-
-    defaults:
-      className: "teleport"
-      range: 3
-      cooldown: 2000
-      speed: 100
-      damage: 0
-      stun: false
-      onCd: false
-      type: 'instant'
-      target: 'player'
-      # extraDom: "<div class='left'></div><div class='right'></div>"
-      rotate: false
+    initialize:->
+      @set
+        className: "teleport"
+        cooldown: 6000
+        speed: 100
+        damage: 0
+        type: 'instant'
+        target: 'player'
+        # extraDom: "<div class='left'></div><div class='right'></div>"
 
 
   API =

@@ -86,7 +86,6 @@
         y: (currentLoc.y + newLoc.y)
       }
 
-
     oppositeDirection: (direction) ->
       opposite = {
         up: "down"
