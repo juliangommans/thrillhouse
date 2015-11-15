@@ -25,6 +25,7 @@
       location = $(".player").parent().attr('id')
       @player.set location: location
       @setModelFacingAttributes('.player', @player)
+      console.log "this is your hero", @hero
 
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
@@ -132,6 +133,8 @@
       for i in [1..hp]
         $('#player-health-bars').append(healthObj)
 
+    
+
 #### Views ####
 
     showView: ->
@@ -161,6 +164,7 @@
 
     dialogView: ->
       dialogView = @getDialogView()
+      @hero = App.request "heroes:entity", 1
       @listenTo dialogView, "show", ->
         @dialogMaps = new Backbone.Marionette.Region
           el: "#map-load-list"

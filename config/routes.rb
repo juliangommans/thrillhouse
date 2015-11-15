@@ -7,9 +7,11 @@ ThrillHouse::Application.routes.draw do
   get '/lilrpg/mapedit', to: "lilrpg#mapedit"
 
   root to: "home#index"
-  resources :lil_rpg_map_editor
   resources :character
   resources :move
-
+  
+  resources :lil_rpg_map_editor
+  resources :heroes
+  resources :hero_items
 
 end

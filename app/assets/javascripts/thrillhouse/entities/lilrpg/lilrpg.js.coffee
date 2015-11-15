@@ -1,11 +1,11 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
 
-  class LilrpgApp.Lilrpg extends App.Entities.Model
-    urlRoot: -> Routes.lilrpg_index_path()
+  class LilrpgApp.Heroes extends App.Entities.Model
+    urlRoot: -> Routes.heroes_path()
 
-  class LilrpgApp.LilrpgCollection extends App.Entities.Collection
-    model: LilrpgApp.Lilrpg
-    url: -> Routes.lilrpg_index_path()
+  class LilrpgApp.HeroesCollection extends App.Entities.Collection
+    model: LilrpgApp.Heroes
+    url: -> Routes.heroes_path()
 
   class LilrpgApp.Controls extends App.Entities.Model
 
@@ -78,29 +78,29 @@
         code: 68
 
   API =
-    getLilrpgs: ->
-      lilrpgs = new LilrpgApp.LilrpgCollection
+    getHeroesCollection: ->
+      lilrpgs = new LilrpgApp.HeroesCollection
       lilrpgs.fetch
         reset: true
       lilrpgs
-    getLilrpg: (id) ->
-      lilrpg = new LilrpgApp.Lilrpg
+    getHeroes: (id) ->
+      lilrpg = new LilrpgApp.Heroes
         id: id
       lilrpg.fetch()
       lilrpg
-    newLilrpg: ->
-      new LilrpgApp.Lilrpg
+    newHeroes: ->
+      new LilrpgApp.Heroes
     controls: ->
       new LilrpgApp.Controls
 
   App.reqres.setHandler "lilrpg:player:controls", ->
     API.controls()
 
-  App.reqres.setHandler 'lilrpg:entities', ->
-    API.getLilrpgs()
+  App.reqres.setHandler 'heroes:entities', ->
+    API.getHeroesCollection()
 
-  App.reqres.setHandler 'lilrpg:entity', (id) ->
-    API.getLilrpg id
+  App.reqres.setHandler 'heroes:entity', (id) ->
+    API.getHeroes id
 
-  App.reqres.setHandler 'new:lilrpg:entity', ->
-    API.newLilrpg()
+  App.reqres.setHandler 'new:heroes:entity', ->
+    API.newHeroes()

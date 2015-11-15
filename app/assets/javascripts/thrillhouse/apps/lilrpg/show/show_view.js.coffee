@@ -20,6 +20,10 @@
       loadMap: "#load-modal"
     triggers:
       'click @ui.loadMap': 'load:selected:map'
+      
+    onRender: ->
+      $(document).keydown (e) =>
+        e.preventDefault()
 
   class Show.LoadMap extends App.Views.ItemView
     template: 'lilrpg/show/load_map'

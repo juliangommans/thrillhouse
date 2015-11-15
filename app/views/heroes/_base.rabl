@@ -1,1 +1,1 @@
-attributes :id, :name
+attributes :id, :name, :hero_class

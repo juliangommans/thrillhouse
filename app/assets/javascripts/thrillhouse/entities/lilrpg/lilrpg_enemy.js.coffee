@@ -43,8 +43,9 @@
       $("##{@get('id')}").remove()
       $("##{cell}").append(enemyObj)
       nextCell = @checkCurrentDirection(1)
-      if @checkIllegalMoves(nextCell)
-        @checkFacingCell(nextCell)
+  #### this needs to be fixing, causes them to miss a step when hitting a wall
+      # if @checkIllegalMoves(nextCell)
+      #   @checkFacingCell(nextCell)
       @createProxyChar()
 
     createProxyChar: ->
