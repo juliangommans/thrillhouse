@@ -1,8 +1,9 @@
 ######################################
-require_relative "./seeding_data/characters_for_seeding"
-require_relative "./seeding_data/simple_movelist"
-require_relative "./seeding_data/bufflist_for_seeding"
+# require_relative "./seeding_data/characters_for_seeding"
+# require_relative "./seeding_data/simple_movelist"
+# require_relative "./seeding_data/bufflist_for_seeding"
 # require_relative "./seeding_data/movelist_for_seeding"
+require_relative "./seeding_data/heroes_items_seeding"
 
 ######################################
 
@@ -61,3 +62,12 @@ require_relative "./seeding_data/bufflist_for_seeding"
 #     end
 #   end
 # end
+
+items_array = [HeroItemList.fragments, HeroItemList.orbs]
+items_array.each do |item_type|
+  item_type.each do |item|
+    h = HeroItems.create(name: item[:name], description: item[:description])
+    h.save!
+  end
+end
+

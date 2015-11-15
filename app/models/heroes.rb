@@ -4,6 +4,6 @@ class Heroes < ActiveRecord::Base
 
   def create
     @hero = Heroes.new
-    inventory = HeroInventory.new(heroes_id: @hero.id)
+    HeroInventory.new(heroes_id: @hero.id)
   end
 end
