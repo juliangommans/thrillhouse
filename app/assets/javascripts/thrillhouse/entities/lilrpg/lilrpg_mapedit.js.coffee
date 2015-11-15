@@ -9,6 +9,11 @@
       ary = []
       ary.push(@buildVerticalWall())
       ary.push(@buildHorizontalWall())
+      ary.push(@buildCrossWall())
+      ary.push(@buildBottomLeftWall())
+      ary.push(@buildTopRightWall())
+      ary.push(@buildTopLeftWall())
+      ary.push(@buildBottomRightWall())
 
       for obj in ary
         @collection.add obj
@@ -26,6 +31,41 @@
         class2: "wall"
         class3: ""
         name: "Horizontal Wall"
+
+    buildCrossWall: ->
+      wall = new App.Entities.Model
+        class1: "cross-wall"
+        class2: "wall"
+        class3: "joinery"
+        name: "Cross Wall"
+
+    buildBottomLeftWall: ->
+      wall = new App.Entities.Model
+        class1: "bottom-left"
+        class2: "wall"
+        class3: "joinery"
+        name: "Bottom Left Corner Wall"
+
+    buildTopRightWall: ->
+      wall = new App.Entities.Model
+        class1: "top-right"
+        class2: "wall"
+        class3: "joinery"
+        name: "Top Right Corner Wall"
+
+    buildTopLeftWall: ->
+      wall = new App.Entities.Model
+        class1: "top-left"
+        class2: "wall"
+        class3: "joinery"
+        name: "Top Left Corner Wall"
+
+    buildBottomRightWall: ->
+      wall = new App.Entities.Model
+        class1: "bottom-right"
+        class2: "wall"
+        class3: "joinery"
+        name: "Bottom Right Corner Wall"
 
   class LilrpgApp.MapCharacters extends App.Controllers.Base
     initialize: ->

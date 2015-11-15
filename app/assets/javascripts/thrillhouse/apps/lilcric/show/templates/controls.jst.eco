@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<div class="modal" id="prematch-modal">
+<div class="modal" id="prematch-modal" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
 
     <div class="modal-content">
