@@ -1,0 +1,8 @@
+<div id="control-region"></div>
+<div id="play-region">
+  <div class="container"></div>
+</div>
+<div id="bottom-region">
+  <div id="ball-region"></div>
+  <div id="over-region"></div>
+</div>

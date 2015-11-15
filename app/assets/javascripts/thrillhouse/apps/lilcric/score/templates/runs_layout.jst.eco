@@ -1,0 +1,21 @@
+<div id="current-over" class="cric-tables">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Balls</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+      </tr>
+    </thead>
+    <tbody id="run-score-region">
+   <!--    <tr id="runs-region" class="success"></tr>
+      <tr id="wickets-region" class="warning"></tr>
+      <tr id="shots-region" class="info"></tr>
+      <tr id="speeds-region"></tr> -->
+    </tbody>
+  </table>
+</div>

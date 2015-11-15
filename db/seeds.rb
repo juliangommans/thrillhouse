@@ -1,6 +1,9 @@
 ######################################
-require_relative "./seeding_data/characters_for_seeding"
-require_relative "./seeding_data/movelist_for_seeding"
+# require_relative "./seeding_data/characters_for_seeding"
+# require_relative "./seeding_data/simple_movelist"
+# require_relative "./seeding_data/bufflist_for_seeding"
+# require_relative "./seeding_data/movelist_for_seeding"
+require_relative "./seeding_data/heroes_items_seeding"
 
 ######################################
 
@@ -9,7 +12,7 @@ require_relative "./seeding_data/movelist_for_seeding"
 # moves_array.each do |moves|
 #   moves.each do |move|
 #     puts move
-#     x = Move.create(name: move[:name], category: move[:type], realm: move[:realm], element: move[:element], power: move[:power], cost: move[:cost], cooldown: move[:cooldown], rank: move[:rank], tier: move[:tier])
+#     x = Move.create(name: move[:name], category: move[:type], critical_damage: move[:critical_damage], realm: move[:realm], element: move[:element], power: move[:power], cost: move[:cost], cooldown: move[:cooldown], stat: move[:stat], stat_target: move[:stat_target], stat_type: move[:stat_type], description: move[:description], rank: move[:rank], tier: move[:tier])
 #     x.save!
 #   end
 # end
@@ -35,4 +38,36 @@ require_relative "./seeding_data/movelist_for_seeding"
 #   end
 # end
 
-######################################
+# #####################################
+
+# buffs_array = Buffs.list
+# buffs_array.each do |buff|
+#   puts buff
+#   b = Buff.create(name: buff[:name], buff_type: buff[:buff_type], stat: buff[:stat], value: buff[:value], stacks: buff[:stacks], max_stacks: buff[:max_stacks])
+#   b.save!
+# end
+
+# #####################################
+
+# buffs = Buff.all
+# buffs.each do |buff|
+#   moves_with_buffs = Move.where(stat: buff.stat)
+#   if moves_with_buffs
+#     moves_with_buffs.each do |move|
+#       if buff.buff_type == move.stat_type
+#         e = Effect.create(move_id: move.id, buff_id: buff.id)
+#         e.save!
+#         puts e
+#       end
+#     end
+#   end
+# end
+
+items_array = [HeroItemList.fragments, HeroItemList.orbs]
+items_array.each do |item_type|
+  item_type.each do |item|
+    h = HeroItems.create(name: item[:name], description: item[:description])
+    h.save!
+  end
+end
+

@@ -1,0 +1,70 @@
+<div id="above-pitch" class="row">
+  <div id="bowler" class="col-xs-2">
+    <div id="ball"> </div>
+  </div>
+  <div class="col-xs-3">
+    <div id="back-swing" class="bat"></div>
+    <div id="down-swing" class="bat"></div>
+    <div id="fore-swing" class="bat"></div>
+  </div>
+  <div class="result-display col-xs-1">
+  </div>
+  <div class="countdown col-xs-1"></div>
+  <div class="col-xs-2">
+  </div>
+  <div class="col-xs-1">
+    <div id="batsman" class="person">
+      <div id="head"></div>
+      <div id="torso"></div>
+      <div class="legs">
+        <div id="left-leg"></div>
+        <div id="right-leg"></div>
+      </div>
+    </div>
+  </div>
+  <div id="wicket-col" class="col-xs-1">
+    <div id="empty-wicket"></div>
+    <div id="wicket"></div>
+  </div>
+  <div class="col-xs-1">
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-1">
+  </div>
+  <div class="pitch col-xs-2">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div id="short-loc" class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div id="good-loc" class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div id="full-loc" class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div class="pitch col-xs-1">
+  </div>
+  <div class="col-xs-1">
+  </div>
+</div>
+<div id="below-pitch" class="row">
+  <div class="pitch-segments col-xs-2">
+  </div>
+  <div id="short-pitch" class="pitch-segments col-xs-3">
+    SHORT
+  </div>
+  <div id="good-pitch" class="pitch-segments col-xs-3">
+    GOOD
+  </div>
+  <div id="full-pitch" class="pitch-segments col-xs-2">
+    FULL
+  </div>
+  <div class="pitch-segments col-xs-2">
+  </div>
+</div>

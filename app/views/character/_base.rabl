@@ -20,6 +20,20 @@ node :secondary_stats do |r|
   }
 end
 
+node :totals do |r|
+  {
+  action_points: r[:action_points],
+  critical_strike_points: r[:total_critical_strike_points],
+  combo_points: r[:total_combo_points],
+  health: r[:health],
+  attack: r[:attack],
+  defense: r[:defense],
+  energy: r[:energy],
+  resilience: r[:resilience],
+  speed: r[:speed]
+  }
+end
+
 child :moves do
   extends("move/_base")
 end

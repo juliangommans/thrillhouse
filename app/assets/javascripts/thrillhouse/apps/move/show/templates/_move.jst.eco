@@ -6,3 +6,8 @@
 <p>Cooldown: <%= @cooldown %></p>
 <p>Cost: <%= @cost %></p>
 
+<% if @buffs: %>
+<h4> <%= @name %>'s has the following added effects </h4>
+<% for buff in @buffs: %>
+<p>Effect: This buff <%= buff.buff_type %>s <%= @stat_target %>s <%= buff.stat%> by <%= buff.value*100 %>%</p>
+<p>Stacks up to <%= buff.max_stacks %> times.</p>

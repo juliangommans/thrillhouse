@@ -1,0 +1,6 @@
+<% if @wicket is "Wicket?": %>
+<%= @wicket %>
+<% else if @wicket: %>
+<%= "W" %>
+<% else: %>
+<%= "n/o" %>

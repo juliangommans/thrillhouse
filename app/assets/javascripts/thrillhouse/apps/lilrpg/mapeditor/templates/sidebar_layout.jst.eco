@@ -1,0 +1,11 @@
+<div id="map-sidebar">
+  <div id="map-sidebar-tabs">
+    <ul class="nav nav-tabs">
+      <li id="objects" class="map-sidebar-nav active"><a href="#">Objects</a ></li>
+      <li id="characters" class="map-sidebar-nav" ><a href="#">Characters</a ></li>
+      <li id="items" class="map-sidebar-nav"><a href="#">Items</a ></li>
+    </ul>
+  </div>
+  <div id="map-sidebar-body">
+  </div>
+</div>

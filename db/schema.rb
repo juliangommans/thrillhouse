@@ -11,19 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150916061919) do
+ActiveRecord::Schema.define(version: 20151115013601) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
     t.string   "buff_type"
     t.string   "stat"
     t.string   "type"
-    t.integer  "value"
+    t.decimal  "value"
     t.integer  "stacks"
     t.integer  "duration"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "character_id"
+    t.integer  "max_stacks"
   end
 
   add_index "buffs", ["character_id"], name: "index_buffs_on_character_id"
@@ -46,6 +47,8 @@ ActiveRecord::Schema.define(version: 20150916061919) do
     t.string   "nature"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "total_combo_points",           default: 5
+    t.integer  "total_critical_strike_points", default: 10
   end
 
   create_table "effects", force: true do |t|
@@ -58,6 +61,39 @@ ActiveRecord::Schema.define(version: 20150916061919) do
 
   add_index "effects", ["buff_id"], name: "index_effects_on_buff_id"
   add_index "effects", ["move_id"], name: "index_effects_on_move_id"
+
+  create_table "hero_inventories", force: true do |t|
+    t.integer  "heroes_id"
+    t.integer  "hero_items_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hero_inventories", ["hero_items_id"], name: "index_hero_inventories_on_hero_items_id"
+  add_index "hero_inventories", ["heroes_id"], name: "index_hero_inventories_on_heroes_id"
+
+  create_table "hero_items", force: true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "heroes", force: true do |t|
+    t.string   "name"
+    t.string   "hero_class"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "lil_rpg_map_editors", force: true do |t|
+    t.string   "name"
+    t.integer  "size"
+    t.text     "map"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "coordinates"
+  end
 
   create_table "move_lists", force: true do |t|
     t.integer  "move_id"
@@ -81,6 +117,13 @@ ActiveRecord::Schema.define(version: 20150916061919) do
     t.integer  "tier"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "bonus",           default: false
+    t.boolean  "critical",        default: false
+    t.decimal  "critical_damage"
+    t.string   "stat"
+    t.string   "stat_type"
+    t.string   "stat_target"
+    t.string   "description"
   end
 
   create_table "passives", force: true do |t|

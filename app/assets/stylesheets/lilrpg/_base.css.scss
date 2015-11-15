@@ -1,0 +1,178 @@
+.cell {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+}
+
+.map-row {
+  display: block;
+  height: 20px;
+}
+
+
+.enemy {
+}
+
+.dummy {
+  // background-color: blue;
+  // width: 5px;
+  // height: 5px;
+}
+
+.simple-melee {
+  margin: 2px;
+  background-color: red;
+  z-index: 2;
+  border-radius: 4px;
+  border: 8px solid red;
+}
+
+.simple-ranged {
+  border-radius: 3px;
+  width: 15px;
+  height: 15px;
+  border: 3px solid orange;
+}
+
+.player {
+  background-color: green;
+  z-index: 2;
+  margin: 2px;
+  border-radius: 4px;
+  border: 8px solid green;
+}
+
+.tresure-chest {
+  background-color: yellow;
+  height: 8px;
+  width: 14px;
+  margin: 6px 3px;
+  border: 2px solid gray;
+}
+.health {
+  height: 7px;
+  display: inline-block; //-block;
+  position: absolute;
+  left: -3px;
+  top: -13px;
+  z-index: 5;
+}
+
+.health-bar {
+  border: 1px solid red;
+  border-radius: 1px;
+  height: 5px;
+  width: 2px;
+  display: inline-block;
+}
+// .health{
+//   height: 8px;
+//   margin-top: 9px;
+// // these three things don't need to exist without gridlines
+//   background-color: black;
+//   border: 1px solid black;
+//   border-radius: 1px;
+
+//   position: absolute;
+// }
+
+// .health-bar {
+//   border: 1px solid red;
+//   border-radius: 1px;
+//   height: 5px;
+//   width: 3px;
+//   margin-right: 1px;
+//   margin-bottom: 10px;
+//   display: inline-block;
+// }
+
+
+.positive-health {
+  border-color: green;
+  background-color: lime;
+}
+
+.negative-health {
+  border-color: crimson;
+  background-color: red;
+}
+
+.fireball {
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  background-color: yellow;
+  border: 4px solid orange;
+  border-radius: 8px;
+}
+
+.icicle {
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  background-color: aqua;
+  border: 2px dashed blue;
+}
+
+.thunderbolt {
+  display: none;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+
+}
+
+.lightning-left {
+  position: absolute;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  margin-right: 5px;
+  margin-top: 5px;
+  border-right: 10px solid yellow;
+}
+
+.lightning-right {
+  position: absolute;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  border-left: 10px solid yellow;
+}
+
+.direction {
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid yellow;
+}
+
+.right {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-left: 8px solid white;
+}
+
+.left {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid white;
+  border-left: 8px solid transparent;
+
+}
+
+.down {
+  border-top: 8px solid white;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+
+}
+
+.up {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid white;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+
+}

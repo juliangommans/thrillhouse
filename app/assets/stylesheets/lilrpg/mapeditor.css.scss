@@ -1,0 +1,77 @@
+#map-editor-wrapper {
+  height: 513px;
+  position: relative;
+  width: 100%;
+
+  a {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+  }
+
+  #map-ui{
+    padding: 10px;
+  }
+
+  #map-sidebar-region {
+    width: 25%;
+    height: 512px;
+    right: 0;
+    display: inline-block;
+    position: absolute;
+    overflow-y: auto;
+    text-align: center;
+    font-size: 75%;
+  }
+
+  #map-region {
+    width: 75%;
+    display: inline-block;
+    height: 365px;
+    overflow: auto;
+    white-space: nowrap;
+    padding: 10px;
+  }
+
+  .map-cell {
+    position: relative;
+    margin: 1px;
+  }
+
+  .map-cell:after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      bottom: -1px;
+      right: -1px;
+      border: 1px solid lightgray;
+  }
+
+  .map-cell:hover {
+    background-color: lightgray;
+  }
+
+  .map-cell:active {
+    background-color: gray;
+  }
+
+  .map-row {
+    margin-bottom: 2px;
+  }
+
+  .selected {
+    background-color: lightgray;
+  }
+
+  .modal {
+    text-align: center;
+  }
+
+  #sidebar-object-icon {
+    float: left;
+  }
+
+}
+
+

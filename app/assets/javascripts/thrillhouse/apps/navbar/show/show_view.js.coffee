@@ -4,5 +4,9 @@
     template: 'navbar/show/navbar'
     triggers:
       'click #home': 'go:home'
-      'click #chars': 'get:character:list'
-      'click #moves': 'get:move:list'
+      "click #character-list" : "get:character:list"
+      "click #battle-dome" : "get:battle:dome"
+      "click #move-list" : "get:move:list"
+      "click #lil-cric" : "get:lil:cric"
+      "click #lil-rpg" : "get:lil:rpg"
+      "click #lil-rpg-map" : "get:lil:rpg:map"

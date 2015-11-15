@@ -1,0 +1,45 @@
+<div id="map-ui">
+  <div id="buttons">
+    <button id="new-map" class="btn btn-info">New Map</button>
+    <button id="save-map" class="btn btn-success">Save Map</button>
+    <button id="load-map" class="btn btn-warning">Load Map</button>
+    <button id="clear-map" class="btn btn-danger">Clear Map</button>
+  </div>
+</div>
+
+
+<div id="save-map-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Save Map</h3>
+      </div>
+      <div class="modal-body">
+        <p>Before saving your map please enter a name so it can be found later.</p>
+        <input id="save-map-name" type="text"></input>
+      <div class="modal-footer">
+        <button type="button" id="save-modal" class="btn btn-default" data-dismiss="modal">Save</button>
+        <button type="button" id="cancel-save-modal" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="load-map-modal-bloop" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Load Map</h3>
+      </div>
+      <div class="modal-body">
+        <p>Please choose a map to load before.</p>
+        <div id="map-load-select" class="dropdown"></div>
+      <div class="modal-footer">
+        <button type="button" id="load-modal" class="btn btn-default" data-dismiss="modal">Load</button>
+        <button type="button" id="cancel-load-modal" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>

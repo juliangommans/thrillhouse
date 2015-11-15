@@ -1,0 +1,33 @@
+#ui-region {
+  // width: 75%;
+  // height: 150px;
+  // bottom: 0;
+  // position: absolute;
+  background-color: orange;
+  .points-circle {
+    width: 14px;
+    height: 14px;
+    background: gray;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+    border: 2px solid red;
+    display: inline-block;
+  }
+  .available {
+    background: green;
+    border: 2px solid lightgreen;
+  }
+  .selected {
+    background: darkgray;
+  }
+  .combo-points {
+    background: gray;
+  }
+  .crit-points {
+    background: gray;
+  }
+  .modal-ap-wrapper {
+    float: right;
+  }
+}

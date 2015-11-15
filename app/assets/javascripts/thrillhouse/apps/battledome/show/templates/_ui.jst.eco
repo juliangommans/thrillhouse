@@ -1,19 +1,55 @@
 <div id="moves-region">
-  goody is <%= @player.get('name') %> the <%= @player.get('breed') %>
+  <%= @player.get('name') %> the <%= @player.get('breed') %>
   <br>
-  <% for move in @player.get('moves'): %>
-    <button class="player-moves btn btn-sm btn-danger" data-toggle="popover" data-placement="bottom" data-content='<%= move.description %>'>
-      <%= move.name %>
+  <button class="player-select-moves btn btn-sm btn-danger" data-toggle="modal" data-target="#moves-modal">
+      Moves List
+  </button>
+ <div id="confirm-moves">
+    <br>
+    <button class="player-confirm-moves btn btn-sm btn-danger">
+      Fight
     </button>
-  <% end %>
-
+    <button class="player-clear-moves btn btn-sm btn-danger">
+      Clear
+    </button>
+  </div>
 </div>
+
+<div id="cooldowns">
+  These are your cooldowns
+    <% for cd in @cooldowns.player: %>
+      <div id="cd<%=num%>" class="cooldown">
+        <%= cd.move.name %> has <%= cd.cooldown %> rounds remaining.
+      </div>
+    <% end %>
+</div>
+
+<div id="character-points">
+     Action Points
+  <br>
+  <% for num in [@player.get('totals')["action_points"]..1]: %>
+    <div class="ui-ap points-circle"></div>
+  <% end %>
+  <br>
+    Combo Points
+  <br>
+  <% for num in [1..3]: %>
+    <div id="combo<%=num%>" class="combo-points points-circle"></div>
+  <% end %>
+  <br>
+    Critical Strike Points
+  <br>
+  <% for num in [1..10]: %>
+    <div id="crit<%=num%>" class="crit-points points-circle"></div>
+  <% end %>
+</div>
+
 <div id="character-data">
   Stats
   <table class="table-striped">
     <tr>
       <td>Health:</td>
-      <td><%= @player.get('base_stats').health %> </td>
+      <td><%= @player.get('base_stats').health %>/<%= @player.get('totals').health %> </td>
       <td>Action Points:</td>
       <td><%= @player.get('secondary_stats').action_points %> </td>
     </tr>
@@ -32,7 +68,7 @@
       <td>Energy:</td>
       <td><%= @player.get('base_stats').energy %> </td>
       <td>Crit Damage:</td>
-      <td><%= @player.get('secondary_stats').critical_strike_damage %> </td>
+      <td><%= @player.get('secondary_stats').critical_strike_power %> </td>
     </tr>
     <tr>
       <td>Resilience:</td>
@@ -43,4 +79,36 @@
       <td><%= @player.get('base_stats').speed %> </td>
     </tr>
   </table>
+</div>
+
+<div class="modal" id="moves-modal">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"> Select your moves
+          <div class="modal-ap-wrapper"> Available action points
+          <% for num in [@player.get('totals')["action_points"]..1]: %>
+            <div id="ap<%=num%>" class="modal-ap action-points points-circle"></div>
+          <% end %>
+          </div>
+        </h4>
+      </div>
+
+        <br>
+      <% for move in @player.get('moves'): %>
+        <button id="<%= move.id %>" class="player-moves btn btn-sm btn-default" data-toggle="popover" data-placement="bottom" data-content='<%= move.description %>'>
+          <%= move.name %> (<%= move.cost %>)
+        </button>
+      <% end %>
+        <br>
+        <br>
+
+      <div class="modal-footer">
+        <button type="button" id="accept-move-list" class="btn btn-default" data-dismiss="modal">Accept</button>
+        <button type="button" id="close-move-list" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+  </div>
 </div>

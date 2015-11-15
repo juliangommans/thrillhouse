@@ -1,0 +1,16 @@
+<div id="over-totals" class="cric-tables">
+  <table class="table table-hover">
+    <thead>
+      <row>
+        <th>Over</th>
+        <th>Runs</th>
+        <th>S/R</th>
+        <!-- <th>Avg Speed</th> -->
+        <th>W</th>
+      </row>
+    </thead>
+    <tbody id="over-score-region">
+      <!-- <tr id="overs-region"></tr> -->
+    </tbody>
+  </table>
+</div>

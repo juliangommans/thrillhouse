@@ -12,6 +12,8 @@ module MoveSeeds
       effect2: "reflect",
       cooldown: 2,
       cooldown_total: 2,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -25,6 +27,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 1,
       cooldown_total: 1,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -38,6 +42,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 2,
       cooldown_total: 2,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -51,6 +57,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 1,
       cooldown_total: 1,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -64,6 +72,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 1,
       cooldown_total: 1,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -77,6 +87,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 2,
       cooldown_total: 2,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     }
@@ -95,6 +107,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 2,
       cooldown_total: 2,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -108,6 +122,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 1,
       cooldown_total: 1,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -121,6 +137,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 0,
       cooldown_total: 0,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -134,6 +152,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 2,
       cooldown_total: 2,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -147,6 +167,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 1,
       cooldown_total: 1,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     },
@@ -160,6 +182,8 @@ module MoveSeeds
       effect2: "",
       cooldown: 0,
       cooldown_total: 0,
+      critical: false,
+      critical_damage: 0.5,
       rank: 1,
       tier: 1
     }]
@@ -177,6 +201,8 @@ module MoveSeeds
         cooldown: 1,
         cooldown_total: 1,
         rank: 1,
+        critical: false,
+        critical_damage: 0.5,
         tier: 1
       },
       { name: "Warmth",
@@ -190,6 +216,8 @@ module MoveSeeds
         cooldown: 0,
         cooldown_total: 0,
         rank: 1,
+        critical: false,
+        critical_damage: 0.5,
         tier: 1
       },
     @firey_shell_1 = { name: "Firey shell",
@@ -203,6 +231,8 @@ module MoveSeeds
         cooldown: 2,
         cooldown_total: 2,
         rank: 1,
+        critical: false,
+        critical_damage: 0.5,
         tier: 1
       },
       { name: "Molten swipe",
@@ -216,6 +246,8 @@ module MoveSeeds
         cooldown: 0,
         cooldown_total: 0,
         rank: 1,
+        critical: false,
+        critical_damage: 0.5,
         tier: 1
       },
       { name: "Pyro slap",
@@ -229,6 +261,8 @@ module MoveSeeds
         cooldown: 1,
         cooldown_total: 1,
         rank: 1,
+        critical: false,
+        critical_damage: 0.5,
         tier: 1
       },
       { name: "Lava Jet",
@@ -242,9 +276,9 @@ module MoveSeeds
         cooldown: 3,
         cooldown_total: 3,
         rank: 1,
+        critical: false,
+        critical_damage: 0.5,
         tier: 1
       }]
   end
-
-
 end

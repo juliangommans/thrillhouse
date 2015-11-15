@@ -617,9 +617,9 @@ end
 
 options = {
   title: "Thrillhouse",
-  appname: "move",
-  branchname: "show",
-  routable: true,
+  appname: "lilrpg",
+  branchname: "hero_items",
+  routable: false,
   custom: "/thrillhouse"
 }
 

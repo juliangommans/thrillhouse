@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="row padded-rows">
+    <div class="col-xs-2">
+      <button id="js-one-bowl" class="btn btn-sm btn-danger">Bowl One Ball</button>
+    </div>
+    <div class="col-xs-2">
+      <button id="js-one-over" class="btn btn-sm btn-danger">Bowl One Over</button>
+    </div>
+    <div class="col-xs-2">
+      <button id="js-reset" class="btn btn-sm btn-danger">Reset</button></div>
+    <div class="col-xs-3">
+      <span>Strike Rate:</span><span class="strike-rate"> 0 (0)</span>
+    </div>
+    <div class="col-xs-3">
+      <span>Total Runs:</span><span class="total-runs"> 0 (0)</span>
+    </div>
+</div>
+
+<div class="modal" id="prematch-modal" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"> Rules and Options
+        </h4>
+      </div>
+        <p class="generic-padding"> These are the rules for the game. Use the arrow keys to perform a number of different shots, the ball will vary in speed and length resulting in different outcomes from each shot. Evey shot has a way to get out and a way to cash in.</p>
+
+        <ul class="list-group">
+          <li class="list-group-item">
+            <div id="up-hook"> The Up Arrow ( &#8593; ) perform a Hook (better for short balls)
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div id="down-drive"> The Down Arrow ( &#8595; ) perform a Drive shot (better for full balls)
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div id="right-cut"> The Right Arrow ( &#8594; ) perform a Cut shot (works varyingly on lengths/speeds)
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div id="left-pull"> The Left Arrow ( &#8592; ) perform a Pull shot (works varyingly on lengths/speeds)
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div id="space-bar"> The Space Bar - perform a Block (can't get out, but can't score much)
+            </div>
+          </li>
+        </ul>
+
+        <div class="form-group">
+          <label>How would you like messages displayed between deliveries?</label>
+          <select class="form-control" id="js-options">
+            <option value="0">No notifications between balls</option>
+            <option value="1">Notifications for wickets only</option>
+            <option value="2">Notifications for every ball</option>
+          </select>
+        </div>
+
+      <div class="modal-footer">
+        <button type="button" id="close-modal" class="btn btn-default" data-dismiss="modal">Okay</button>
+      </div>
+    </div>
+
+  </div>
+</div>

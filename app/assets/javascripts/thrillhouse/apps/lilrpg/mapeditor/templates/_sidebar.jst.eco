@@ -1,0 +1,3 @@
+<div id="sidebar-object-icon" class="map-cell cell"><div class="<%= "#{ @class1 } #{ @class2 } #{ @class3 }" %>"></div></div>
+
+<a id="<%= @class %>" href="#"><%= @name %></a>

@@ -1,0 +1,5 @@
+<td><%= @over %></td>
+<td><%= @runs %> (<%= @before_penalties %>)</td>
+<td><%= @strike_rate %> (<%= @before_wickets_sr %>)</td>
+<!-- <td><%= @average_speed %></td> -->
+<td><%= @wickets %></td>

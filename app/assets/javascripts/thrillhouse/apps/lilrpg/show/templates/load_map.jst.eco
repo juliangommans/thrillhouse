@@ -1,0 +1,4 @@
+<span data-id="<%= @id %>">
+  <%= @name %> (<%= @size %>x<%= @size %>)
+</span>
+

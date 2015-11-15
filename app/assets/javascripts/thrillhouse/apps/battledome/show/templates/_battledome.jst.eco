@@ -1,11 +1,70 @@
-<% console.log @ %>
-baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
+<div id="battledome-size">
+  <div class="row padded-rows">
 
-<br>
+    <div class="col-xs-8">
+      baddy is <%= @opponent.get('name') %> the <%= @opponent.get('breed') %>
+    </div>
 
-<% for move in @opponent.get('moves'): %>
-<button class="opponent-moves"> <%= move.name %> </button>
-<% end %>
+    <div class="col-xs-4">
+    </div>
 
-<br>
+  </div>
+
+<!--   <div class="row padded-rows">
+    <% for move in @opponent.get('moves'): %>
+      <div class="col-xs-2">
+        <button class="opponent-moves"> <%= move.name %> </button>
+      </div>
+    <% end %>
+  </div> -->
+  <div class="row padded-rows">
+    <div class="col-xs-8">
+    </div>
+    <div class="col-xs-4">
+      <div class="outer-health-bar">
+        <div id="opponent-current-hp" class="inner-health-bar">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row padded-rows">
+    <div class="col-xs-9">
+    </div>
+    <div class="col-xs-3">
+      <span class="opponent-health"> <%= @opponent.get('base_stats').health %>/<%= @opponent.get('totals').health %></span>
+      <span class="opponent-health-percent">
+       ( <%= Math.round(@opponent.get('base_stats').health / @opponent.get('totals').health * 100) %>% )
+      </span>
+    </div>
+  </div>
+
+  <div class="row filler-rows"></div>
+  <div class="row filler-rows"></div>
+  <div class="row filler-rows"></div>
+  <div class="row filler-rows"></div>
+
+  <div class="row padded-rows">
+    <div class="col-xs-3">
+      <span class="player-health"> <%= @player.get('base_stats').health %>/<%= @player.get('totals').health %></span>
+      <span class="player-health-percent">
+       ( <%= Math.round(@player.get('base_stats').health / @player.get('totals').health * 100) %>% )
+      </span>
+    </div>
+    <div class="col-xs-9">
+    </div>
+  </div>
+  <div class="row padded-rows player-health-bar">
+    <div class="col-xs-4">
+        <div class="outer-health-bar">
+          <div id="player-current-hp" class="inner-health-bar">
+          </div>
+        </div>
+    </div>
+    <div class="col-xs-8">
+    </div>
+  </div>
+
+
+</div>
+
 

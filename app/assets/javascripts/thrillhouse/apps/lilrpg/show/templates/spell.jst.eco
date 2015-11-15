@@ -1,0 +1,3 @@
+<div id="<%= @className %>" class="cooldown-display">
+  <p><%= @className %></p>
+</div>

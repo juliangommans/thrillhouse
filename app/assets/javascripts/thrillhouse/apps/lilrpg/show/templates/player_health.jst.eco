@@ -1,0 +1,4 @@
+<div id="player-health-wrapper">
+	<div id="player-health-bars"></div>
+	<div id="player-shield-bars"></div>
+</div>

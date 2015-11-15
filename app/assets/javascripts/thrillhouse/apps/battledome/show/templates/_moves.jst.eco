@@ -1,0 +1,115 @@
+<div id="ui-size">
+  <div class="row">
+    <div class="col-lg-2 test" id="moves-column">
+      <!-- First column -->
+      <div class="row padded-rows" id="moves-title">
+        <%= @player.get('name') %> the <%= @player.get('breed') %>
+      </div>
+      <div class="row padded-rows" id="moves-list">
+        <button class="player-select-moves in-combat btn btn-sm btn-danger" data-toggle="modal" data-target="#moves-modal">
+            Moves List
+        </button>
+      </div>
+      <div class="row padded-rows" id="moves-confirm">
+        <button class="player-confirm-moves in-combat btn btn-sm btn-danger">
+          Fight
+        </button>
+        <button class="player-clear-moves in-combat btn btn-sm btn-danger">
+          Clear
+        </button>
+      </div>
+    </div>
+    <!-- Second column -->
+    <div class="col-lg-3 test">
+      <div class="row" id="cooldowns-title">
+        Cooldowns
+      </div>
+      <% for cd in @cooldowns.player: %>
+        <div id="cd<%=num%>" class="row cooldown">
+          <%= cd.move.name %> has <%= cd.cooldown %> rounds remaining.
+        </div>
+      <% end %>
+    </div>
+    <!-- Third column -->
+    <div class="col-lg-3 test">
+      <div class="row" id="aps-title">
+        Action Points
+      </div>
+      <div class="row">
+        <% for num in [@player.get('totals')["action_points"]..1]: %>
+          <div class="ui-ap points-circle"></div>
+        <% end %>
+      </div>
+      <div class="row" id="cps-title">
+        Combo Points
+      </div>
+      <div class="row">
+        <% for num in [1..@player.get('totals')["combo_points"]]: %>
+          <div id="combo<%=num%>" class="combo-points points-circle"></div>
+        <% end %>
+      </div>
+      <div class="row" id="crit-title">
+        Critical Strike Points
+      </div>
+      <div class="row">
+        <% for num in [1..10]: %>
+          <div id="crit<%=num%>" class="crit-points points-circle"></div>
+        <% end %>
+      </div>
+    </div>
+    <!-- Fourth column -->
+    <div class="col-lg-4 test">
+      <div class="row" id="base-stats-title">
+        Base Stats
+      </div>
+        <div class="col-lg-4 test">
+          <% for stat, value of @player.get('base_stats'): %>
+            <div class="row">
+              <span> <%= stat %>: </span><span id="player-<%= stat%>"><%= value %></span>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="col-lg-8 test">
+          <% for stat, value of @player.get('secondary_stats'): %>
+            <div class="row">
+              <%= stat %>: <%= value %>
+            </div>
+          <% end %>
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="moves-modal">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"> Select your moves
+          <div class="modal-ap-wrapper"> Available action points
+          <% for num in [@player.get('totals')["action_points"]..1]: %>
+            <div id="ap<%=num%>" class="modal-ap action-points points-circle"></div>
+          <% end %>
+          </div>
+        </h4>
+      </div>
+
+        <br>
+      <% for move in @player.get('moves'): %>
+        <button id="<%= move.id %>" class="player-moves btn btn-sm btn-default" data-toggle="popover" data-placement="bottom" data-content='<%= move.description %>'>
+          <%= move.name %> (<%= move.cost %>)
+        </button>
+      <% end %>
+        <br>
+        <br>
+
+      <div class="modal-footer">
+        <button type="button" id="accept-move-list" class="btn btn-default" data-dismiss="modal">Accept</button>
+        <button type="button" id="close-move-list" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>

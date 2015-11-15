@@ -1,3 +1,32 @@
 <div id="nav-bar">
-   <a href="#" id="home">Home</a> / <a href="#" id="chars">Character List</a> / <a href="#" id="moves">Move List</a>
+  <ul class="nav nav-pills">
+    <li><a href="#" id="home">Home</a></li>
+    <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Battle Dome
+      <span class="caret"></span></a>
+      <ul class="dropdown-menu">
+      <li>
+        <a href="#" id="character-list">Character Page</a>
+      </li>
+      <li>
+        <a href="#" id="move-list">Move List</a>
+      </li>
+      <li>
+        <a href="#" id="abilities-list">Abilities List</a>
+      </li>
+      <li>
+        <a href="#" id="battle-dome">Combat</a>
+      </li>
+      </ul>
+    </li>
+    <li><a href="#" id="lil-cric">Lil Cric</a></li>
+    <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Lil RPG
+      <span class="caret"></span></a>
+      <ul class="dropdown-menu">
+        <li><a href="#" id="lil-rpg">Play</a></li>
+        <li><a href="#" id="lil-rpg-map">Map Editor</a></li>
+      </ul>
+    </li>
+  </ul>
 </div>
