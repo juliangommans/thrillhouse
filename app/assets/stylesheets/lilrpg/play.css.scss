@@ -23,20 +23,33 @@
   display: inline-block;
   overflow: auto;
   white-space: nowrap;
+  border: 1px solid red;
 }
 
 #inventory-region {
   width: 500px;
+  height: 400px;
   display: inline-block;
 }
 
 #inventory-wrapper {
   width: 100%;
+  float:right;
   padding: 10px;
+  display: inline-block;
+  border: 1px solid red;
 
   #spell-display {
+    width: 45%;
+    display: inline-block;
+    border: 1px solid black;
 
+  }
 
+  #inventory-display {
+    width: 45%;
+    display: inline-block;
+    border: 1px solid black;
   }
 
   .cooldown-display {

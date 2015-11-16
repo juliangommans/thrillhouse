@@ -1,5 +1,6 @@
 <%= console.log @ %>
 
+<h3>Inventory</h3>
 
 <% for item in @inventory :%>
 <div class="<%= item.className %>"></div>

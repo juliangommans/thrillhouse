@@ -26,7 +26,7 @@
 
       console.log "this is your hero", @player
       console.log "and these are the items", @items
-      # @chestLoot()
+      @chestLoot()
 
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
