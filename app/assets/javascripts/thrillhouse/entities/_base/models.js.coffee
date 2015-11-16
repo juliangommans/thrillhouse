@@ -108,3 +108,15 @@
         top: top
         left: left
       }
+
+    uniqueArrayFilter: (array, selector) ->
+      arr = {}
+      i = 0
+      len = array.length
+      while i < len
+        arr[array[i][selector]] = array[i]
+        i++
+      array = new Array
+      for key of arr
+        array.push arr[key]
+      array

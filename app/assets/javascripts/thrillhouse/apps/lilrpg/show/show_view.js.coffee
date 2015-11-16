@@ -6,6 +6,9 @@
   class Show.Inventory extends App.Views.ItemView
     template: 'lilrpg/show/inventory'
 
+  class Show.InventoryDisplay extends App.Views.ItemView
+    template: 'lilrpg/show/inventory_display'
+
   class Show.Spell extends App.Views.ItemView
     template: 'lilrpg/show/spell'
 
@@ -18,9 +21,16 @@
     template: 'lilrpg/show/dialog'
     ui:
       loadMap: "#load-modal"
+      collect: "#collect-loot-modal"
+      cancel: ".cancel-modal"
+    events:
+      'mouseenter .loot-box': 'showData'
+      'mouseleave .loot-box': 'hideData'
+      'click @ui.cancel': 'closeBackdrop'
     triggers:
       'click @ui.loadMap': 'load:selected:map'
-      
+      'click @ui.collect': 'collect:current:loot'
+
     onRender: ->
       $(document).keydown (e) =>
         e.preventDefault()

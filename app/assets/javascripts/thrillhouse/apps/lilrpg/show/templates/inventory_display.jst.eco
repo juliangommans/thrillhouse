@@ -1,0 +1,8 @@
+<%= console.log @ %>
+
+
+<% for item in @inventory :%>
+<div class="<%= item.className %>"></div>
+<span><%= item.name %>: </span> <span><%=item.total%></span>
+<% end %>
+

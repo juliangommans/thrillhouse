@@ -9,9 +9,10 @@ ThrillHouse::Application.routes.draw do
   root to: "home#index"
   resources :character
   resources :move
-  
+
   resources :lil_rpg_map_editor
   resources :heroes
   resources :hero_items
+  resources :hero_inventory
 
 end

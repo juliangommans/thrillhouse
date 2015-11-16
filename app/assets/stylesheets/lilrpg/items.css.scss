@@ -1,0 +1,48 @@
+.loot-box {
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+  background-color: lightgray;
+  display: inline-block;
+}
+
+.unchecked-loot {
+  border: 2px outset gray;
+}
+
+.checked-loot {
+  border: 2px inset gray;
+  background-color: gray;
+}
+
+.sapphire {
+  background-color: mediumblue;
+  border-color: aqua;
+}
+
+.ruby {
+  background-color: crimson;
+  border-color: mediumvioletred;
+}
+
+.topaz {
+  background-color: gold;
+  border-color: khaki;
+}
+
+.fragment {
+  height: 10px;
+  width: 10px;
+  border-width: 2px;
+  border-style: solid;
+  margin: 13px;
+}
+
+.orb {
+  height: 30px;
+  width: 30px;
+  border-radius: 10px;
+  border-width: 5px;
+  border-style: solid;
+  margin: 3px;
+}

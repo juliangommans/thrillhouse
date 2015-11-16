@@ -18,6 +18,16 @@
 
 #lilrpg-play-region {
   padding: 5px 10px;
+  width: 400px;
+  height: 400px;
+  display: inline-block;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+#inventory-region {
+  width: 500px;
+  display: inline-block;
 }
 
 #inventory-wrapper {

@@ -8,5 +8,4 @@
         if typeof item.get(identifier) is "number"
           total += item.get(identifier)
         else
-          console.log "wtf is this?", item.get(identifier)
       total

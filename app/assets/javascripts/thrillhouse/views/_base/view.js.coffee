@@ -37,3 +37,7 @@
       else
         $(".#{classname}").removeClass(classname)
         $(args.currentTarget).addClass(classname)
+
+    closeBackdrop: ->
+      $('.modal-backdrop').remove();
+

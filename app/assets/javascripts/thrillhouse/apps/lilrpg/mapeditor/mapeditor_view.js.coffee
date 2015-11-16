@@ -60,6 +60,10 @@
       'mousedown @ui.cell': "rightClick"
       'contextmenu @ui.cell': "returnFalse"
 
+    onRender: ->
+      $(document).keydown (e) =>
+        e.stopPropagation()
+
     rightClick: (event) ->
       event.preventDefault()
       if event.which is 3 or event.button is 2
