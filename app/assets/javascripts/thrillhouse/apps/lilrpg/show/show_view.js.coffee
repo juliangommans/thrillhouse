@@ -20,6 +20,8 @@
   class Show.Dialog extends App.Views.ItemView
     template: 'lilrpg/show/dialog'
     ui:
+      saveHeroChanges: "#save-hero-changes-modal"
+      heroCancel: "#cancel-hero-modal"
       loadMap: "#load-modal"
       collect: "#collect-loot-modal"
       cancel: ".cancel-modal"
@@ -28,6 +30,8 @@
       'mouseleave .loot-box': 'hideData'
       'click @ui.cancel': 'closeBackdrop'
     triggers:
+      'click @ui.saveHeroChanges': 'save:hero:changes'
+      'click @ui.heroCancel': 'load:map:modal'
       'click @ui.loadMap': 'load:selected:map'
       'click @ui.collect': 'collect:current:loot'
 
@@ -50,7 +54,7 @@
       e.preventDefault
       target = e.currentTarget[e.currentTarget.selectedIndex]
       id = $($(target).children()).data("id")
-      @trigger "load:selected:map", id
+      @trigger "select:current:map", id
 
   class Show.Show extends App.Views.ItemView
     template: 'lilrpg/show/_show'

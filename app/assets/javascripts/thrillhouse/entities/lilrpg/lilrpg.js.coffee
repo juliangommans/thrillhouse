@@ -1,7 +1,24 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
 
-  class LilrpgApp.Heroes extends App.Entities.Model
+  class LilrpgApp.Heroes extends App.Entities.LilrpgModel
     urlRoot: -> Routes.heroes_path()
+
+    buildInventory: ->
+      items = @get('hero_items')
+      console.log "items", items
+      filtered = @uniqueArrayFilter(items,'id')
+      inventory = []
+      for item in filtered
+        count = _.filter(items, (i) ->
+          i.id is item.id)
+        inventory.push {
+          id: item.id
+          name: item.name
+          className: "#{item.colour} #{item.category}"
+          description: item.description
+          total: count.length
+        }
+      @set inventory: inventory
 
   class LilrpgApp.HeroesCollection extends App.Entities.Collection
     model: LilrpgApp.Heroes

@@ -1,11 +1,11 @@
-<div id="load-map-modal" class="modal fade" role="dialog"data-backdrop="static" data-keyboard="false">
+<div id="load-map-modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">Load Map</h3>
+        <h3 class="modal-title">LilRPG</h3>
       </div>
       <div class="modal-body">
-        <p>Please choose a map to load before starting.</p>
+        <p>Start by inspecting and modifying your character, or select a map to play.</p>
         <div id="map-load-list" class="dropdown"></div>
       <div class="modal-footer">
         <button type="button" id="load-modal" class="btn btn-default" data-dismiss="modal">Load</button>
@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div id="loot-modal" class="modal fade" role="dialog"data-backdrop="static" data-keyboard="false">
+<div id="loot-modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -28,6 +28,56 @@
       <div class="modal-footer">
         <button type="button" id="collect-loot-modal" class="btn btn-default" data-dismiss="modal">Collect</button>
         <button type="button" id="cancel-pick-modal" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="hero-modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Spells</h3>
+      </div>
+      <div class="modal-body container">
+        <div id="inventory-spells" class="row">
+          <div class="col-xs-2"> Transmute Box </div>
+
+          <div class="col-xs-2"> Fireball </div>
+          <div class="col-xs-2"> Icicle </div>
+          <div class="col-xs-2"> Thunderbolt </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-1">
+            <div class="drop-box transmute-box"></div>
+          </div>
+          <div id="fireball-box" class="spell-box col-xs-1">
+            <div id="fireball-slot-1" class="drop-box spell-slot"></div>
+            <div id="fireball-slot-2" class="drop-box spell-slot"></div>
+            <div id="fireball-slot-3" class="drop-box spell-slot"></div>
+          </div>
+          <div id="icicle-box" class="spell-box col-xs-1">
+            <div id="icicle-slot-1" class="drop-box spell-slot"></div>
+            <div id="icicle-slot-2" class="drop-box spell-slot"></div>
+            <div id="icicle-slot-3" class="drop-box spell-slot"></div>
+          </div>
+          <div id="thunderbolt-box" class="spell-box col-xs-1">
+            <div id="thunderbolt-slot-1" class="drop-box spell-slot"></div>
+            <div id="thunderbolt-slot-2" class="drop-box spell-slot"></div>
+            <div id="thunderbolt-slot-3" class="drop-box spell-slot"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-header">
+        <h3 class="modal-title">Inventory</h3>
+      </div>
+      <div class="modal-body">
+        <p>Here's your inventory, 10 fragments put in the transmute box create 1 orb. Orbs can go into a spell to modify it.</p>
+        <div id="inventory-items"></div>
+      <div class="modal-footer">
+        <button type="button" id="save-hero-changes-modal" class="btn btn-default" data-dismiss="modal">Save Changes</button>
+        <button type="button" id="cancel-hero-modal" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
       </div>
       </div>
     </div>

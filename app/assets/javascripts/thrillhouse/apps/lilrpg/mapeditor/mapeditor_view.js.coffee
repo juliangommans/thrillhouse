@@ -62,6 +62,7 @@
 
     onRender: ->
       $(document).keydown (e) =>
+        console.log "map has rendered"
         e.stopPropagation()
 
     rightClick: (event) ->

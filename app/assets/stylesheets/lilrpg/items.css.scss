@@ -21,13 +21,13 @@
 }
 
 .ruby {
-  background-color: crimson;
-  border-color: mediumvioletred;
+  background-color: mediumvioletred;
+  border-color: pink;
 }
 
 .topaz {
-  background-color: gold;
-  border-color: khaki;
+  background-color: khaki;
+  border-color: gold;
 }
 
 .fragment {
@@ -46,3 +46,42 @@
   border-style: solid;
   margin: 3px;
 }
+
+.inv-box {
+  height: 50px;
+  width: 50px;
+  display: inline-block;
+}
+
+#inventory-spells {
+  width: 560px;
+}
+
+.transmute-box {
+  height: 40px;
+  width: 40px;
+  border-width: 10px;
+}
+
+.spell-box {
+  width: 80px;
+  height: 30px;
+}
+
+.spell-slot {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-width: 5px;
+}
+
+.drop-box {
+  border-style: inset;
+  border-color: gray;
+}
+
+.inv-item  {
+  display: inline-block;
+}
+
+

@@ -15,7 +15,7 @@
 
     initialize: (options) ->
       { @map } = options
-      @coords = @map.get('coordinates')
+      @coords = @map.get('coordinates') if @map?
       @damage =
         attack: 1
       @listenTo @, "change", @checkHealth
@@ -76,6 +76,7 @@
         count = _.filter(items, (i) ->
           i.id is item.id)
         inventory.push {
+          id: item.id
           name: item.name
           className: "#{item.colour} #{item.category}"
           description: item.description

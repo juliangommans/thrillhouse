@@ -6,27 +6,26 @@
       $('.health').remove()
 
     initialize: ->
-      App.execute "when:fetched", [@controls, @player], =>
-        @layout = @getLayout()
-        @facingData =
-          directions: ['up','right','down','left']
-          axis: [-1,1,1,-1]
-        @listenTo @layout, 'show', =>
-          @showView()
-          @dialogView()
-          @playerHealthView()
-          @inventoryView()
+      @layout = @getLayout()
+      @facingData =
+        directions: ['up','right','down','left']
+        axis: [-1,1,1,-1]
+      @listenTo @layout, 'show', =>
+        @showView()
+        @dialogView()
+        @playerHealthView()
+        @inventoryView()
 
-        @show @layout
+      @show @layout
 
     setPlayerLocation: ->
       location = $(".player").parent().attr('id')
       @player.set location: location
       @setModelFacingAttributes('.player', @player)
 
-      console.log "this is your hero", @player
+      console.log "this is your hero, player", @hero, @player
       console.log "and these are the items", @items
-      @chestLoot()
+      # @chestLoot()
 
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
@@ -105,22 +104,34 @@
         @filterKey(pressedKey)
 
     setLoadedMap: (selectedID) ->
-      @map = @loadMapList.find((map) ->
-        map.get('id') is selectedID
-      )
+      console.log "what is this id??", selectedID
+      if selectedID?
+        @map = @loadMapList.find((map) ->
+          map.get('id') is selectedID
+        )
+      else
+        console.log "this is map", @map
+        # @loadCharacterSheet()
 
     loadSelectedMap: ->
-      $("#map-area").empty()
-      $("#map-area").append(@map.get('map'))
-      @afterMapLoadTasks()
+      if @map?
+        $("#map-area").empty()
+        $("#map-area").append(@map.get('map'))
+        @afterMapLoadTasks()
+      else
+        @loadCharacterSheet()
+
 
     afterMapLoadTasks: ->
       @loadEntities()
       App.execute "when:fetched", [@hero, @items], =>
-        @player = App.request "lilrpg:player:entity",
-          map: @map
-          hero_items: @hero.get('hero_items')
+        @fetchPlayer()
         @afterHeroFetch()
+
+    fetchPlayer: ->
+      @player = App.request "lilrpg:player:entity",
+        map: @map
+        hero_items: @hero.get('hero_items')
 
     afterHeroFetch: ->
       App.execute "when:fetched", @player, =>
@@ -132,7 +143,7 @@
         @fetchEnemies()
 
     loadEntities: ->
-      @hero = App.request "heroes:entity", 1
+      @hero or= App.request "heroes:entity", 1
       @controls = App.request "lilrpg:player:controls"
       @items = App.request "hero:items:entities"
 
@@ -185,9 +196,39 @@
       item.save {},
         success: (model) =>
           console.log "saved item successfully", model
-          @hero.fetch()
         error: (model) ->
           console.log "item FAIL", model
+
+    loadCharacterSheet: ->
+      @hero = App.request "heroes:entity", 1
+      App.execute "when:fetched", @hero, =>
+        $('#hero-modal').modal('show')
+        console.log "@hero", @hero
+        @showSpells()
+        @showCharacterItems()
+
+    showCharacterItems:  ->
+      @hero.buildInventory()
+      console.log "hero", @hero
+      html = "<div class='character-sheet'>"
+      for item in @hero.get('inventory')
+        html += "<div class='inv-box' data-toggle='popover' data-placement='bottom' data-content='#{item.description}''>"
+        html += "<div id='item-#{item.id}'class='inv-item #{item.className}''></div><div class='inv-item'>#{item.total}</div></div>"
+      html += "</div>"
+      $('#inventory-items').append(html)
+
+    showSpells: ->
+      console.log "nothing to show yet"
+
+
+
+        #add some display shit
+
+    saveHeroChanges: ->
+      App.request "lilrpg:heroinfo",
+        hero: @hero
+        changes: @changes
+
 
 
 #### Views ####
@@ -231,6 +272,8 @@
         @dialogMaps = new Backbone.Marionette.Region
           el: "#map-load-list"
         @mapLoadView()
+      @listenTo dialogView, "save:hero:changes", @saveHeroChanges
+      @listenTo dialogView, "load:map:modal", @mapLoadView
       @listenTo dialogView, "load:selected:map", @loadSelectedMap
       @listenTo dialogView, "collect:current:loot", @collectCurrentLoot
 
@@ -242,7 +285,7 @@
         loadView = @getMapLoadView()
         @listenTo loadView, "show", ->
           $('#load-map-modal').modal('show')
-        @listenTo loadView, "load:selected:map", (id) =>
+        @listenTo loadView, "select:current:map", (id) =>
           @setLoadedMap(id)
 
         @dialogMaps.show loadView

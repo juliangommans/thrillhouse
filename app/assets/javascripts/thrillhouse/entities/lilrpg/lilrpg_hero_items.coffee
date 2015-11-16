@@ -10,9 +10,6 @@
   class LilrpgApp.HeroInventory extends App.Entities.Model
     urlRoot: -> Routes.hero_inventory_index_path()
 
-    initialize: ->
-      console.log "this should have these params", @
-
   class LilrpgApp.HeroInventoryCollection extends App.Entities.Collection
     model: LilrpgApp.HeroInventory
     url: -> Routes.hero_inventory_index_path()
