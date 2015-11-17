@@ -145,7 +145,7 @@
     loadEntities: ->
       @hero or= App.request "heroes:entity", 1
       @controls = App.request "lilrpg:player:controls"
-      @items = App.request "hero:items:entities"
+      @items or= App.request "hero:items:entities"
 
     setupPlayerHealthBars: ->
       hp = @player.get('maxHealth')
@@ -201,10 +201,8 @@
 
     loadCharacterSheet: ->
       @hero = App.request "heroes:entity", 1
-      App.execute "when:fetched", @hero, =>
+      App.execute "when:fetched", [@hero], =>
         $('#hero-modal').modal('show')
-        console.log "@hero", @hero
-        @showSpells()
         @showCharacterItems()
 
     showCharacterItems:  ->
@@ -212,24 +210,59 @@
       console.log "hero", @hero
       html = "<div class='character-sheet'>"
       for item in @hero.get('inventory')
-        html += "<div class='inv-box' data-toggle='popover' data-placement='bottom' data-content='#{item.description}''>"
-        html += "<div id='item-#{item.id}'class='inv-item #{item.className}''></div><div class='inv-item'>#{item.total}</div></div>"
+        html += "<div data-id='#{item.id}' class='inv-box unchecked-loot' data-toggle='popover' data-placement='bottom' data-content='#{item.description}'>"
+        html += "<div class='inv-item #{item.className}'></div><div id='#{item.colour}-#{item.category}' class='inv-item'>#{item.total}</div></div>"
       html += "</div>"
       $('#inventory-items').append(html)
 
-    showSpells: ->
-      console.log "nothing to show yet"
+    itemConversion: (id,spell) ->
+      inv = @hero.get('inventory')
+      item = _.find(inv, (item) ->
+        item.id is id)
+      if item.type is "fragment"
+        @transmuteFragments(item,id)
+      else
+        @addOrbToSpell(item,inv,id,spell)
 
+    transmuteFragments: (item,id) ->
+      if item.total >= 5
+        newTotal = item.total -= 5
+        @destroyFragments(id)
+        @createOrb(id)
+        @updateInvDisplay(newTotal,item)
+      else
+        alert "You need at least 10 fragments to transmute an orb"
 
+    destroyFragments: (id) ->
+      x = App.request "new:hero:inventory:entity"
+      App.execute "when:fetched", x, =>
+        x.set id: 5
+        x.destroy({
+          data:
+            heroes_id: @hero.id
+            hero_items_id: (id)
+          processData: true
+          })
 
-        #add some display shit
+    createOrb: (id) ->
+      orb = App.request "new:hero:inventory:entity"
+      App.execute "when:fetched", orb, =>
+        orb.set(
+          hero_inventory:
+            heroes_id: @hero.id
+            hero_items_id: (id+3)
+          )
+        @saveItemToServer(orb)
+
+    updateInvDisplay: (newTotal,item) ->
+      object = $("##{item.colour}-#{item.category}")
+      if newTotal > 0
+        object.text("#{newTotal}")
 
     saveHeroChanges: ->
       App.request "lilrpg:heroinfo",
         hero: @hero
         changes: @changes
-
-
 
 #### Views ####
 
@@ -272,6 +305,9 @@
         @dialogMaps = new Backbone.Marionette.Region
           el: "#map-load-list"
         @mapLoadView()
+
+      @listenTo dialogView, "trigger:item:even", (id, spell) =>
+        @itemConversion(id,spell)
       @listenTo dialogView, "save:hero:changes", @saveHeroChanges
       @listenTo dialogView, "load:map:modal", @mapLoadView
       @listenTo dialogView, "load:selected:map", @loadSelectedMap

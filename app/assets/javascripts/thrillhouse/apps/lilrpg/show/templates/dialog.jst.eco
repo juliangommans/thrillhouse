@@ -50,7 +50,7 @@
         </div>
         <div class="row">
           <div class="col-xs-1">
-            <div class="drop-box transmute-box"></div>
+            <div id="transmute-box" class="drop-box transmute-box"></div>
           </div>
           <div id="fireball-box" class="spell-box col-xs-1">
             <div id="fireball-slot-1" class="drop-box spell-slot"></div>

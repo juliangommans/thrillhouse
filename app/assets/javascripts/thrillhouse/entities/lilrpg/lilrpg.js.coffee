@@ -14,6 +14,8 @@
         inventory.push {
           id: item.id
           name: item.name
+          type: item.category
+          colour: item.colour
           className: "#{item.colour} #{item.category}"
           description: item.description
           total: count.length

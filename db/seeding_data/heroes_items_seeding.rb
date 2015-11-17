@@ -5,19 +5,19 @@ module HeroItemList
       name: "Ruby Fragment",
       category: "fragment",
       colour: "ruby",
-      description: "You need 10 of these to make 1 ruby, ruby's increase your abilities damage"
+      description: "You need 10 of these to make 1 ruby orb, these orbs increase your abilities damage"
     },
     {
       name: "Sapphire Fragment",
       category: "fragment",
       colour: "sapphire",
-      description: "You need 10 of these to make 1 sapphire, sapphire's reduces your abilities cooldown"
+      description: "You need 10 of these to make 1 sapphire orb, these orbs reduces your abilities cooldown"
     },
     {
       name: "Topaz Fragment",
       category: "fragment",
       colour: "topaz",
-      description: "You need 10 of these to make 1 topaz, topaz's increase your abilities range"
+      description: "You need 10 of these to make 1 topaz orb, these orbs increase your abilities range"
     }]
   end
 
@@ -25,7 +25,7 @@ module HeroItemList
     [{
       name: "Ruby Orb",
       category: "orb",
-      colour: "red",
+      colour: "ruby",
       description: "A Ruby Orb increases the associated abilities damage by 1"
     },
     {
