@@ -25,7 +25,7 @@
 
       console.log "this is your hero, player", @hero, @player
       console.log "and these are the items", @items
-      # @chestLoot()
+      @chestLoot()
 
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
@@ -201,7 +201,8 @@
 
     loadCharacterSheet: ->
       @hero = App.request "heroes:entity", 1
-      App.execute "when:fetched", [@hero], =>
+      @item = App.request "hero:items:entities"
+      App.execute "when:fetched", [@hero, @item], =>
         $('#hero-modal').modal('show')
         @showCharacterItems()
 
@@ -223,6 +224,10 @@
         @transmuteFragments(item,id)
       else
         @addOrbToSpell(item,inv,id,spell)
+
+    addOrbToSpell: (item,inv,id,spell) ->
+      console.log "item, inv, id, spell", item,inv,id,spell
+      
 
     transmuteFragments: (item,id) ->
       if item.total >= 5
@@ -256,8 +261,7 @@
 
     updateInvDisplay: (newTotal,item) ->
       object = $("##{item.colour}-#{item.category}")
-      if newTotal > 0
-        object.text("#{newTotal}")
+      object.text("#{newTotal}")
 
     saveHeroChanges: ->
       App.request "lilrpg:heroinfo",
