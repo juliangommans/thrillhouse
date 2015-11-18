@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151116215223) do
+ActiveRecord::Schema.define(version: 20151117125619) do
 
   create_table "buffs", force: true do |t|
     t.string   "name"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20151116215223) do
     t.integer  "hero_items_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "spell",         default: ""
   end
 
   add_index "hero_inventories", ["hero_items_id"], name: "index_hero_inventories_on_hero_items_id"

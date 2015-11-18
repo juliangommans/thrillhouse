@@ -36,7 +36,7 @@ class HeroInventoryController < ApplicationController
   private
 
   def inventory_params
-    params.require(:hero_inventory).permit(:id, :heroes_id, :hero_items_id)
+    params.require(:hero_inventory).permit(:id, :heroes_id, :hero_items_id, :spell)
   end
 
   def fetch_inventory

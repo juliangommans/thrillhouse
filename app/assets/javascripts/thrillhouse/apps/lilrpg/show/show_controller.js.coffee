@@ -25,7 +25,7 @@
 
       console.log "this is your hero, player", @hero, @player
       console.log "and these are the items", @items
-      # @chestLoot()
+      @chestLoot()
 
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
@@ -201,7 +201,8 @@
 
     loadCharacterSheet: ->
       @hero = App.request "heroes:entity", 1
-      App.execute "when:fetched", [@hero], =>
+      @item = App.request "hero:items:entities"
+      App.execute "when:fetched", [@hero, @item], =>
         $('#hero-modal').modal('show')
         @showCharacterItems()
 
@@ -212,8 +213,34 @@
       for item in @hero.get('inventory')
         html += "<div data-id='#{item.id}' class='inv-box unchecked-loot' data-toggle='popover' data-placement='bottom' data-content='#{item.description}'>"
         html += "<div class='inv-item #{item.className}'></div><div id='#{item.colour}-#{item.category}' class='inv-item'>#{item.total}</div></div>"
+        @checkForSocket(item)
       html += "</div>"
       $('#inventory-items').append(html)
+
+    checkForSocket: (item) ->
+      @spellsWithItems = []
+      inventory = @hero.get('hero_inventories')
+      inv_items = inventory.filter((x) ->
+        x.hero_items_id is item.id)
+      inv_item = inv_items.find((x) ->
+        return x if x.spell.length > 0?)
+      console.log "THIS IS YOUR ITEM", inv_item
+      if inv_item?
+        @spellsWithItems.push(inv_item)
+        @socketSpell(inv_item)
+
+    socketSpell: (inv_item) ->
+      inventory = @hero.get('inventory')
+      item = inventory.find((item) ->
+        inv_item.hero_items_id is item.id)
+      console.log "inv_items, item, inventory", inv_item, item, inventory
+      check = false
+      for socket in [1..3]
+        object = $("##{inv_item.spell}-slot-#{socket}")
+        unless object.hasClass('socketed') or check
+          object.addClass("socketed")
+          object.addClass("#{item.colour}")
+          check = true
 
     itemConversion: (id,spell) ->
       inv = @hero.get('inventory')
@@ -223,6 +250,32 @@
         @transmuteFragments(item,id)
       else
         @addOrbToSpell(item,inv,id,spell)
+
+    addOrbToSpell: (item,inv,id,spell) ->
+      console.log "item, inv, id, spell", item,inv,id,spell
+      jspell =  $("##{spell}")
+      if jspell.hasClass("socketed")
+        console.log "WRONG HOLE FOOL"
+      else
+        jspell.addClass("socketed")
+        jspell.addClass("#{item.colour}")
+        @assignSpell(id, spell)
+
+      console.log @hero
+
+    assignSpell: (id, spell) ->
+      inv_item = @findInventoryItem(id)
+      getItem = App.request "hero:inventory:entity", inv_item.id
+      App.execute "when:fetched", getItem, =>
+        selectedSpell = spell.split('-')[0]
+        getItem.set spell: selectedSpell
+        @saveItemToServer(getItem)
+
+    findInventoryItem: (id) ->
+      inventory = @hero.get('hero_inventories')
+      inv_item = inventory.find((item) ->
+        item.hero_items_id is id)
+      inv_item
 
     transmuteFragments: (item,id) ->
       if item.total >= 5
@@ -256,8 +309,7 @@
 
     updateInvDisplay: (newTotal,item) ->
       object = $("##{item.colour}-#{item.category}")
-      if newTotal > 0
-        object.text("#{newTotal}")
+      object.text("#{newTotal}")
 
     saveHeroChanges: ->
       App.request "lilrpg:heroinfo",

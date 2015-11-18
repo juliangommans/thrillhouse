@@ -16,6 +16,7 @@
           name: item.name
           type: item.category
           colour: item.colour
+          spell: item.spell
           className: "#{item.colour} #{item.category}"
           description: item.description
           total: count.length
