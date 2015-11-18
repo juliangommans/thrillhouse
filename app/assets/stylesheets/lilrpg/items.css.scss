@@ -8,7 +8,9 @@
 
 .unchecked-loot {
   background-color: lightgray;
-  border: 2px outset gray;
+  border-width: 2px;
+  border-style: outset;
+  border-color: gray;
 }
 
 .checked-loot {
@@ -18,17 +20,17 @@
 
 .sapphire {
   background-color: mediumblue;
-  border-color: aqua;
+  border-color: aqua !important;
 }
 
 .ruby {
   background-color: mediumvioletred;
-  border-color: pink;
+  border-color: pink !important;
 }
 
 .topaz {
-  background-color: khaki;
-  border-color: gold;
+  background-color: gold;
+  border-color: khaki !important;
 }
 
 .fragment {
