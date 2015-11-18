@@ -1,0 +1,88 @@
+.loot-box {
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+  background-color: lightgray;
+  display: inline-block;
+}
+
+.unchecked-loot {
+  background-color: lightgray;
+  border: 2px outset gray;
+}
+
+.checked-loot {
+  border: 2px inset gray;
+  background-color: gray;
+}
+
+.sapphire {
+  background-color: mediumblue;
+  border-color: aqua;
+}
+
+.ruby {
+  background-color: mediumvioletred;
+  border-color: pink;
+}
+
+.topaz {
+  background-color: khaki;
+  border-color: gold;
+}
+
+.fragment {
+  height: 10px;
+  width: 10px;
+  border-width: 2px;
+  border-style: solid;
+  margin: 13px;
+}
+
+.orb {
+  height: 30px;
+  width: 30px;
+  border-radius: 10px;
+  border-width: 5px;
+  border-style: solid;
+  margin: 3px;
+}
+
+.inv-box {
+  height: 50px;
+  width: 50px;
+  display: inline-block;
+}
+
+#inventory-spells {
+  width: 560px;
+}
+
+.transmute-box {
+  height: 40px;
+  width: 40px;
+  border-width: 10px;
+}
+
+.spell-box {
+  width: 80px;
+  height: 30px;
+}
+
+.spell-slot {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-width: 5px;
+}
+
+.drop-box {
+  border-style: inset;
+  border-color: gray;
+}
+
+.inv-item  {
+  display: inline-block;
+}
+
+

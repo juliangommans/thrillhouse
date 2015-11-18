@@ -35,6 +35,7 @@
     renderMapTemplate: (map, coordinates) ->
       $('#save-map-name').val('')
       @map = App.request "new:lilrpg:map:entity"
+      console.log @map
       @map.set coordinates: JSON.stringify(coordinates)
       $('#map-area').empty()
       $('#map-area').append(map)
@@ -100,6 +101,7 @@
       @saveToServer()
 
     saveToServer: ->
+      console.log "does this have id?", @map
       @map.save {},
         success: (model) ->
           console.log "success", model

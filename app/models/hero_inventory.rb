@@ -1,4 +1,4 @@
 class HeroInventory < ActiveRecord::Base
-  belongs_to :hero
-  belongs_to :item
+  belongs_to :heroes
+  belongs_to :hero_items
 end

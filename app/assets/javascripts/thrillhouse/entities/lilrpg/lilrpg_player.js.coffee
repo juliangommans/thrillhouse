@@ -15,7 +15,7 @@
 
     initialize: (options) ->
       { @map } = options
-      @coords = @map.get('coordinates')
+      @coords = @map.get('coordinates') if @map?
       @damage =
         attack: 1
       @listenTo @, "change", @checkHealth
@@ -25,6 +25,8 @@
       teleport = App.request "lilrpg:teleport:spell"
       spellArray = [fireball,icicle,thunderbolt,teleport]
       spellCollection = new App.Entities.Collection
+
+      @buildInventory()
 
       App.execute "when:fetched", spellArray, =>
         @set spells:
@@ -66,6 +68,21 @@
         if $(target).children().length
           @findTargetModel(parseInt($(target).attr('id')))
 
+    buildInventory: ->
+      items = @get('hero_items')
+      filtered = @uniqueArrayFilter(items,'id')
+      inventory = []
+      for item in filtered
+        count = _.filter(items, (i) ->
+          i.id is item.id)
+        inventory.push {
+          id: item.id
+          name: item.name
+          className: "#{item.colour} #{item.category}"
+          description: item.description
+          total: count.length
+        }
+      @set inventory: inventory
 
 #### Movement methods ####
 
@@ -367,6 +384,7 @@
             y: currentLocation.y + facing.axis*i
         array.push(temp)
       array
+
 
 #### Cooldowns and Timers ####
 

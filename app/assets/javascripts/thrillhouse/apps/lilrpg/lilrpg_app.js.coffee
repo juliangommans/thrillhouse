@@ -10,6 +10,8 @@
       new LilrpgApp.Show.Controller
     mapeditor: ->
       new LilrpgApp.Mapeditor.Controller
+    heroinfo: (options) ->
+      new LilrpgApp.Heroinfo.Controller options
 
   App.reqres.setHandler 'lilrpg:show', ->
     App.navigate Routes.lilrpg_path()
@@ -18,6 +20,9 @@
   App.reqres.setHandler 'lilrpg:mapeditor', ->
     App.navigate Routes.lilrpg_mapedit_path()
     API.mapeditor()
+
+  App.reqres.setHandler 'lilrpg:heroinfo', (options) ->
+    API.mapeditor options
 
   App.addInitializer ->
     new LilrpgApp.Router

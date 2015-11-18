@@ -6,26 +6,26 @@
       $('.health').remove()
 
     initialize: ->
-      @controls = App.request "lilrpg:player:controls"
+      @layout = @getLayout()
+      @facingData =
+        directions: ['up','right','down','left']
+        axis: [-1,1,1,-1]
+      @listenTo @layout, 'show', =>
+        @showView()
+        @dialogView()
+        @playerHealthView()
+        @inventoryView()
 
-      App.execute "when:fetched", [@controls, @player], =>
-        @layout = @getLayout()
-        @facingData =
-          directions: ['up','right','down','left']
-          axis: [-1,1,1,-1]
-        @listenTo @layout, 'show', =>
-          @showView()
-          @dialogView()
-          @playerHealthView()
-          @inventoryView()
-
-        @show @layout
+      @show @layout
 
     setPlayerLocation: ->
       location = $(".player").parent().attr('id')
       @player.set location: location
       @setModelFacingAttributes('.player', @player)
-      console.log "this is your hero", @hero
+
+      console.log "this is your hero, player", @hero, @player
+      console.log "and these are the items", @items
+      # @chestLoot()
 
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
@@ -69,7 +69,6 @@
       model.engageAi(@map.get('coordinates'),@player)
 
     setCharHealth: (char, object) ->
-      # location = @getOffset(object)
       total = char.get('maxHealth')
       if $("##{char.get('name')}").length
         $("##{char.get('name')}").remove()
@@ -78,7 +77,6 @@
         health += "<div class='health-bar positive-health'></div>"
       health += "</div>"
       $("##{char.get('id')}").append(health)
-      # $('body').append(health)
 
     filterKey: (key) ->
       switch key.action
@@ -106,26 +104,48 @@
         @filterKey(pressedKey)
 
     setLoadedMap: (selectedID) ->
-      @map = @loadMapList.find((map) ->
-        map.get('id') is selectedID
-      )
+      console.log "what is this id??", selectedID
+      if selectedID?
+        @map = @loadMapList.find((map) ->
+          map.get('id') is selectedID
+        )
+      else
+        console.log "this is map", @map
+        # @loadCharacterSheet()
 
     loadSelectedMap: ->
-      $("#map-area").empty()
-      $("#map-area").append(@map.get('map'))
-      @afterMapLoadTasks()
+      if @map?
+        $("#map-area").empty()
+        $("#map-area").append(@map.get('map'))
+        @afterMapLoadTasks()
+      else
+        @loadCharacterSheet()
+
 
     afterMapLoadTasks: ->
-      @getPlayer()
-      @setupPlayerHealthBars()
-      @fetchEnemies()
-      App.execute "when:fetched", @player, =>
-        @loadSpellsView()
+      @loadEntities()
+      App.execute "when:fetched", [@hero, @items], =>
+        @fetchPlayer()
+        @afterHeroFetch()
 
-    getPlayer: ->
+    fetchPlayer: ->
       @player = App.request "lilrpg:player:entity",
         map: @map
-      @setPlayerLocation()
+        hero_items: @hero.get('hero_items')
+
+    afterHeroFetch: ->
+      App.execute "when:fetched", @player, =>
+        @loadSpellsView()
+        @loadInventoryDisplay()
+        @setPlayerLocation()
+
+        @setupPlayerHealthBars()
+        @fetchEnemies()
+
+    loadEntities: ->
+      @hero or= App.request "heroes:entity", 1
+      @controls = App.request "lilrpg:player:controls"
+      @items or= App.request "hero:items:entities"
 
     setupPlayerHealthBars: ->
       hp = @player.get('maxHealth')
@@ -133,7 +153,116 @@
       for i in [1..hp]
         $('#player-health-bars').append(healthObj)
 
-    
+    chestLoot: ->
+      fragments = @items.filter((item) ->
+        item.get('category') is "fragment")
+      @itemMath(fragments)
+
+    itemMath: (fragments) ->
+      @loot = []
+      itemOptions = @getRandomNum(1,3)
+      for i in [1..itemOptions]
+        @loot.push(_.sample(fragments))
+      console.log "and htis is the loot", @loot
+      @buildLootBox()
+
+    buildLootBox: ->
+      $("#loot-outcome").empty()
+      for item in @loot
+        lootbox = "<div class='loot-box unchecked-loot' data-toggle='popover' data-placement='bottom' data-content='#{item.get('name')}'>"
+        lootbox += "<div id='#{item.get('id')}' class='#{item.get('colour')} #{item.get('category')}'></div>"
+        lootbox += "</div>"
+        $("#loot-outcome").append(lootbox)
+
+      $('#loot-modal').modal('show')
+
+    collectCurrentLoot: ->
+      @itemcontainer = []
+      itemboxes = $('.loot-box')
+      if itemboxes.length
+        itemboxes.each( (index, object) =>
+          item = App.request "new:hero:inventory:entity"
+          App.execute "when:fetched", item, =>
+            item.set(
+              hero_inventory:
+                heroes_id: @hero.id
+                hero_items_id: parseInt($($(object).children()[0]).attr('id'))
+            )
+            @saveItemToServer(item)
+            @itemcontainer.push(item)
+          )
+
+    saveItemToServer: (item) ->
+      item.save {},
+        success: (model) =>
+          console.log "saved item successfully", model
+        error: (model) ->
+          console.log "item FAIL", model
+
+    loadCharacterSheet: ->
+      @hero = App.request "heroes:entity", 1
+      App.execute "when:fetched", [@hero], =>
+        $('#hero-modal').modal('show')
+        @showCharacterItems()
+
+    showCharacterItems:  ->
+      @hero.buildInventory()
+      console.log "hero", @hero
+      html = "<div class='character-sheet'>"
+      for item in @hero.get('inventory')
+        html += "<div data-id='#{item.id}' class='inv-box unchecked-loot' data-toggle='popover' data-placement='bottom' data-content='#{item.description}'>"
+        html += "<div class='inv-item #{item.className}'></div><div id='#{item.colour}-#{item.category}' class='inv-item'>#{item.total}</div></div>"
+      html += "</div>"
+      $('#inventory-items').append(html)
+
+    itemConversion: (id,spell) ->
+      inv = @hero.get('inventory')
+      item = _.find(inv, (item) ->
+        item.id is id)
+      if item.type is "fragment"
+        @transmuteFragments(item,id)
+      else
+        @addOrbToSpell(item,inv,id,spell)
+
+    transmuteFragments: (item,id) ->
+      if item.total >= 5
+        newTotal = item.total -= 5
+        @destroyFragments(id)
+        @createOrb(id)
+        @updateInvDisplay(newTotal,item)
+      else
+        alert "You need at least 10 fragments to transmute an orb"
+
+    destroyFragments: (id) ->
+      x = App.request "new:hero:inventory:entity"
+      App.execute "when:fetched", x, =>
+        x.set id: 5
+        x.destroy({
+          data:
+            heroes_id: @hero.id
+            hero_items_id: (id)
+          processData: true
+          })
+
+    createOrb: (id) ->
+      orb = App.request "new:hero:inventory:entity"
+      App.execute "when:fetched", orb, =>
+        orb.set(
+          hero_inventory:
+            heroes_id: @hero.id
+            hero_items_id: (id+3)
+          )
+        @saveItemToServer(orb)
+
+    updateInvDisplay: (newTotal,item) ->
+      object = $("##{item.colour}-#{item.category}")
+      if newTotal > 0
+        object.text("#{newTotal}")
+
+    saveHeroChanges: ->
+      App.request "lilrpg:heroinfo",
+        hero: @hero
+        changes: @changes
 
 #### Views ####
 
@@ -153,8 +282,15 @@
       @listenTo invView, "show", ->
         @spellRegion = new Backbone.Marionette.Region
           el: "#spell-display"
+        @inventoryRegion = new Backbone.Marionette.Region
+          el: "#inventory-display"
 
       @layout.invRegion.show invView
+
+    loadInventoryDisplay: ->
+      invDisplay = @getInventoryDisplay()
+
+      @inventoryRegion.show invDisplay
 
     loadSpellsView: ->
       collection = @player.get('spellCollection')
@@ -164,12 +300,18 @@
 
     dialogView: ->
       dialogView = @getDialogView()
-      @hero = App.request "heroes:entity", 1
+
       @listenTo dialogView, "show", ->
         @dialogMaps = new Backbone.Marionette.Region
           el: "#map-load-list"
         @mapLoadView()
+
+      @listenTo dialogView, "trigger:item:even", (id, spell) =>
+        @itemConversion(id,spell)
+      @listenTo dialogView, "save:hero:changes", @saveHeroChanges
+      @listenTo dialogView, "load:map:modal", @mapLoadView
       @listenTo dialogView, "load:selected:map", @loadSelectedMap
+      @listenTo dialogView, "collect:current:loot", @collectCurrentLoot
 
       @layout.dialogRegion.show dialogView
 
@@ -179,7 +321,7 @@
         loadView = @getMapLoadView()
         @listenTo loadView, "show", ->
           $('#load-map-modal').modal('show')
-        @listenTo loadView, "load:selected:map", (id) =>
+        @listenTo loadView, "select:current:map", (id) =>
           @setLoadedMap(id)
 
         @dialogMaps.show loadView
@@ -203,6 +345,10 @@
     getSpellsView: (collection) ->
       new Show.Spells
         collection: collection
+
+    getInventoryDisplay: ->
+      new Show.InventoryDisplay
+        model: @player
 
     getShowView: ->
       new Show.Show
