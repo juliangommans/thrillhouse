@@ -218,6 +218,7 @@
       $('#inventory-items').append(html)
 
     checkForSocket: (item) ->
+      @spellsWithItems = []
       inventory = @hero.get('hero_inventories')
       inv_items = inventory.filter((x) ->
         x.hero_items_id is item.id)
@@ -225,6 +226,7 @@
         return x if x.spell.length > 0?)
       console.log "THIS IS YOUR ITEM", inv_item
       if inv_item?
+        @spellsWithItems.push(inv_item)
         @socketSpell(inv_item)
 
     socketSpell: (inv_item) ->
@@ -235,9 +237,7 @@
       check = false
       for socket in [1..3]
         object = $("##{inv_item.spell}-slot-#{socket}")
-        console.log object
         unless object.hasClass('socketed') or check
-          console.log "OBJECT", object
           object.addClass("socketed")
           object.addClass("#{item.colour}")
           check = true
