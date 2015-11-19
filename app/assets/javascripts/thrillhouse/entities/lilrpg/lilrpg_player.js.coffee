@@ -45,12 +45,10 @@
         for orb in orbs
           x = orb.spell_stat
           change = spell.get(orb.spell_stat)
-          console.log "fetched stat===", change
           if orb.item_colour is "sapphire"
             change *= orb.change
           else
             change += orb.change
-          console.log "this is the updated change", change
           spell.set(orb.spell_stat, change)
       console.log "PLAYA PLAYA", @
 
@@ -199,7 +197,7 @@
       if target?
         enemyHp = target.get('health')
         enemyHp -= damage
-        target.set stunned: true if stunned
+        @stunTarget(target) if stunned
         target.set alive: false if enemyHp < 1
         target.set health: enemyHp
     #fire damage animation
@@ -415,8 +413,17 @@
         @resetSpell(spell)
       , spell.get('cooldown'))
 
+    stunTarget: (target) ->
+      target.set stunned: true
+      setTimeout( =>
+        @resetTarget(target)
+      , 2000)
+
     resetSpell: (spell) =>
       spell.set onCd: false
+
+    resetTarget: (target) =>
+      target.set stunned: false
 
     setMoveCd: (time) ->
       @set moveCd: true

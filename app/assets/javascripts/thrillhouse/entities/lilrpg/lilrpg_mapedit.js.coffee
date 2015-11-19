@@ -75,6 +75,7 @@
     buildObjects: ->
       ary = []
       ary.push(@buildSimpleMeleeEnemy())
+      ary.push(@buildNormalMeleeEnemy())
       ary.push(@buildSimpleRangedEnemy())
       ary.push(@buildPlayer())
 
@@ -87,6 +88,13 @@
         class2: "enemy"
         class3: "character"
         name: "Simple Melee Enemy"
+
+    buildNormalMeleeEnemy: ->
+      enemy = new App.Entities.Model
+        class1: "normal-melee"
+        class2: "enemy"
+        class3: "character"
+        name: "Normal Melee Enemy"
 
     buildSimpleRangedEnemy: ->
       enemy = new App.Entities.Model
@@ -117,8 +125,8 @@
     buildTreasureChest: ->
       treasure = new App.Entities.Model
         class1: "item"
-        class2: "tresure-chest"
-        class3: ""
+        class2: "treasure-chest"
+        class3: "loot"
         name: "Treasure Chest"
 
   class LilrpgApp.LilrpgMap extends App.Entities.Model

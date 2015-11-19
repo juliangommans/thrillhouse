@@ -123,16 +123,17 @@
         false
 
     attackPlayer: =>
-      if @get('target')
-        if @checkPlayerStillInRange()
-          playerHp = @player.get('health')
-          console.log "before", playerHp
-          playerHp -= @get('damage')
-          @player.set health: playerHp
-          @postDamage()
-      else
-        clearInterval(@swing)
-        @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
+      unless @get('stunned')
+        if @get('target')
+          if @checkPlayerStillInRange()
+            playerHp = @player.get('health')
+            console.log "before", playerHp
+            playerHp -= @get('damage')
+            @player.set health: playerHp
+            @postDamage()
+        else
+          clearInterval(@swing)
+          @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
 
     postDamage: ->
       @checkPlayerStillInRange()
@@ -155,6 +156,14 @@
 
   class LilrpgApp.SimpleMeleeEnemy extends LilrpgApp.Enemy
 
+  class LilrpgApp.NormalMeleeEnemy extends LilrpgApp.Enemy
+
+    initialize: ->
+      @set
+        health: 10
+        maxHealth: 10
+        range: 1
+        attackSpeed: 1500
 
   class LilrpgApp.SimpleRangedEnemy extends LilrpgApp.Enemy
 
@@ -163,7 +172,6 @@
         health: 2
         maxHealth: 2
         range: 3
-        alive: true
         attackSpeed: 3000
 
 
@@ -175,6 +183,9 @@
 
   App.reqres.setHandler "lilrpg:simple-melee:enemy", ->
     API.simpleMeleeEnemy()
+
+  App.reqres.setHandler "lilrpg:normal-melee:enemy", ->
+    API.normalMeleeEnemy()
 
   App.reqres.setHandler "lilrpg:simple-ranged:enemy", ->
     API.simpleRangedEnemy()

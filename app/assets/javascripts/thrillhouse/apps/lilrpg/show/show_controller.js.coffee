@@ -7,6 +7,7 @@
 
     initialize: ->
       @serverItems = []
+      @spellsWithItems = []
       @layout = @getLayout()
       @facingData =
         directions: ['up','right','down','left']
@@ -64,7 +65,6 @@
         char
 
     runAi: (model) ->
-      # model.pulse(@map.get('coordinates'),@player)
       model.engageAi(@map.get('coordinates'),@player)
 
     setCharHealth: (char, object) ->
@@ -88,6 +88,16 @@
         when "spell"
           unless @player.get('actionCd')
             @player.spell(key)
+      @checkForLoot()
+
+    checkForLoot: ->
+      loc = $("##{@player.get('location')}")
+      if $(loc.children()[0])?
+        item = $(loc.children()[0])
+        if $(loc.children()[0]).hasClass('item')
+          console.log "we have kiddies", loc.children()[0]
+          item.remove()
+          @chestLoot()
 
     getTargetModel: ->
       @enemies.find((enemy) =>
@@ -120,7 +130,6 @@
       else
         @loadCharacterSheet()
 
-
     afterMapLoadTasks: ->
       @loadEntities()
       App.execute "when:fetched", [@hero, @items], =>
@@ -152,8 +161,13 @@
         return item if item.spell is "icicle")
       @player.get('spells').E.set orbs: _.filter(invs, (item) ->
         return item if item.spell is "thunderbolt")
-      console.log "work please", invs
       @player.updateSpells()
+      @updateDisplay()
+
+    updateDisplay: ->
+      @spellsView.render()
+      for item in @hero.get('inventory')
+        @checkForSocket(item)
 
     loadEntities: ->
       @hero or= App.request "heroes:entity", 1
@@ -384,9 +398,9 @@
 
     loadSpellsView: ->
       collection = @player.get('spellCollection')
-      spellsView = @getSpellsView(collection)
+      @spellsView = @getSpellsView(collection)
 
-      @spellRegion.show spellsView
+      @spellRegion.show @spellsView
 
     dialogView: ->
       dialogView = @getDialogView()

@@ -70,7 +70,6 @@
     #### higher rotate speed is faster rotation animation
     #### basically how many degrees change per milisecond
 
-
   class LilrpgApp.ThunderBolt extends LilrpgApp.Spell
     initialize:->
       @set

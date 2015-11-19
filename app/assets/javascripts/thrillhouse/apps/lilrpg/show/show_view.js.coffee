@@ -11,6 +11,7 @@
 
   class Show.Spell extends App.Views.ItemView
     template: 'lilrpg/show/spell'
+    className: 'big-spell-wrapper'
 
   class Show.Spells extends App.Views.CompositeView
     template: 'lilrpg/show/spells'
