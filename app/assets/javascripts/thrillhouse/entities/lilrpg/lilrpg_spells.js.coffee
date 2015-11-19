@@ -8,6 +8,7 @@
       rotateSpeed: 10
       stun: false
       target: 'enemy'
+      orbs: []
 
     showCooldown: ->
       className = @get('className')
@@ -52,7 +53,7 @@
       @set
         className: "fireball"
         cooldown: 12000
-        speed: 500
+        speed: 350
         damage: 2
         type: 'projectile'
 
@@ -61,7 +62,7 @@
       @set
         className: "icicle"
         cooldown: 10000
-        speed: 400
+        speed: 250
         damage: 1
         stun: true
         type: 'projectile'

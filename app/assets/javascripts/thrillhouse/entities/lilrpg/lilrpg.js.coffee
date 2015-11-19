@@ -14,7 +14,7 @@
         inventory.push {
           id: item.id
           name: item.name
-          type: item.category
+          category: item.category
           colour: item.colour
           spell: item.spell
           className: "#{item.colour} #{item.category}"

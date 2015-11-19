@@ -6,6 +6,7 @@
       $('.health').remove()
 
     initialize: ->
+      @serverItems = []
       @layout = @getLayout()
       @facingData =
         directions: ['up','right','down','left']
@@ -23,9 +24,7 @@
       @player.set location: location
       @setModelFacingAttributes('.player', @player)
 
-      console.log "this is your hero, player", @hero, @player
-      console.log "and these are the items", @items
-      @chestLoot()
+      # @chestLoot()
 
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
@@ -111,7 +110,7 @@
         )
       else
         console.log "this is map", @map
-        # @loadCharacterSheet()
+        @map = false
 
     loadSelectedMap: ->
       if @map?
@@ -125,6 +124,7 @@
     afterMapLoadTasks: ->
       @loadEntities()
       App.execute "when:fetched", [@hero, @items], =>
+        @hero.buildInventory()
         @fetchPlayer()
         @afterHeroFetch()
 
@@ -137,10 +137,23 @@
       App.execute "when:fetched", @player, =>
         @loadSpellsView()
         @loadInventoryDisplay()
-        @setPlayerLocation()
 
+        @setPlayerLocation()
+        @assignSpellOrbs()
         @setupPlayerHealthBars()
         @fetchEnemies()
+
+    assignSpellOrbs: ->
+      invs = @hero.get('hero_inventories')
+
+      @player.get('spells').W.set orbs: _.filter(invs, (item) ->
+        return item if item.spell is "fireball")
+      @player.get('spells').Q.set orbs: _.filter(invs, (item) ->
+        return item if item.spell is "icicle")
+      @player.get('spells').E.set orbs: _.filter(invs, (item) ->
+        return item if item.spell is "thunderbolt")
+      console.log "work please", invs
+      @player.updateSpells()
 
     loadEntities: ->
       @hero or= App.request "heroes:entity", 1
@@ -207,6 +220,7 @@
         @showCharacterItems()
 
     showCharacterItems:  ->
+      @spellsWithItems = []
       @hero.buildInventory()
       console.log "hero", @hero
       html = "<div class='character-sheet'>"
@@ -216,52 +230,56 @@
         @checkForSocket(item)
       html += "</div>"
       $('#inventory-items').append(html)
+      @cleanupInventory()
+
+    cleanupInventory: ->
+      if @spellsWithItems?
+        for object in @spellsWithItems
+          $("##{object.item.colour}-#{object.item.category}").text("#{object.item.total - object.array.length}")
 
     checkForSocket: (item) ->
-      @spellsWithItems = []
       inventory = @hero.get('hero_inventories')
       inv_items = inventory.filter((x) ->
         x.hero_items_id is item.id)
-      inv_item = inv_items.find((x) ->
+      itemArray = inv_items.filter((x) ->
         return x if x.spell.length > 0?)
-      console.log "THIS IS YOUR ITEM", inv_item
-      if inv_item?
-        @spellsWithItems.push(inv_item)
-        @socketSpell(inv_item)
+      if itemArray.length >= 1
+        @spellsWithItems.push(
+          item: item
+          array: itemArray
+          )
+        @socketSpell(itemArray)
 
-    socketSpell: (inv_item) ->
+    socketSpell: (array) ->
       inventory = @hero.get('inventory')
-      item = inventory.find((item) ->
-        inv_item.hero_items_id is item.id)
-      console.log "inv_items, item, inventory", inv_item, item, inventory
-      check = false
-      for socket in [1..3]
-        object = $("##{inv_item.spell}-slot-#{socket}")
-        unless object.hasClass('socketed') or check
-          object.addClass("socketed")
-          object.addClass("#{item.colour}")
-          check = true
+      for inv_item in array
+        item = inventory.find((item) ->
+          inv_item.hero_items_id is item.id)
+        check = false
+        for socket in [1..3]
+          object = $("##{inv_item.spell}-slot-#{socket}")
+          unless object.hasClass('socketed') or check
+            object.addClass("socketed")
+            object.addClass("#{item.colour}")
+            check = true
 
     itemConversion: (id,spell) ->
       inv = @hero.get('inventory')
       item = _.find(inv, (item) ->
         item.id is id)
-      if item.type is "fragment"
+      if item.category is "fragment"
         @transmuteFragments(item,id)
       else
         @addOrbToSpell(item,inv,id,spell)
 
     addOrbToSpell: (item,inv,id,spell) ->
-      console.log "item, inv, id, spell", item,inv,id,spell
       jspell =  $("##{spell}")
-      if jspell.hasClass("socketed")
-        console.log "WRONG HOLE FOOL"
+      if jspell.hasClass("socketed") or parseInt($($(".checked-loot").children()[1]).text()) < 1
+        console.log "WRONG HOLE FOOL", jspell
       else
         jspell.addClass("socketed")
         jspell.addClass("#{item.colour}")
         @assignSpell(id, spell)
-
-      console.log @hero
 
     assignSpell: (id, spell) ->
       inv_item = @findInventoryItem(id)
@@ -269,17 +287,20 @@
       App.execute "when:fetched", getItem, =>
         selectedSpell = spell.split('-')[0]
         getItem.set spell: selectedSpell
-        @saveItemToServer(getItem)
+        @serverItems.push(
+          item: getItem
+          action: "save"
+          )
 
     findInventoryItem: (id) ->
       inventory = @hero.get('hero_inventories')
       inv_item = inventory.find((item) ->
-        item.hero_items_id is id)
+        item.hero_items_id is id and item.spell.length <= 1)
       inv_item
 
     transmuteFragments: (item,id) ->
-      if item.total >= 5
-        newTotal = item.total -= 5
+      if item.total >= 10
+        newTotal = item.total -= 10
         @destroyFragments(id)
         @createOrb(id)
         @updateInvDisplay(newTotal,item)
@@ -289,13 +310,16 @@
     destroyFragments: (id) ->
       x = App.request "new:hero:inventory:entity"
       App.execute "when:fetched", x, =>
-        x.set id: 5
-        x.destroy({
-          data:
-            heroes_id: @hero.id
-            hero_items_id: (id)
-          processData: true
-          })
+        x.set id: 10
+        @serverItems.push(
+          item: x
+          actions: "destroy"
+          destroy:
+            data:
+              heroes_id: @hero.id
+              hero_items_id: (id)
+            processData: true
+          )
 
     createOrb: (id) ->
       orb = App.request "new:hero:inventory:entity"
@@ -305,16 +329,30 @@
             heroes_id: @hero.id
             hero_items_id: (id+3)
           )
-        @saveItemToServer(orb)
+        @serverItems.push(
+          item: orb
+          action: "save"
+          )
 
     updateInvDisplay: (newTotal,item) ->
       object = $("##{item.colour}-#{item.category}")
       object.text("#{newTotal}")
 
     saveHeroChanges: ->
-      App.request "lilrpg:heroinfo",
-        hero: @hero
-        changes: @changes
+      for object in @serverItems
+        console.log "this is each item to save", object
+        if object.action is "save"
+          @saveItemToServer(object.item)
+        else if object.action is "destroy"
+          object.item.destroy(object.destroy)
+      @serverItems = []
+      @clearHeroCss()
+
+    clearHeroCss: ->
+      @mapLoadView()
+      $('.spell-slot').removeClass('socketed topaz ruby saphire')
+      $('#inventory-items').empty()
+
 
 #### Views ####
 
@@ -358,10 +396,10 @@
           el: "#map-load-list"
         @mapLoadView()
 
-      @listenTo dialogView, "trigger:item:even", (id, spell) =>
+      @listenTo dialogView, "trigger:item:event", (id, spell) =>
         @itemConversion(id,spell)
       @listenTo dialogView, "save:hero:changes", @saveHeroChanges
-      @listenTo dialogView, "load:map:modal", @mapLoadView
+      @listenTo dialogView, "load:map:modal", @clearHeroCss
       @listenTo dialogView, "load:selected:map", @loadSelectedMap
       @listenTo dialogView, "collect:current:loot", @collectCurrentLoot
 

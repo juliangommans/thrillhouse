@@ -47,12 +47,13 @@
 
     selectItem: (args) ->
       item = $(args.currentTarget)
-      if $('.checked-loot').length
-        old = $('.checked-loot')
-        old.removeClass('checked-loot')
-        old.addClass('unchecked-loot')
-      item.removeClass('unchecked-loot')
-      item.addClass('checked-loot')
+      unless parseInt($(item.children()[1]).text()) < 1
+        if $('.checked-loot').length
+          old = $('.checked-loot')
+          old.removeClass('checked-loot')
+          old.addClass('unchecked-loot')
+        item.removeClass('unchecked-loot')
+        item.addClass('checked-loot')
 
       #later will need to be as follows
       # if item.hasClass('checked-loot')
@@ -63,11 +64,10 @@
       #   item.addClass('checked-loot')
 
       @itemId = item.data('id')
-      console.log "item Id?", @itemId
 
     dropSelectedItem: (args) ->
       spell = $(args.currentTarget)
-      @trigger "trigger:item:even", @itemId, spell.attr('id')
+      @trigger "trigger:item:event", @itemId, spell.attr('id')
 
   class Show.LoadMap extends App.Views.ItemView
     template: 'lilrpg/show/load_map'

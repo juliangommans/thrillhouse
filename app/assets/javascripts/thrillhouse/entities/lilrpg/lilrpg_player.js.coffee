@@ -38,6 +38,23 @@
         @set spellCollection: spellCollection
         console.log "spellses?", @get('spells')
 
+    updateSpells: ->
+      spells = @get('spells')
+      for k,spell of spells
+        orbs = spell.get('orbs')
+        for orb in orbs
+          x = orb.spell_stat
+          change = spell.get(orb.spell_stat)
+          console.log "fetched stat===", change
+          if orb.item_colour is "sapphire"
+            change *= orb.change
+          else
+            change += orb.change
+          console.log "this is the updated change", change
+          spell.set(orb.spell_stat, change)
+      console.log "PLAYA PLAYA", @
+
+
     checkHealth: (args) ->
       healthBars = $('#player-health-bars').children()
       @modifyTargetHealth(healthBars, @)

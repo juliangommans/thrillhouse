@@ -26,18 +26,24 @@ module HeroItemList
       name: "Ruby Orb",
       category: "orb",
       colour: "ruby",
+      spell_stat: "damage",
+      change: 1,
       description: "A Ruby Orb increases the associated abilities damage by 1"
     },
     {
       name: "Sapphire Orb",
       category: "orb",
       colour: "sapphire",
+      spell_stat: "cooldown",
+      change: 0.8,
       description: "A Sapphire Orb decreases the associated abilities cooldown by 20%"
     },
     {
       name: "Topaz Orb",
       category: "orb",
       colour: "topaz",
+      spell_stat: "range",
+      change: 1,
       description: "A Topaz Orb increases the associated abilities range by 1"
     }]
   end
