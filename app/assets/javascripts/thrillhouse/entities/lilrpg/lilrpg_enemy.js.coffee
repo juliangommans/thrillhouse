@@ -160,10 +160,18 @@
 
     initialize: ->
       @set
-        health: 10
-        maxHealth: 10
-        range: 1
+        health: 8
+        maxHealth: 8
         attackSpeed: 1500
+
+  class LilrpgApp.NormalMeleeEnemy extends LilrpgApp.Enemy
+
+    initialize: ->
+      @set
+        health: 12
+        maxHealth: 12
+        damage: 2
+        attackSpeed: 2000
 
   class LilrpgApp.SimpleRangedEnemy extends LilrpgApp.Enemy
 
@@ -178,6 +186,10 @@
   API =
     simpleMeleeEnemy: ->
       new LilrpgApp.SimpleMeleeEnemy
+    normalMeleeEnemy: ->
+      new LilrpgApp.NormalMeleeEnemy
+    strongMeleeEnemy: ->
+      new LilrpgApp.StrongMeleeEnemy
     simpleRangedEnemy: ->
       new LilrpgApp.SimpleRangedEnemy
 
@@ -186,6 +198,9 @@
 
   App.reqres.setHandler "lilrpg:normal-melee:enemy", ->
     API.normalMeleeEnemy()
+
+  App.reqres.setHandler "lilrpg:strong-melee:enemy", ->
+    API.strongMeleeEnemy()
 
   App.reqres.setHandler "lilrpg:simple-ranged:enemy", ->
     API.simpleRangedEnemy()

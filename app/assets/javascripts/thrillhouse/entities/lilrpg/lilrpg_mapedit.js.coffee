@@ -77,6 +77,7 @@
       ary.push(@buildSimpleMeleeEnemy())
       ary.push(@buildNormalMeleeEnemy())
       ary.push(@buildSimpleRangedEnemy())
+      ary.push(@buildStrongMeleeEnemy())
       ary.push(@buildPlayer())
 
       for obj in ary
@@ -92,6 +93,13 @@
     buildNormalMeleeEnemy: ->
       enemy = new App.Entities.Model
         class1: "normal-melee"
+        class2: "enemy"
+        class3: "character"
+        name: "Normal Melee Enemy"
+
+    buildStrongMeleeEnemy: ->
+      enemy = new App.Entities.Model
+        class1: "strong-melee"
         class2: "enemy"
         class3: "character"
         name: "Normal Melee Enemy"

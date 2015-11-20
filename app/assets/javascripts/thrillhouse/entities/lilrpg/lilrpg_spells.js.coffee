@@ -91,7 +91,6 @@
         target: 'player'
         # extraDom: "<div class='left'></div><div class='right'></div>"
 
-
   API =
     fireball: ->
       new LilrpgApp.Fireball

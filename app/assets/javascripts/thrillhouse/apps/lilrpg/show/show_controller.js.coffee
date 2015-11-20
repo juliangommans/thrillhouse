@@ -94,8 +94,7 @@
       loc = $("##{@player.get('location')}")
       if $(loc.children()[0])?
         item = $(loc.children()[0])
-        if $(loc.children()[0]).hasClass('item')
-          console.log "we have kiddies", loc.children()[0]
+        if $(loc.children()[0]).hasClass('loot')
           item.remove()
           @chestLoot()
 
@@ -113,14 +112,12 @@
         @filterKey(pressedKey)
 
     setLoadedMap: (selectedID) ->
-      console.log "what is this id??", selectedID
       if selectedID?
         @map = @loadMapList.find((map) ->
           map.get('id') is selectedID
         )
       else
-        console.log "this is map", @map
-        @map = false
+        @map = undefined
 
     loadSelectedMap: ->
       if @map?
@@ -156,9 +153,9 @@
       invs = @hero.get('hero_inventories')
 
       @player.get('spells').W.set orbs: _.filter(invs, (item) ->
-        return item if item.spell is "fireball")
-      @player.get('spells').Q.set orbs: _.filter(invs, (item) ->
         return item if item.spell is "icicle")
+      @player.get('spells').Q.set orbs: _.filter(invs, (item) ->
+        return item if item.spell is "fireball")
       @player.get('spells').E.set orbs: _.filter(invs, (item) ->
         return item if item.spell is "thunderbolt")
       @player.updateSpells()
@@ -200,7 +197,6 @@
         lootbox += "<div id='#{item.get('id')}' class='#{item.get('colour')} #{item.get('category')}'></div>"
         lootbox += "</div>"
         $("#loot-outcome").append(lootbox)
-
       $('#loot-modal').modal('show')
 
     collectCurrentLoot: ->
@@ -231,12 +227,12 @@
       @item = App.request "hero:items:entities"
       App.execute "when:fetched", [@hero, @item], =>
         $('#hero-modal').modal('show')
+        @hero.buildInventory()
         @showCharacterItems()
 
     showCharacterItems:  ->
       @spellsWithItems = []
-      @hero.buildInventory()
-      console.log "hero", @hero
+      @clearHeroCss()
       html = "<div class='character-sheet'>"
       for item in @hero.get('inventory')
         html += "<div data-id='#{item.id}' class='inv-box unchecked-loot' data-toggle='popover' data-placement='bottom' data-content='#{item.description}'>"
@@ -277,22 +273,45 @@
             object.addClass("#{item.colour}")
             check = true
 
+    removeSpellItem: (jspell) ->
+      items = @hero.get('hero_inventories')
+      item = _.find(items, (i) ->
+        if i.item_colour is jspell[0].classList[3] or i.item_colour is jspell[0].classList[2]
+          if i.spell.length > 0
+            return i
+        )
+      inventory_item = App.request "hero:inventory:entity", item.id
+      App.execute "when:fetched", inventory_item, =>
+        inventory_item.set spell: ""
+        @serverItems.push(
+          item: inventory_item
+          action: "save"
+        )
+        jspell.removeClass("#{item.item_colour} socketed")
+        $("##{item.item_colour}-orb").text(parseInt($("##{item.item_colour}-orb").text()) + 1)
+
     itemConversion: (id,spell) ->
+      jspell =  $("##{spell}")
       inv = @hero.get('inventory')
+      if jspell.hasClass("socketed")
+        @removeSpellItem(jspell)
       item = _.find(inv, (item) ->
         item.id is id)
-      if item.category is "fragment"
-        @transmuteFragments(item,id)
-      else
-        @addOrbToSpell(item,inv,id,spell)
+      if item?
+        if item.category is "fragment"
+          if jspell.attr('id') is 'transmute-box'
+            @transmuteFragments(item,id)
+        else
+          unless jspell.attr('id') is 'transmute-box'
+            @addOrbToSpell(item,inv,id,jspell,spell)
 
-    addOrbToSpell: (item,inv,id,spell) ->
-      jspell =  $("##{spell}")
+    addOrbToSpell: (item,inv,id,jspell,spell) ->
       if jspell.hasClass("socketed") or parseInt($($(".checked-loot").children()[1]).text()) < 1
         console.log "WRONG HOLE FOOL", jspell
       else
         jspell.addClass("socketed")
         jspell.addClass("#{item.colour}")
+        $("##{item.colour}-orb").text(parseInt($("##{item.colour}-orb").text()) - 1)
         @assignSpell(id, spell)
 
     assignSpell: (id, spell) ->
@@ -309,7 +328,12 @@
     findInventoryItem: (id) ->
       inventory = @hero.get('hero_inventories')
       inv_item = inventory.find((item) ->
-        item.hero_items_id is id and item.spell.length <= 1)
+        console.log "item find??", item
+        unless item.assigned
+          item.hero_items_id is id and item.spell.length <= 1
+        )
+      if inv_item?
+        inv_item["assigned"] = true
       inv_item
 
     transmuteFragments: (item,id) ->
@@ -327,7 +351,7 @@
         x.set id: 10
         @serverItems.push(
           item: x
-          actions: "destroy"
+          action: "destroy"
           destroy:
             data:
               heroes_id: @hero.id
