@@ -58,7 +58,6 @@
       @modifyTargetHealth(healthBars, @)
       unless @get('alive')
         console.log "bitch, you ded"
-
     checkCss: ->
       player = $('.player')
       if player.css('opacity')?
@@ -186,14 +185,14 @@
         @deadOrAlive(model)
 
     dealDamage: (source, target) ->
-      console.log "source and target", source, target
+      console.log "==source and target==", source, target
       stunned = false
       if source is "attack"
         damage = @damage[source]
       else
         damage = source.get('damage')
         stunned = source.get('stun')
-      console.log "damage", damage, target
+      console.log "damage", damage
       if target?
         if target.get('eligible')
           target.set eligible: false
@@ -202,6 +201,11 @@
           @stunTarget(target) if stunned
           target.set alive: false if enemyHp < 1
           target.set health: enemyHp
+          unless source.get('pierce')
+            @cleanupTargets(source)
+            @cleanupSpellSprite(source)
+        else
+          console.log "target is not eligible for some reason", target
     #fire damage animation
 
     deadOrAlive: (targetModel) ->
@@ -224,17 +228,26 @@
       spell = @get('spells')[key]
       unless spell.get('onCd')
         console.log spell.get('className'), spell
+        if spell.get('targets').length > 0
+          @cleanupTargets(spell)
+        spell.set targets: []
+        spell.set confirmHit: false
         @spellCd(spell)
-        ####move confirm hit to spell attribute (looks like its screwing up 
-        ####multiple spell casts) look for other overlapping spell errors
-        @confirmHit = false
+        #### ConfirmHit is fine eligible seems to not be being removed from pierce
+        #### need to figure out the source.
         route = @getProjectileCoords(spell)
-        console.log "this is the spells route", route
         @setActionCd(@get('actionSpeed'))
         if spell.get('type') is "projectile"
           @projectileSpell(spell, route)
         else if spell.get('type') is "instant"
           @instantSpell(spell, route)
+
+    cleanupTargets: (spell) ->
+      x = spell.get('targets')
+      console.log "x", x, x.length
+      for target in spell.get('targets')
+        console.log "current target", target
+        target.set eligible: true
 
     projectileSpell: (spell, route) ->
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
@@ -270,10 +283,11 @@
         top: absoluteDest.top+5
         ,
         spellSpeed * route.length
-        ->
+        =>
           if spell.get('rotate')
             clearTimeout(@rotationTimer)
-          $(".#{className}").remove()
+          @cleanupTargets(spell)
+          @cleanupSpellSprite(spell)
         )
 
     animateInstant: (spell, domObject, target) ->
@@ -316,7 +330,7 @@
         if cell.children().length
           @checkCurrentCell(cell, spell)
           unless spell.get('pierce')
-            @confirmHit = true
+            spell.set confirmHit: true
           console.log "we hit it in the milisecondCellChecker"
           return
         if count >= total
@@ -330,16 +344,14 @@
       count = -1
       total = route.length
       simulateTravelTime = =>
-        return if @confirmHit is true
+        return if spell.get('confirmHit')
         unless count < 0 or count > (route.length-1)
           cell = @getElementByLoc(route[count])
-          console.log "just checking each cell", cell, cell.children().length
           if spell.get('className') is "teleport"
             if cell.children().length
               if count > 0
                 previousCell = @getElementByLoc(route[count - 1])
                 @checkCurrentCell(previousCell, spell)
-                console.log "we should be back a cell", previousCell
                 return
               else
                 @checkCurrentCell($("##{@get('location')}"), spell)
@@ -366,16 +378,13 @@
       else if spell.get('className') is "teleport"
         @movePlayerInstantly(cell, spell)
       else
-        unless spell.get('pierce')
-          @cleanupSpellSprite(spell)
+        @cleanupSpellSprite(spell)
 
     hitTarget: (target,spell) ->
       @checkTargetForDummy(target, spell)
       @enemies = @get('enemies')
-      console.log "target before finding model", target, $(target.children()[0])
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
       spell.get('targets').push(target)
-      console.log "spell", spell
       @dealDamage(spell,target)
       healthBars = $("##{target.get('name')}").children()
       @modifyTargetHealth(healthBars, target)

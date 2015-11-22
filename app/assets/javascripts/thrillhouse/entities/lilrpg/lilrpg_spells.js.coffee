@@ -10,7 +10,7 @@
       pierce: false
       aoe: false
       multishot: false
-      confirmedHit: false
+      confirmHit: false
       target: 'enemy'
       orbs: []
       targets: []
@@ -59,7 +59,7 @@
         pierce: true
         className: "fireball"
         cooldown: 12000
-        speed: 350
+        speed: 325
         damage: 2
         type: 'projectile'
 
@@ -68,7 +68,7 @@
       @set
         className: "icicle"
         cooldown: 10000
-        speed: 250
+        speed: 275
         damage: 1
         stun: true
         type: 'projectile'

@@ -47,7 +47,7 @@
   #### this needs to be fixing, causes them to miss a step when hitting a wall
       # if @checkIllegalMoves(nextCell)
       #   @checkFacingCell(nextCell)
-      @createProxyChar()
+      # @createProxyChar()
 
     createProxyChar: ->
       if @get('alive')

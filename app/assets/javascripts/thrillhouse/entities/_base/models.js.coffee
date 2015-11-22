@@ -56,14 +56,6 @@
       spellname = spell.get("className")
       $(".#{spellname}").stop()
       $(".#{spellname}").remove()
-      if spell.get('targets').length > 0
-        @cleanupTargets(spell)
-        console.log "you have hit targets"
-
-    cleanupTargets: (spell) ->
-      for target in spell.get('targets')
-        target.set eligible: true
-      spell.set targets: []
 
     checkIllegalMoves: (newCoords) ->
       illegalMoves = ['wall', 'enemy', 'player']
