@@ -8,6 +8,7 @@
       range: 1
       alive: true
       moveSpeed: 1000
+      eligible: true
       stunned: false
       attackSpeed: 1200
       name: "TestSubject"

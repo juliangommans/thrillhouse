@@ -195,11 +195,13 @@
         stunned = source.get('stun')
       console.log "damage", damage, target
       if target?
-        enemyHp = target.get('health')
-        enemyHp -= damage
-        @stunTarget(target) if stunned
-        target.set alive: false if enemyHp < 1
-        target.set health: enemyHp
+        if target.get('eligible')
+          target.set eligible: false
+          enemyHp = target.get('health')
+          enemyHp -= damage
+          @stunTarget(target) if stunned
+          target.set alive: false if enemyHp < 1
+          target.set health: enemyHp
     #fire damage animation
 
     deadOrAlive: (targetModel) ->
@@ -223,6 +225,8 @@
       unless spell.get('onCd')
         console.log spell.get('className'), spell
         @spellCd(spell)
+        ####move confirm hit to spell attribute (looks like its screwing up 
+        ####multiple spell casts) look for other overlapping spell errors
         @confirmHit = false
         route = @getProjectileCoords(spell)
         console.log "this is the spells route", route
@@ -286,7 +290,7 @@
               if target?
                 @hitTarget(target, spell)
               else
-                @cleanupSpellSprite(spell.get('className'))
+                @cleanupSpellSprite(spell)
             )
         )
 
@@ -311,7 +315,8 @@
       milisecondCellChecker = =>
         if cell.children().length
           @checkCurrentCell(cell, spell)
-          @confirmHit = true
+          unless spell.get('pierce')
+            @confirmHit = true
           console.log "we hit it in the milisecondCellChecker"
           return
         if count >= total
@@ -361,24 +366,28 @@
       else if spell.get('className') is "teleport"
         @movePlayerInstantly(cell, spell)
       else
-        @cleanupSpellSprite(spell.get('className'))
+        unless spell.get('pierce')
+          @cleanupSpellSprite(spell)
 
     hitTarget: (target,spell) ->
       @checkTargetForDummy(target, spell)
       @enemies = @get('enemies')
       console.log "target before finding model", target, $(target.children()[0])
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
+      spell.get('targets').push(target)
+      console.log "spell", spell
       @dealDamage(spell,target)
       healthBars = $("##{target.get('name')}").children()
       @modifyTargetHealth(healthBars, target)
 
     checkTargetForDummy: (target, spell) ->
-      if target.hasClass('dummy')
-        setTimeout( =>
-          @cleanupSpellSprite(spell.get('className'))
-        , spell.get('cooldown'))
-      else
-        @cleanupSpellSprite(spell.get('className'))
+      unless spell.get('pierce')
+        if target.hasClass('dummy')
+          setTimeout( =>
+            @cleanupSpellSprite(spell)
+          , spell.get('cooldown'))
+        else
+          @cleanupSpellSprite(spell)
 
     findTargetModel: (identifier) ->
       @get('enemies').find( (enemy) ->

@@ -7,8 +7,13 @@
       rotate: false
       rotateSpeed: 10
       stun: false
+      pierce: false
+      aoe: false
+      multishot: false
+      confirmedHit: false
       target: 'enemy'
       orbs: []
+      targets: []
 
     showCooldown: ->
       className = @get('className')
@@ -51,6 +56,7 @@
   class LilrpgApp.Fireball extends LilrpgApp.Spell
     initialize:->
       @set
+        pierce: true
         className: "fireball"
         cooldown: 12000
         speed: 350
