@@ -57,8 +57,9 @@
     initialize:->
       @set
         pierce: true
+        aoe: true
         className: "fireball"
-        cooldown: 12000
+        cooldown: 1200
         speed: 325
         damage: 2
         type: 'projectile'
@@ -66,8 +67,10 @@
   class LilrpgApp.Icicle extends LilrpgApp.Spell
     initialize:->
       @set
+        pierce: true
+        aoe: true
         className: "icicle"
-        cooldown: 10000
+        cooldown: 1000
         speed: 275
         damage: 1
         stun: true
@@ -79,8 +82,9 @@
   class LilrpgApp.ThunderBolt extends LilrpgApp.Spell
     initialize:->
       @set
+        aoe: true
         className: "thunderbolt"
-        cooldown: 6000
+        cooldown: 600
         speed: 50
         damage: 1
         type: 'instant'

@@ -57,6 +57,24 @@
       $(".#{spellname}").stop()
       $(".#{spellname}").remove()
 
+    createAoeCells: (cell,radius) ->
+      cells = []
+      for newCell in [
+        {x:-1,y:-1},
+        {x:-1,y:0},
+        {x:-1,y:1},
+        {x:0,y:-1},
+        {x:0,y:1},
+        {x:1,y:-1},
+        {x:1,y:0},
+        {x:1,y:1}
+      ]
+        cells.push {
+          x: cell.x + (newCell.x*radius)
+          y: cell.y + (newCell.y*radius)
+        }
+      cells
+
     checkIllegalMoves: (newCoords) ->
       illegalMoves = ['wall', 'enemy', 'player']
       if $("##{newCoords}")[0]?

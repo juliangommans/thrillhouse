@@ -2,6 +2,7 @@
   display: inline-block;
   height: 20px;
   width: 20px;
+  position: relative;
 }
 
 .map-row {
@@ -19,6 +20,7 @@
 }
 
 .simple-melee {
+  position: absolute;
   margin: 2px;
   background-color: red;
   z-index: 2;
@@ -192,4 +194,37 @@
   border-right: 8px solid transparent;
   border-left: 8px solid transparent;
 
+}
+
+.aoe-wrapper {
+  position: relative;
+  z-index: 9;
+  display: none;
+}
+
+.aoe {
+  position: absolute;
+  z-index: 9;
+  left: 4;
+  top: 4;
+  border: 3px dotted black;
+  border-radius: 6px;
+  opacity: 0.7;
+  height: 12px;
+  width: 12px;
+}
+
+.aoe-fireball {
+  background-color: yellow;
+  border-color: orange;
+}
+
+.aoe-icicle {
+  background-color: aqua;
+  border-color: blue;
+}
+
+.aoe-thunderbolt {
+  background-color: gold;
+  border-color: yellow;
 }

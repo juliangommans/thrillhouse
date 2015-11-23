@@ -194,19 +194,19 @@
         stunned = source.get('stun')
       console.log "damage", damage
       if target?
-        if target.get('eligible')
-          target.set eligible: false
+        if target.get('eligible') or source.get('dummy')
           enemyHp = target.get('health')
           enemyHp -= damage
           @stunTarget(target) if stunned
           target.set alive: false if enemyHp < 1
           target.set health: enemyHp
+          target.set eligible: false
           unless source.get('pierce')
             @cleanupTargets(source)
             @cleanupSpellSprite(source)
         else
           console.log "target is not eligible for some reason", target
-    #fire damage animation
+      #fire damage animation
 
     deadOrAlive: (targetModel) ->
       unless targetModel.get('alive')
@@ -244,10 +244,12 @@
 
     cleanupTargets: (spell) ->
       x = spell.get('targets')
-      console.log "x", x, x.length
-      for target in spell.get('targets')
-        console.log "current target", target
-        target.set eligible: true
+      # console.log "x", x, x.length
+      if x.length > 0
+        console.log "x??", x
+        for target in spell.get('targets')
+          console.log "current target", target
+          target.set eligible: true
 
     projectileSpell: (spell, route) ->
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
@@ -302,6 +304,8 @@
           $(".#{className}").fadeOut(spell.get("speed")*3
             , =>
               if target?
+                if spell.get('aoe')
+                  @applyAoe(target, spell)
                 @hitTarget(target, spell)
               else
                 @cleanupSpellSprite(spell)
@@ -324,6 +328,7 @@
 
     realtimeCounter: (cell,spell) =>
       clearTimeout(@suicideTimeout)
+      console.log "we are checking our squares"
       count = 0
       total = spell.get('speed')
       milisecondCellChecker = =>
@@ -374,20 +379,64 @@
       if cell.children().length
         check = cell.children()[0].classList[1]
       if check is "enemy" or check is "dummy"
+        if spell.get('aoe')
+          console.log "THIS ONE WAS AN AOE"
+          @applyAoe(cell, spell)
+        console.log "**target aquired**", spell
         @hitTarget(cell,spell)
+        return true
       else if spell.get('className') is "teleport"
         @movePlayerInstantly(cell, spell)
       else
-        @cleanupSpellSprite(spell)
+        unless spell.get('pierce')
+          @cleanupSpellSprite(spell)
+        return false
+
+    applyAoe: (cell, spell) ->
+      cellLoc = @coords[cell.attr('id')]
+      cells = @createAoeCells(cellLoc,1)
+      for newCell in cells
+        newSpell = @buildDummySpell(newCell, spell)
+        @animateAoe(newCell, newSpell)
+
+    animateAoe: (cell, spell) ->
+      cell = $("#cell-#{cell.x}-#{cell.y}")
+      div = "<div class='aoe-wrapper #{spell.get('className')}'>"
+      div += "<div class='aoe aoe-#{spell.get('spellName')}'>"
+      div += "</div></div>"
+      cell.append(div)
+      if cell.children().length
+        @checkCurrentCell(cell, spell)
+      $(".aoe-wrapper").fadeIn(spell.get('speed')
+        , =>
+          $(".aoe-wrapper").fadeOut(spell.get('speed')*2
+            , =>
+              @cleanupTargets(spell)
+              @cleanupSpellSprite(spell)
+              $(".aoe-wrapper").remove()
+            )
+        )
+
+    buildDummySpell: (cell, spell) ->
+      newSpell = new Backbone.Model
+      newSpell.set damage: spell.get('damage')
+      newSpell.set className: "#{spell.get('className')}-#{cell.x}-#{cell.y}"
+      newSpell.set spellName: spell.get('className')
+      newSpell.set targets: []
+      newSpell.set dummy: true
+      newSpell.set pierce: true # so it won't get normal spell treatment
+      newSpell.set stun: spell.get('stun')
+      newSpell
 
     hitTarget: (target,spell) ->
       @checkTargetForDummy(target, spell)
       @enemies = @get('enemies')
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
-      spell.get('targets').push(target)
-      @dealDamage(spell,target)
-      healthBars = $("##{target.get('name')}").children()
-      @modifyTargetHealth(healthBars, target)
+      if target?
+        spell.get('targets').push(target)
+        @dealDamage(spell,target)
+        healthBars = $("##{target.get('name')}").children()
+        @modifyTargetHealth(healthBars, target)
 
     checkTargetForDummy: (target, spell) ->
       unless spell.get('pierce')
@@ -420,7 +469,6 @@
             y: currentLocation.y + facing.axis*i
         array.push(temp)
       array
-
 
 #### Cooldowns and Timers ####
 
@@ -463,5 +511,3 @@
 
   App.reqres.setHandler "lilrpg:player:entity", (options) ->
     API.player options
-
-

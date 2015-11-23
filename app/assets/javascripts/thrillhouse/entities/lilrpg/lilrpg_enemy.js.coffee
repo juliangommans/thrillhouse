@@ -93,24 +93,24 @@
       cell = @buildCellName(newLoc)
       cell
 
-    pulse: (coords,player) ->
-      @sensor = setInterval(@scanArea,@get('attackSpeed'))
+    # pulse: (coords,player) ->
+    #   @sensor = setInterval(@scanArea,@get('attackSpeed'))
 
-    scanArea: =>
-      if @get('alive') and @player.get('alive')
-        enemyCoords = @coords[@get('location')]
-        for x in [1..@get('range')]
-          @checkLoc(@getLoc(x))
-      else
-        clearInterval(@sensor)
+    # scanArea: =>
+    #   if @get('alive') and @player.get('alive')
+    #     enemyCoords = @coords[@get('location')]
+    #     for x in [1..@get('range')]
+    #       @checkLoc(@getLoc(x))
+    #   else
+    #     clearInterval(@sensor)
 
-    checkLoc: (locArray) ->
-      for item in locArray
-        newLoc =
-          x: @location.x + item.x
-          y: @location.y + item.y
-        if @playerChecker(newLoc)
-          @attackPlayer()
+    # checkLoc: (locArray) ->
+    #   for item in locArray
+    #     newLoc =
+    #       x: @location.x + item.x
+    #       y: @location.y + item.y
+    #     if @playerChecker(newLoc)
+    #       @attackPlayer()
 
     playerChecker: (newLoc) ->
       id = "#cell-#{newLoc.x}-#{newLoc.y}"
@@ -165,7 +165,7 @@
         maxHealth: 8
         attackSpeed: 1500
 
-  class LilrpgApp.NormalMeleeEnemy extends LilrpgApp.Enemy
+  class LilrpgApp.StrongMeleeEnemy extends LilrpgApp.Enemy
 
     initialize: ->
       @set
@@ -178,8 +178,8 @@
 
     initialize: ->
       @set
-        health: 2
-        maxHealth: 2
+        health: 3
+        maxHealth: 3
         range: 3
         attackSpeed: 3000
 
