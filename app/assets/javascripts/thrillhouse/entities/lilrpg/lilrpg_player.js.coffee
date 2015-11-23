@@ -15,6 +15,7 @@
 
     initialize: (options) ->
       { @map } = options
+      @spellCount = 0
       @coords = @map.get('coordinates') if @map?
       @damage =
         attack: 1
@@ -35,6 +36,8 @@
           E: thunderbolt
           S: teleport
         spellCollection.add spellArray
+        for spell in spellArray
+          spell.uniqueId(@spellCount)
         @set spellCollection: spellCollection
         console.log "spellses?", @get('spells')
 
@@ -194,15 +197,14 @@
         stunned = source.get('stun')
       console.log "damage", damage
       if target?
-        if target.get('eligible') or source.get('dummy')
+        if source.checkTargets(target) or !source.get('dummy') #target.get('eligible')
           enemyHp = target.get('health')
           enemyHp -= damage
           @stunTarget(target) if stunned
           target.set alive: false if enemyHp < 1
           target.set health: enemyHp
-          target.set eligible: false
+          # target.set eligible: false
           unless source.get('pierce')
-            @cleanupTargets(source)
             @cleanupSpellSprite(source)
         else
           console.log "target is not eligible for some reason", target
@@ -228,32 +230,41 @@
       spell = @get('spells')[key]
       unless spell.get('onCd')
         console.log spell.get('className'), spell
-        if spell.get('targets').length > 0
-          @cleanupTargets(spell)
         spell.set targets: []
         spell.set confirmHit: false
         @spellCd(spell)
         #### ConfirmHit is fine eligible seems to not be being removed from pierce
-        #### need to figure out the source.
         route = @getProjectileCoords(spell)
         @setActionCd(@get('actionSpeed'))
+        @sortSpell(spell, route)
+
+    sortSpell: (spell, route) ->
+      for count in [1..spell.get('multishot')]
+        @spellCount += 1
+        newSpell = spell.clone()
+        newSpell.uniqueId(@spellCount)
+        @delayCounter(newSpell, route)
+
+
+
+    delayCounter: (spell, route) =>
+      count = 1
+      total = spell.get('multishot')
+      spellDelay = =>
         if spell.get('type') is "projectile"
           @projectileSpell(spell, route)
         else if spell.get('type') is "instant"
           @instantSpell(spell, route)
-
-    cleanupTargets: (spell) ->
-      x = spell.get('targets')
-      # console.log "x", x, x.length
-      if x.length > 0
-        console.log "x??", x
-        for target in spell.get('targets')
-          console.log "current target", target
-          target.set eligible: true
+        if count >= total
+          return
+        else
+          count++
+        setTimeout spellDelay, (spell.get('speed') + 50)
+      spellDelay()
 
     projectileSpell: (spell, route) ->
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
-      domObject = "<div class='#{spell.get('className')}' style='left:#{absoluteLoc.left+5}px;top:#{absoluteLoc.top+5}px;'></div>"
+      domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left+5}px;top:#{absoluteLoc.top+5}px;'></div>"
       destination = @getElementByLoc(route[route.length-1])
       $('body').append(domObject)
       @animateProjectile(spell, destination, route)
@@ -264,7 +275,7 @@
         @teleport(spell,route)
       else
         absoluteLoc = @getOffset($(destination)[0])
-        domObject = "<div class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
+        domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
         if destination.children().length
           if destination.children()[0].classList[1] is "enemy"
             target = destination
@@ -288,7 +299,6 @@
         =>
           if spell.get('rotate')
             clearTimeout(@rotationTimer)
-          @cleanupTargets(spell)
           @cleanupSpellSprite(spell)
         )
 
@@ -401,8 +411,8 @@
 
     animateAoe: (cell, spell) ->
       cell = $("#cell-#{cell.x}-#{cell.y}")
-      div = "<div class='aoe-wrapper #{spell.get('className')}'>"
-      div += "<div class='aoe aoe-#{spell.get('spellName')}'>"
+      div = "<div id='#{spell.get('uniqueId')}' class='aoe-wrapper'>"
+      div += "<div class='aoe aoe-#{spell.get('className')}'>"
       div += "</div></div>"
       cell.append(div)
       if cell.children().length
@@ -411,25 +421,20 @@
         , =>
           $(".aoe-wrapper").fadeOut(spell.get('speed')*2
             , =>
-              @cleanupTargets(spell)
               @cleanupSpellSprite(spell)
               $(".aoe-wrapper").remove()
             )
         )
 
     buildDummySpell: (cell, spell) ->
-      newSpell = new Backbone.Model
-      newSpell.set damage: spell.get('damage')
-      newSpell.set className: "#{spell.get('className')}-#{cell.x}-#{cell.y}"
-      newSpell.set spellName: spell.get('className')
-      newSpell.set targets: []
+      newSpell = spell.clone()
+      newSpell.uniqueId(@spellCount)
       newSpell.set dummy: true
-      newSpell.set pierce: true # so it won't get normal spell treatment
-      newSpell.set stun: spell.get('stun')
+      newSpell.set aoe: false
       newSpell
 
     hitTarget: (target,spell) ->
-      @checkTargetForDummy(target, spell)
+      # @checkTargetForDummy(target, spell)
       @enemies = @get('enemies')
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
       if target?
@@ -438,14 +443,14 @@
         healthBars = $("##{target.get('name')}").children()
         @modifyTargetHealth(healthBars, target)
 
-    checkTargetForDummy: (target, spell) ->
-      unless spell.get('pierce')
-        if target.hasClass('dummy')
-          setTimeout( =>
-            @cleanupSpellSprite(spell)
-          , spell.get('cooldown'))
-        else
-          @cleanupSpellSprite(spell)
+    # checkTargetForDummy: (target, spell) ->
+    #   unless spell.get('pierce')
+    #     if target.hasClass('dummy')
+    #       setTimeout( =>
+    #         @cleanupSpellSprite(spell)
+    #       , spell.get('cooldown'))
+    #     else
+    #       @cleanupSpellSprite(spell)
 
     findTargetModel: (identifier) ->
       @get('enemies').find( (enemy) ->

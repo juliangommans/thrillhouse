@@ -53,9 +53,9 @@
       "cell-#{loc.x}-#{loc.y}"
 
     cleanupSpellSprite: (spell) ->
-      spellname = spell.get("className")
-      $(".#{spellname}").stop()
-      $(".#{spellname}").remove()
+      spellname = spell.get("uniqueId")
+      $("##{spellname}").stop()
+      $("##{spellname}").remove()
 
     createAoeCells: (cell,radius) ->
       cells = []

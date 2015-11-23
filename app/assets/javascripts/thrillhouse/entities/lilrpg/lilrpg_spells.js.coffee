@@ -9,11 +9,15 @@
       stun: false
       pierce: false
       aoe: false
-      multishot: false
+      multishot: 1
       confirmHit: false
       target: 'enemy'
       orbs: []
       targets: []
+      uniqueId: "test-0"
+
+    uniqueId: (counter) ->
+      @set uniqueId: "#{@get('className')}-#{counter}"
 
     showCooldown: ->
       className = @get('className')
@@ -25,6 +29,16 @@
       ->
         @remove()
         )
+
+    checkTargets: (target) ->
+      hit = _.find(@get('targets'), (x) ->
+        target.id is x.id)
+      if hit?
+        console.log "--WE GOT TRUE--", hit
+        return true
+      else
+        console.log "--we got false--", hit
+        return false
 
     getRange: (map, facing, playerLoc) ->
       coords = map.get('coordinates')
@@ -68,7 +82,8 @@
     initialize:->
       @set
         pierce: true
-        aoe: true
+        # aoe: true
+        multishot: 2
         className: "icicle"
         cooldown: 1000
         speed: 275
