@@ -1,9 +1,9 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
   class LilrpgApp.Spell extends App.Entities.LilrpgModel
     defaults:
-      peirce: false
       onCd: false
       range: 3
+      damage: 1
       rotate: false
       rotateSpeed: 10
       stun: false
@@ -34,10 +34,8 @@
       hit = _.find(@get('targets'), (x) ->
         target.id is x.id)
       if hit?
-        console.log "--WE GOT TRUE--", hit
         return true
       else
-        console.log "--we got false--", hit
         return false
 
     getRange: (map, facing, playerLoc) ->
@@ -70,20 +68,22 @@
   class LilrpgApp.Fireball extends LilrpgApp.Spell
     initialize:->
       @set
-        pierce: true
-        aoe: true
+        # pierce: true
+        # aoe: true
+        # multishot: 2
         className: "fireball"
         cooldown: 1200
         speed: 325
+        range: 4
         damage: 2
         type: 'projectile'
 
   class LilrpgApp.Icicle extends LilrpgApp.Spell
     initialize:->
       @set
-        pierce: true
+        # pierce: true
         # aoe: true
-        multishot: 2
+        # multishot: 2
         className: "icicle"
         cooldown: 1000
         speed: 275
@@ -97,7 +97,8 @@
   class LilrpgApp.ThunderBolt extends LilrpgApp.Spell
     initialize:->
       @set
-        aoe: true
+        # aoe: true
+        multishot: 2
         className: "thunderbolt"
         cooldown: 600
         speed: 50

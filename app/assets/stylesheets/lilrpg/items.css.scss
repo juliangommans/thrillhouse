@@ -6,6 +6,10 @@
   display: inline-block;
 }
 
+.loot {
+  position: absolute;
+}
+
 .unchecked-loot {
   background-color: lightgray;
   border-width: 2px;

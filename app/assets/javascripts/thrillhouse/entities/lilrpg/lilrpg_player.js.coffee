@@ -204,7 +204,7 @@
           target.set alive: false if enemyHp < 1
           target.set health: enemyHp
           # target.set eligible: false
-          unless source.get('pierce')
+          unless source.get('pierce') or source.get('dummy')
             @cleanupSpellSprite(source)
         else
           console.log "target is not eligible for some reason", target
@@ -238,28 +238,26 @@
         @setActionCd(@get('actionSpeed'))
         @sortSpell(spell, route)
 
-    sortSpell: (spell, route) ->
-      for count in [1..spell.get('multishot')]
-        @spellCount += 1
-        newSpell = spell.clone()
-        newSpell.uniqueId(@spellCount)
-        @delayCounter(newSpell, route)
+    castSpell: (spell, route) ->
+      @spellCount += 1
+      newSpell = spell.clone()
+      newSpell.set(spell.attributes)
+      newSpell.uniqueId(@spellCount)
+      if newSpell.get('type') is "projectile"
+        @projectileSpell(newSpell, route)
+      else if newSpell.get('type') is "instant"
+        @instantSpell(newSpell, route)
 
-
-
-    delayCounter: (spell, route) =>
+    sortSpell: (spell, route) =>
       count = 1
       total = spell.get('multishot')
       spellDelay = =>
-        if spell.get('type') is "projectile"
-          @projectileSpell(spell, route)
-        else if spell.get('type') is "instant"
-          @instantSpell(spell, route)
+        @castSpell(spell, route)
         if count >= total
           return
         else
           count++
-        setTimeout spellDelay, (spell.get('speed') + 50)
+        setTimeout spellDelay, (400)
       spellDelay()
 
     projectileSpell: (spell, route) ->
@@ -276,11 +274,11 @@
       else
         absoluteLoc = @getOffset($(destination)[0])
         domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
-        if destination.children().length
-          if destination.children()[0].classList[1] is "enemy"
-            target = destination
+        # if destination.children().length
+        #   if destination.children()[0].classList[1] is "enemy"
+        #     target = destination
 
-        @animateInstant(spell, domObject, target)
+        @animateInstant(spell, domObject, destination)
 
     animateProjectile: (spell, destination, route) ->
       @degree = 0
@@ -313,10 +311,13 @@
         , =>
           $(".#{className}").fadeOut(spell.get("speed")*3
             , =>
-              if target?
-                if spell.get('aoe')
-                  @applyAoe(target, spell)
-                @hitTarget(target, spell)
+              if spell.get('aoe')
+                @applyAoe(target, spell)
+              if target.children().length
+                if target.children()[0].classList[1] is "enemy"
+                  @hitTarget(target, spell)
+                else
+                  @cleanupSpellSprite(spell)
               else
                 @cleanupSpellSprite(spell)
             )
@@ -343,11 +344,12 @@
       total = spell.get('speed')
       milisecondCellChecker = =>
         if cell.children().length
-          @checkCurrentCell(cell, spell)
-          unless spell.get('pierce')
-            spell.set confirmHit: true
-          console.log "we hit it in the milisecondCellChecker"
-          return
+          if @checkCurrentCell(cell, spell)
+            console.log "we hit it in the milisecondCellChecker"
+            return
+          else
+            console.log "-------------we hit nothing"
+            return
         if count >= total
           return
         else
@@ -390,19 +392,25 @@
         check = cell.children()[0].classList[1]
       if check is "enemy" or check is "dummy"
         if spell.get('aoe')
-          console.log "THIS ONE WAS AN AOE"
           @applyAoe(cell, spell)
-        console.log "**target aquired**", spell
+        unless spell.get('pierce')
+          spell.set confirmHit: true
         @hitTarget(cell,spell)
         return true
       else if spell.get('className') is "teleport"
         @movePlayerInstantly(cell, spell)
-      else
-        unless spell.get('pierce')
+      else if check is "wall"
+        unless spell.get('dummy')
+          console.log "we hit a", check, "with", spell
+          spell.set confirmHit: true
           @cleanupSpellSprite(spell)
+        spell.set confirmHit: true
+        return true
+      else
         return false
 
     applyAoe: (cell, spell) ->
+      # ATM aoe appears to  be cloning everything - including the animation - spamming the system.
       cellLoc = @coords[cell.attr('id')]
       cells = @createAoeCells(cellLoc,1)
       for newCell in cells
@@ -427,14 +435,16 @@
         )
 
     buildDummySpell: (cell, spell) ->
+      # animations seem to whack out
       newSpell = spell.clone()
-      newSpell.uniqueId(@spellCount)
+      newSpell.set(spell.attributes)
+      newSpell.uniqueId("#{cell.x}-#{cell.y}")
       newSpell.set dummy: true
+      newSpell.set pierce: false
       newSpell.set aoe: false
       newSpell
 
     hitTarget: (target,spell) ->
-      # @checkTargetForDummy(target, spell)
       @enemies = @get('enemies')
       target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
       if target?
@@ -442,15 +452,6 @@
         @dealDamage(spell,target)
         healthBars = $("##{target.get('name')}").children()
         @modifyTargetHealth(healthBars, target)
-
-    # checkTargetForDummy: (target, spell) ->
-    #   unless spell.get('pierce')
-    #     if target.hasClass('dummy')
-    #       setTimeout( =>
-    #         @cleanupSpellSprite(spell)
-    #       , spell.get('cooldown'))
-    #     else
-    #       @cleanupSpellSprite(spell)
 
     findTargetModel: (identifier) ->
       @get('enemies').find( (enemy) ->
