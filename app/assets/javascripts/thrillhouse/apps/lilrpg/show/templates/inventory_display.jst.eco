@@ -1,8 +1,7 @@
-
 <h3>Your current Fragments</h3>
 
 <% for item in @inventory :%>
-<% if item.type is "fragment" :%>
+<% if item.category is "fragment" :%>
 <div class="<%= item.className %>"></div>
 <span><%= item.name %>: </span> <span><%=item.total%></span>
 <% end %>

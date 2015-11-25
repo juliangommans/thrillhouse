@@ -1,6 +1,7 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
   class LilrpgApp.Spell extends App.Entities.LilrpgModel
     defaults:
+      cooldownMod: 1
       onCd: false
       range: 3
       damage: 1
@@ -15,6 +16,10 @@
       orbs: []
       targets: []
       uniqueId: "test-0"
+
+    setCooldown: ->
+      newCooldown = @get('cooldownBase') * @get('cooldownMod')
+      @set cooldown: newCooldown
 
     uniqueId: (counter) ->
       @set uniqueId: "#{@get('className')}-#{counter}"
@@ -72,6 +77,7 @@
         # aoe: true
         # multishot: 2
         className: "fireball"
+        cooldownBase: 10000
         cooldown: 10000
         speed: 325
         range: 4
@@ -85,6 +91,7 @@
         # aoe: true
         # multishot: 2
         className: "icicle"
+        cooldownBase: 9000
         cooldown: 9000
         speed: 275
         damage: 1
@@ -102,6 +109,7 @@
         # multishot: 2
         range: 2
         className: "thunderbolt"
+        cooldownBase: 7000
         cooldown: 7000
         speed: 50
         damage: 1
@@ -112,6 +120,7 @@
     initialize:->
       @set
         className: "teleport"
+        cooldownBase: 6000
         cooldown: 6000
         speed: 100
         damage: 0

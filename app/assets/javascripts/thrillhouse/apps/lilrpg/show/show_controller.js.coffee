@@ -25,8 +25,6 @@
       @player.set location: location
       @setModelFacingAttributes('.player', @player)
 
-      # @chestLoot()
-
     setModelFacingAttributes: (target, model) ->
       if $(target).hasAnyClass(@facingData.directions).bool
         direction = @facingData.directions[$(target).hasAnyClass(@facingData.directions).index]
@@ -137,6 +135,9 @@
     fetchPlayer: ->
       @player = App.request "lilrpg:player:entity",
         map: @map
+        hero: @hero
+        inventory: @hero.get('inventory')
+
         hero_items: @hero.get('hero_items')
 
     afterHeroFetch: ->
@@ -145,21 +146,9 @@
         @loadInventoryDisplay()
 
         @setPlayerLocation()
-        @assignSpellOrbs()
+        @updateDisplay()
         @setupPlayerHealthBars()
         @fetchEnemies()
-
-    assignSpellOrbs: ->
-      invs = @hero.get('hero_inventories')
-
-      @player.get('spells').W.set orbs: _.filter(invs, (item) ->
-        return item if item.spell is "icicle")
-      @player.get('spells').Q.set orbs: _.filter(invs, (item) ->
-        return item if item.spell is "fireball")
-      @player.get('spells').E.set orbs: _.filter(invs, (item) ->
-        return item if item.spell is "thunderbolt")
-      @player.updateSpells()
-      @updateDisplay()
 
     updateDisplay: ->
       @spellsView.render()
@@ -343,7 +332,7 @@
       if item.total >= 10
         newTotal = item.total -= 10
         @destroyFragments(id)
-        @createOrb(item, (id+3))
+        @createOrb(id+3)
         @updateInvDisplay(newTotal,item)
       else
         alert "You need at least 10 fragments to transmute an orb"
@@ -425,7 +414,6 @@
           )
 
     createOrb: (id) ->
-      # console.log "what is this item???", item
       orb = App.request "new:hero:inventory:entity"
       App.execute "when:fetched", orb, =>
         orb.set(

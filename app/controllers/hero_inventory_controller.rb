@@ -1,6 +1,6 @@
 class HeroInventoryController < ApplicationController
   respond_to :json
-  before_filter :fetch_inventory, except: [:index, :create]
+  before_filter :fetch_inventory, except: [:index, :create, :destroy]
 
   def create
     @inventory = HeroInventory.new
@@ -32,6 +32,7 @@ class HeroInventoryController < ApplicationController
         items_to_destroy[x].destroy
       end
     else
+      @inventory = HeroInventory.find(params[:id])
       @inventory.destroy
     end
     render json: { status: 200 }

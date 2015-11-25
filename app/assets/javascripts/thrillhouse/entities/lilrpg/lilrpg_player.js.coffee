@@ -2,6 +2,12 @@
   class LilrpgApp.Player extends App.Entities.LilrpgModel
 
     defaults:
+      damage: 1
+      spellStats:
+        damage: 0
+        range: 0
+        cooldownMod: 0
+        multishot: 0
       health: 5
       maxHealth: 5
       range: 1
@@ -14,11 +20,10 @@
       facing: {}
 
     initialize: (options) ->
-      { @map } = options
+      { @map, @hero } = options
       @spellCount = 0
       @coords = @map.get('coordinates') if @map?
-      @damage =
-        attack: 1
+
       @listenTo @, "change", @checkHealth
       fireball = App.request "lilrpg:fireball:spell"
       icicle = App.request "lilrpg:icicle:spell"
@@ -26,8 +31,7 @@
       teleport = App.request "lilrpg:teleport:spell"
       spellArray = [fireball,icicle,thunderbolt,teleport]
       spellCollection = new App.Entities.Collection
-
-      @buildInventory()
+      @getClassBonus()
 
       App.execute "when:fetched", spellArray, =>
         @set spells:
@@ -37,25 +41,77 @@
           S: teleport
         spellCollection.add spellArray
         for spell in spellArray
-          spell.uniqueId(@spellCount)
+          @updateSpells(spell)
+
         @set spellCollection: spellCollection
         console.log "spellses?", @get('spells')
+        console.log "hero/player info", @
 
-    updateSpells: ->
-      spells = @get('spells')
-      for k,spell of spells
-        orbs = spell.get('orbs')
-        for orb in orbs
-          x = orb.spell_stat
-          change = spell.get(orb.spell_stat)
-          if orb.item_colour is "amythest" or orb.item_colour is "emerald"
-            change = true
-          else if orb.item_colour is "sapphire"
-            change *= orb.change
-          else
-            change += orb.change
-          spell.set(orb.spell_stat, change)
-      console.log "PLAYA PLAYA", @
+    updateSpells: (spell) ->
+      @assignSpellOrbs(spell)
+      @updateOrbs(spell)
+      @updateFromHero(spell)
+      spell.uniqueId(@spellCount)
+      spell.setCooldown()
+
+    updateOrbs: (spell) ->
+      orbs = spell.get('orbs')
+      console.log "shit not be working", orbs, spell
+      for orb in orbs
+        stat = orb.spell_stat
+        change = spell.get(orb.spell_stat)
+        console.log "stat change = ", stat, change
+        if orb.item_colour is "amythest" or orb.item_colour is"emerald"
+          change = true
+          spell.set(stat, change)
+        # else if orb.item_colour is "sapphire"
+        #   change += orb.change
+        #   console.log "orb change etc.", orb.change, change
+        #   spell.set cooldownMod: change
+        else
+          change += orb.change
+          console.log "orb change etc.", orb.change, change
+          spell.set(stat, change)
+
+    updateFromHero: (spell) ->
+      heroStats = @get('spellStats')
+      spell.set damage: (spell.get('damage') + heroStats.damage)
+      spell.set range: (spell.get('range') + heroStats.range)
+      spell.set multishot: (spell.get('multishot') + heroStats.multishot)
+      spell.set cooldownMod: (spell.get('cooldownMod') + heroStats.cooldownMod)
+
+    assignSpellOrbs: (spell) ->
+      invs = @get('hero').get('hero_inventories')
+
+      spell.set orbs: _.filter(invs, (item) ->
+        return item if item.spell is spell.get('className'))
+      # @player.get('spells').Q.set orbs: _.filter(invs, (item) ->
+      #   return item if item.spell is "fireball")
+      # @player.get('spells').E.set orbs: _.filter(invs, (item) ->
+      #   return item if item.spell is "thunderbolt")
+
+    getClassBonus: ->
+      switch @get('hero').get('hero_class')
+        when "Fighter"
+          newHealth = @get('health')+2
+          newDamage = @get('damage')+1
+          @fighterBonus(newHealth,newDamage)
+        when "Wizard"
+          spellDamage = @get('spellStats').damage + 1
+          spellRange = 1
+          spellCooldown = -0.15
+          @wizardBonus(spellDamage,spellRange,spellCooldown)
+
+    fighterBonus: (hp,dmg) ->
+      @set health: hp
+      @set maxHealth: hp
+      @set damage: dmg
+
+    wizardBonus: (dmg,range,cd) ->
+      stat = @get('spellStats')
+      stat.damage = dmg
+      stat.range = range
+      stat.cooldownMod = cd
 
     checkHealth: (args) ->
       healthBars = $('#player-health-bars').children()
@@ -86,25 +142,6 @@
       if target?
         if $(target).children().length
           @findTargetModel(parseInt($(target).attr('id')))
-
-    buildInventory: ->
-      items = @get('hero_items')
-      filtered = @uniqueArrayFilter(items,'id')
-      inventory = []
-      for item in filtered
-        count = _.filter(items, (i) ->
-          i.id is item.id)
-        inventory.push {
-          id: item.id
-          name: item.name
-          type: item.category
-          colour: item.colour
-          spell: item.spell
-          className: "#{item.colour} #{item.category}"
-          description: item.description
-          total: count.length
-        }
-      @set inventory: inventory
 
 #### Movement methods ####
 
@@ -169,6 +206,7 @@
 #### Attack and Damage ####
 
     attack: (key) ->
+      console.log "this is a standard attack"
       @changeTarget()
       targetModel = @getTargetModel()
       if @sanityCheck(targetModel)
@@ -188,26 +226,35 @@
         @deadOrAlive(model)
 
     dealDamage: (source, target) ->
-      console.log source.get('uniqueId'), source.get('dummy'), "==source and target==", target
+      console.log "source is yolo", source
       stunned = false
-      if source is "attack"
-        damage = @damage[source]
-      else
-        damage = source.get('damage')
-        stunned = source.get('stun')
-      console.log "damage", damage
       if target?
-        if source.checkTargets(target) or !source.get('dummy')
-          enemyHp = target.get('health')
-          enemyHp -= damage
-          console.log "current hp", enemyHp
-          @stunTarget(target) if stunned
-          target.set alive: false if enemyHp < 1
-          target.set health: enemyHp
-          unless source.get('pierce') or source.get('dummy')
-            @cleanupSpellSprite(source)
+        if source is "attack"
+          damage = @get('damage')
+          @physicalDamage(source, target, damage)
         else
-          console.log "^^^^^target is not eligible for some reason", target
+          damage = source.get('damage')
+          stunned = source.get('stun')
+          @magicalDamage(source, target, damage, stunned)
+        console.log "damage", damage
+
+    physicalDamage: (source, target, damage) ->
+        enemyHp = target.get('health')
+        enemyHp -= damage
+        target.set alive: false if enemyHp < 1
+        target.set health: enemyHp
+
+    magicalDamage: (source, target, damage, stunned) ->
+      if source.checkTargets(target) or !source.get('dummy')
+        enemyHp = target.get('health')
+        enemyHp -= damage
+        @stunTarget(target) if stunned
+        target.set alive: false if enemyHp < 1
+        target.set health: enemyHp
+        unless source.get('pierce') or source.get('dummy')
+          @cleanupSpellSprite(source)
+      else
+        console.log "^^^^^target is not eligible for some reason", target
       #fire damage animation
 
     deadOrAlive: (targetModel) ->

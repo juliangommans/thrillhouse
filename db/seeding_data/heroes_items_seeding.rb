@@ -34,8 +34,8 @@ module HeroItemList
       name: "Sapphire Orb",
       category: "orb",
       colour: "sapphire",
-      spell_stat: "cooldown",
-      change: 0.8,
+      spell_stat: "cooldownMod",
+      change: -0.15,
       description: "A Sapphire Orb decreases the associated abilities cooldown by 20%"
     },
     {
