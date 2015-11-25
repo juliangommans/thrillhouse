@@ -3,6 +3,7 @@
 
 <% for item in @inventory :%>
 <div class="<%= item.className %>"></div>
+<% if item.type is "fragment" :%>
 <span><%= item.name %>: </span> <span><%=item.total%></span>
 <% end %>
 

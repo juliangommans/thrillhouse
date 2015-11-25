@@ -48,7 +48,9 @@
         for orb in orbs
           x = orb.spell_stat
           change = spell.get(orb.spell_stat)
-          if orb.item_colour is "sapphire"
+          if orb.item_colour is "amythest" or orb.item_colour is "emerald"
+            change = true
+          else if orb.item_colour is "sapphire"
             change *= orb.change
           else
             change += orb.change
