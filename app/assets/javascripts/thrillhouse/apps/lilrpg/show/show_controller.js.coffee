@@ -269,16 +269,18 @@
         for socket in [1..3]
           object = $("##{inv_item.spell}-slot-#{socket}")
           unless object.hasClass('socketed') or check
-            object.addClass("socketed")
-            object.addClass("#{item.colour}")
+            object.addClass("socketed #{item.colour}")
             check = true
 
     removeSpellItem: (jspell) ->
       items = @hero.get('hero_inventories')
-      item = _.find(items, (i) ->
+      item = _.find(items, (i) =>
         if i.item_colour is jspell[0].classList[3] or i.item_colour is jspell[0].classList[2]
           if i.spell.length > 0
-            return i
+            x = _.find(@serverItems, (s) =>
+              s.item.id is i.id)
+            unless x?
+              return i
         )
       inventory_item = App.request "hero:inventory:entity", item.id
       App.execute "when:fetched", inventory_item, =>
@@ -293,16 +295,18 @@
     itemConversion: (id,spell) ->
       jspell =  $("##{spell}")
       inv = @hero.get('inventory')
-      if jspell.hasClass("socketed")
-        @removeSpellItem(jspell)
       item = _.find(inv, (item) ->
         item.id is id)
       if item?
-        if item.category is "fragment"
-          if jspell.attr('id') is 'transmute-box'
+        if jspell.attr('id') is 'transmute-box'
+          if item.category is "fragment"
             @transmuteFragments(item,id)
+          else
+            @transmuteOrbs(item,id,jspell)
         else
-          unless jspell.attr('id') is 'transmute-box'
+          if jspell.hasClass("socketed")
+            @removeSpellItem(jspell)
+          else unless item.category is "fragment" #jspell.attr('id') is 'transmute-box'
             @addOrbToSpell(item,inv,id,jspell,spell)
 
     addOrbToSpell: (item,inv,id,jspell,spell) ->
@@ -328,7 +332,6 @@
     findInventoryItem: (id) ->
       inventory = @hero.get('hero_inventories')
       inv_item = inventory.find((item) ->
-        console.log "item find??", item
         unless item.assigned
           item.hero_items_id is id and item.spell.length <= 1
         )
@@ -340,10 +343,72 @@
       if item.total >= 10
         newTotal = item.total -= 10
         @destroyFragments(id)
-        @createOrb(id)
+        @createOrb(item, (id+3))
         @updateInvDisplay(newTotal,item)
       else
         alert "You need at least 10 fragments to transmute an orb"
+
+    transmuteOrbs: (item,id,jspell) ->
+      if jspell.hasClass('socketed')
+        if jspell.data('id') is id
+          alert "you have to select a different type of orb"
+        else
+          items = []
+          items.push(@findInventoryItem(jspell.data('id')))
+          items.push(@findInventoryItem(id))
+          for item in items
+            @destroyOrbs(item, jspell)
+          @createSuperOrb(items)
+      else
+        jspell.addClass("socketed #{item.colour}")
+        jspell.data('id', id)
+
+    destroyOrbs: (invItem, jspell) ->
+      console.log "wtf is this?", invItem
+      jspell.removeClass("socketed #{invItem.item_colour}")
+      item = App.request "hero:inventory:entity", invItem.id
+      App.execute "when:fetched", item, =>
+        @serverItems.push(
+          item: item
+          action: 'destroy'
+          )
+
+    createSuperOrb: (items) ->
+      colour1 = items[0].item_colour
+      colour2 = items[1].item_colour
+      firstColour = @colorMixer()[colour1]
+      newColour = firstColour[colour2]
+      console.log "newColour", newColour
+      @createOrb(newColour.id)
+
+    colorMixer: ->
+      colourObject = {
+        ruby: {
+          topaz:
+            colour: "fireopal"
+            id: 21
+          sapphire:
+            colour: "amythest"
+            id: 19
+        }
+        topaz: {
+          ruby:
+            colour: "fireopal"
+            id: 21
+          sapphire:
+            colour: "emerald"
+            id: 20
+        }
+        sapphire: {
+          topaz:
+            colour: "emerald"
+            id: 20
+          ruby:
+            colour: "amythest"
+            id: 19
+        }
+      }
+
 
     destroyFragments: (id) ->
       x = App.request "new:hero:inventory:entity"
@@ -360,12 +425,13 @@
           )
 
     createOrb: (id) ->
+      # console.log "what is this item???", item
       orb = App.request "new:hero:inventory:entity"
       App.execute "when:fetched", orb, =>
         orb.set(
           hero_inventory:
             heroes_id: @hero.id
-            hero_items_id: (id+3)
+            hero_items_id: id
           )
         @serverItems.push(
           item: orb

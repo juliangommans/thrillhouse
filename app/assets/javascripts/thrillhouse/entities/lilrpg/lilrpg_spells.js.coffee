@@ -72,7 +72,7 @@
         # aoe: true
         # multishot: 2
         className: "fireball"
-        cooldown: 1200
+        cooldown: 10000
         speed: 325
         range: 4
         damage: 2
@@ -85,7 +85,7 @@
         # aoe: true
         # multishot: 2
         className: "icicle"
-        cooldown: 1000
+        cooldown: 9000
         speed: 275
         damage: 1
         stun: true
@@ -97,10 +97,12 @@
   class LilrpgApp.ThunderBolt extends LilrpgApp.Spell
     initialize:->
       @set
+        # pierce: true
         # aoe: true
-        multishot: 2
+        # multishot: 2
+        range: 2
         className: "thunderbolt"
-        cooldown: 600
+        cooldown: 7000
         speed: 50
         damage: 1
         type: 'instant'
