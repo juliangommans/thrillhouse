@@ -8,6 +8,11 @@
         range: 0
         cooldownMod: 0
         multishot: 0
+      abilityStats:
+        damage: 0
+        range: 0
+        cooldownMod: 0
+        multishot: 0
       health: 5
       maxHealth: 5
       range: 1
@@ -20,6 +25,7 @@
       facing: {}
 
     initialize: (options) ->
+      @aoeCount = 0
       { @map, @hero } = options
       @spellCount = 0
       @coords = @map.get('coordinates') if @map?
@@ -214,7 +220,6 @@
         @deadOrAlive(model)
 
     dealDamage: (source, target) ->
-      console.log "source is yolo", source
       stunned = false
       if target?
         if source is "attack"
@@ -224,7 +229,7 @@
           damage = source.get('damage')
           stunned = source.get('stun')
           @magicalDamage(source, target, damage, stunned)
-        console.log "damage", damage
+        console.log "damage", damage, source.get('uniqueId'), target
 
     physicalDamage: (source, target, damage) ->
         enemyHp = target.get('health')
@@ -310,6 +315,7 @@
       count = 1
       total = route.length
       spellDelay = =>
+        console.log "this should only happen 3 times", count, spell
         newSpell = @createNewSpell(spell)
         destination = @getElementByLoc(route[count-1])
         @castInstant(newSpell, route, destination)
@@ -357,6 +363,7 @@
         )
 
     animateInstant: (spell, domObject, target) ->
+      console.log "instantly animated"
       extraDom = spell.get('extraDom')
       className = spell.get('className')
       $('body').append(domObject)
@@ -367,8 +374,6 @@
         , =>
           $(".#{className}").fadeOut(spell.get("speed")*4
             , =>
-              if spell.get('aoe')
-                @applyAoe(target, spell)
               if target.children().length
                 if target.children()[0].classList[1] is "enemy"
                   @hitTarget(target, spell)
@@ -444,9 +449,7 @@
       if cell.children().length
         check = cell.children()[0].classList[1]
       if check is "enemy" or check is "dummy"
-        if spell.get('aoe')
-          @applyAoe(cell, spell)
-          console.log 'aoe spell'
+        console.log "=== AOE damaged target", cell, spell.get('uniqueId')
         unless spell.get('pierce')
           spell.set confirmHit: true
         @hitTarget(cell,spell)
@@ -464,6 +467,8 @@
         return false
 
     applyAoe: (cell, spell) ->
+      @aoeCount += 1
+      console.log 'aoe spell', @aoeCount, @spellCount
       cellLoc = @coords[cell.attr('id')]
       cells = @createAoeCells(cellLoc,1)
       for newCell in cells
@@ -497,11 +502,13 @@
       newSpell.set targets: []
       newSpell
 
-    hitTarget: (target,spell) ->
+    hitTarget: (cell,spell) ->
       @enemies = @get('enemies')
-      target = @findTargetModel(parseInt($(target.children()[0]).attr('id')))
+      target = @findTargetModel(parseInt($(cell.children()[0]).attr('id')))
       if target?
         unless spell.checkTargets(target)
+          if spell.get('aoe')
+            @applyAoe(cell, spell)
           spell.get('targets').push(target)
           @dealDamage(spell,target)
           healthBars = $("##{target.get('name')}").children()
