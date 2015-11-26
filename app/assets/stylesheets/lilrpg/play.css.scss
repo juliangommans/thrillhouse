@@ -7,12 +7,13 @@
 		margin-left: 10px;
 	}
 
-	.health-bar {
-		margin: 0px 5px;
+	.player-health-bar {
+		margin: 0px 2px;
 		height: 15px;
 		width: 30px;
 		border-style: solid;
 		border-width: 3px;
+    display: inline-block;
 	}
 }
 

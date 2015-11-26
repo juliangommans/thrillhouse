@@ -69,7 +69,7 @@
       total = char.get('maxHealth')
       if $("##{char.get('name')}").length
         $("##{char.get('name')}").remove()
-      health = "<div id=#{char.get('name')} class='health' style='width:#{total*4+2};'>" #left:#{location.left-3}px;top:#{location.top-15}px;'>"
+      health = "<div id=#{char.get('name')} class='health'>" #left:#{location.left-3}px;top:#{location.top-15}px;'>"
       for hp in [1..total]
         health += "<div class='health-bar positive-health'></div>"
       health += "</div>"
@@ -162,7 +162,7 @@
 
     setupPlayerHealthBars: ->
       hp = @player.get('maxHealth')
-      healthObj = "<div class='health-bar positive-health'></div>"
+      healthObj = "<div class='player-health-bar positive-health'></div>"
       for i in [1..hp]
         $('#player-health-bars').append(healthObj)
 
@@ -286,16 +286,18 @@
       inv = @hero.get('inventory')
       item = _.find(inv, (item) ->
         item.id is id)
-      if item?
-        if jspell.attr('id') is 'transmute-box'
-          if item.category is "fragment"
+      if jspell.attr('id') is 'transmute-box'
+        if item.category is "fragment"
+          if item?
             @transmuteFragments(item,id)
-          else
-            @transmuteOrbs(item,id,jspell)
         else
-          if jspell.hasClass("socketed")
-            @removeSpellItem(jspell)
-          else unless item.category is "fragment" #jspell.attr('id') is 'transmute-box'
+          if item?
+            @transmuteOrbs(item,id,jspell)
+      else
+        if jspell.hasClass("socketed")
+          @removeSpellItem(jspell)
+        else unless item.category is "fragment"
+          if item?
             @addOrbToSpell(item,inv,id,jspell,spell)
 
     addOrbToSpell: (item,inv,id,jspell,spell) ->
@@ -342,6 +344,8 @@
         if jspell.data('id') is id
           alert "you have to select a different type of orb"
         else
+          newTotal = item.total - 1
+          @updateInvDisplay(newTotal,item)
           items = []
           items.push(@findInventoryItem(jspell.data('id')))
           items.push(@findInventoryItem(id))
@@ -349,11 +353,12 @@
             @destroyOrbs(item, jspell)
           @createSuperOrb(items)
       else
+        newTotal = item.total - 1
+        @updateInvDisplay(newTotal,item)
         jspell.addClass("socketed #{item.colour}")
         jspell.data('id', id)
 
     destroyOrbs: (invItem, jspell) ->
-      console.log "wtf is this?", invItem
       jspell.removeClass("socketed #{invItem.item_colour}")
       item = App.request "hero:inventory:entity", invItem.id
       App.execute "when:fetched", item, =>
@@ -367,7 +372,6 @@
       colour2 = items[1].item_colour
       firstColour = @colorMixer()[colour1]
       newColour = firstColour[colour2]
-      console.log "newColour", newColour
       @createOrb(newColour.id)
 
     colorMixer: ->
@@ -427,6 +431,7 @@
           )
 
     updateInvDisplay: (newTotal,item) ->
+      console.log "item being destroyed??", item
       object = $("##{item.colour}-#{item.category}")
       object.text("#{newTotal}")
 
@@ -437,6 +442,7 @@
           @saveItemToServer(object.item)
         else if object.action is "destroy"
           object.item.destroy(object.destroy)
+      @hero.fetch()
       @serverItems = []
       @clearHeroCss()
 

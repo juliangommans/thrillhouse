@@ -56,21 +56,14 @@
 
     updateOrbs: (spell) ->
       orbs = spell.get('orbs')
-      console.log "shit not be working", orbs, spell
       for orb in orbs
         stat = orb.spell_stat
         change = spell.get(orb.spell_stat)
-        console.log "stat change = ", stat, change
         if orb.item_colour is "amythest" or orb.item_colour is"emerald"
           change = true
           spell.set(stat, change)
-        # else if orb.item_colour is "sapphire"
-        #   change += orb.change
-        #   console.log "orb change etc.", orb.change, change
-        #   spell.set cooldownMod: change
         else
           change += orb.change
-          console.log "orb change etc.", orb.change, change
           spell.set(stat, change)
 
     updateFromHero: (spell) ->
@@ -82,13 +75,8 @@
 
     assignSpellOrbs: (spell) ->
       invs = @get('hero').get('hero_inventories')
-
       spell.set orbs: _.filter(invs, (item) ->
         return item if item.spell is spell.get('className'))
-      # @player.get('spells').Q.set orbs: _.filter(invs, (item) ->
-      #   return item if item.spell is "fireball")
-      # @player.get('spells').E.set orbs: _.filter(invs, (item) ->
-      #   return item if item.spell is "thunderbolt")
 
     getClassBonus: ->
       switch @get('hero').get('hero_class')

@@ -2,8 +2,8 @@
   class LilrpgApp.Enemy extends App.Entities.LilrpgModel
 
     defaults:
-      health: 5
-      maxHealth: 5
+      health: 3
+      maxHealth: 3
       damage: 1
       range: 1
       alive: true
@@ -155,7 +155,15 @@
       #fire damage animation
 
 
+  class LilrpgApp.DunceMeleeEnemy extends LilrpgApp.Enemy
+
   class LilrpgApp.SimpleMeleeEnemy extends LilrpgApp.Enemy
+
+    initialize: ->
+      @set
+        health: 5
+        maxHealth: 5
+        attackSpeed: 1200
 
   class LilrpgApp.NormalMeleeEnemy extends LilrpgApp.Enemy
 
@@ -163,7 +171,7 @@
       @set
         health: 8
         maxHealth: 8
-        attackSpeed: 1500
+        attackSpeed: 1000
 
   class LilrpgApp.StrongMeleeEnemy extends LilrpgApp.Enemy
 
@@ -172,7 +180,7 @@
         health: 12
         maxHealth: 12
         damage: 2
-        attackSpeed: 2000
+        attackSpeed: 1500
 
   class LilrpgApp.SimpleRangedEnemy extends LilrpgApp.Enemy
 
@@ -185,6 +193,8 @@
 
 
   API =
+    dunceMeleeEnemy: ->
+      new LilrpgApp.DunceMeleeEnemy
     simpleMeleeEnemy: ->
       new LilrpgApp.SimpleMeleeEnemy
     normalMeleeEnemy: ->
@@ -193,6 +203,9 @@
       new LilrpgApp.StrongMeleeEnemy
     simpleRangedEnemy: ->
       new LilrpgApp.SimpleRangedEnemy
+
+  App.reqres.setHandler "lilrpg:dunce-melee:enemy", ->
+    API.dunceMeleeEnemy()
 
   App.reqres.setHandler "lilrpg:simple-melee:enemy", ->
     API.simpleMeleeEnemy()

@@ -74,6 +74,7 @@
 
     buildObjects: ->
       ary = []
+      ary.push(@buildDunceMeleeEnemy())
       ary.push(@buildSimpleMeleeEnemy())
       ary.push(@buildNormalMeleeEnemy())
       ary.push(@buildSimpleRangedEnemy())
@@ -82,6 +83,13 @@
 
       for obj in ary
         @collection.add obj
+
+    buildDunceMeleeEnemy: ->
+      enemy = new App.Entities.Model
+        class1: "dunce-melee"
+        class2: "enemy"
+        class3: "character"
+        name: "Dunce Melee Enemy"
 
     buildSimpleMeleeEnemy: ->
       enemy = new App.Entities.Model
@@ -102,7 +110,7 @@
         class1: "strong-melee"
         class2: "enemy"
         class3: "character"
-        name: "Normal Melee Enemy"
+        name: "Strong Melee Enemy"
 
     buildSimpleRangedEnemy: ->
       enemy = new App.Entities.Model
