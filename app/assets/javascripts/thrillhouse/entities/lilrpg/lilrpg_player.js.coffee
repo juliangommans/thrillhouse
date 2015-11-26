@@ -229,7 +229,6 @@
           damage = source.get('damage')
           stunned = source.get('stun')
           @magicalDamage(source, target, damage, stunned)
-        console.log "damage", damage, source.get('uniqueId'), target
 
     physicalDamage: (source, target, damage) ->
         enemyHp = target.get('health')
@@ -238,6 +237,7 @@
         target.set health: enemyHp
 
     magicalDamage: (source, target, damage, stunned) ->
+      console.log "damage", damage, source.get('uniqueId'), target
       if source.checkTargets(target) or !source.get('dummy')
         enemyHp = target.get('health')
         enemyHp -= damage

@@ -3,12 +3,30 @@ class HeroInventoryController < ApplicationController
   before_filter :fetch_inventory, except: [:index, :create, :destroy]
 
   def create
+    puts "########################"
+    puts params
+    puts "########################"
+    puts "########################"
     @inventory = HeroInventory.new
-    if @inventory.update_attributes inventory_params
+    if params[:hero_inventory][:heroes_id]
+      item = find_hero_item(params[:hero_inventory][:colour], params[:hero_inventory][:category])
+      @inventory[:hero_items_id] = item.id
+      @inventory[:heroes_id] = params[:hero_inventory][:heroes_id]
+      @inventory.save
       render "hero_inventory/show"
+      puts item
+      puts "########################"
     else
-      respond_with @inventory
+      if @inventory.update_attributes inventory_params
+        render "hero_inventory/show"
+      else
+        respond_with @inventory
+      end
     end
+  end
+
+  def find_hero_item(colour, category)
+    HeroItems.find_by(colour: colour, category: category)
   end
 
   def index

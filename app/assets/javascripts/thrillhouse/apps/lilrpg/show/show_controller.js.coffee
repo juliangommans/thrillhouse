@@ -333,8 +333,9 @@
     transmuteFragments: (item,id) ->
       if item.total >= 10
         newTotal = item.total -= 10
-        @destroyFragments(id)
-        @createOrb(id+3)
+        # @destroyFragments(id)
+        console.log "item to be transmuted", item
+        @createOrb(item.colour)
         @updateInvDisplay(newTotal,item)
       else
         alert "You need at least 10 fragments to transmute an orb"
@@ -372,7 +373,8 @@
       colour2 = items[1].item_colour
       firstColour = @colorMixer()[colour1]
       newColour = firstColour[colour2]
-      @createOrb(newColour.id)
+      @createOrb(newColour.colour)
+######## no need for id if this works
 
     colorMixer: ->
       colourObject = {
@@ -417,18 +419,35 @@
             processData: true
           )
 
-    createOrb: (id) ->
+    createOrb: (colour) ->
       orb = App.request "new:hero:inventory:entity"
       App.execute "when:fetched", orb, =>
         orb.set(
           hero_inventory:
-            heroes_id: @hero.id
-            hero_items_id: id
+              heroes_id: @hero.id
+              item_colour: colour
+              item_category: "orb"
           )
         @serverItems.push(
           item: orb
           action: "save"
+          # create:
+          #   data:
+          #     heroes_id: @hero.id
+          #     item_colour: colour
+          #     item_category: "orb"
+          #   processData: true
           )
+
+        # orb.set(
+        #   hero_inventory:
+        #     heroes_id: @hero.id
+        #     hero_items_id: id
+        #   )
+        # @serverItems.push(
+        #   item: orb
+        #   action: "save"
+        #   )
 
     updateInvDisplay: (newTotal,item) ->
       console.log "item being destroyed??", item
