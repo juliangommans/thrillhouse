@@ -431,12 +431,12 @@
         @serverItems.push(
           item: orb
           action: "save"
-          # create:
-          #   data:
-          #     heroes_id: @hero.id
-          #     item_colour: colour
-          #     item_category: "orb"
-          #   processData: true
+          create:
+            data:
+              heroes_id: @hero.id
+              item_colour: colour
+              item_category: "orb"
+            processData: true
           )
 
         # orb.set(
