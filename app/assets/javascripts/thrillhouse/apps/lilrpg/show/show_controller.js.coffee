@@ -2,9 +2,6 @@
 
   class Show.Controller extends App.Controllers.Base
 
-    onBeforeDestroy: ->
-      $('.health').remove()
-
     initialize: ->
       @serverItems = []
       @spellsWithItems = []
@@ -80,9 +77,9 @@
         when "move"
           unless @player.get('moveCd') or @player.get('actionCd')
             @player.move(key)
-        when "attack"
+        when "ability"
           unless @player.get('actionCd')
-            @player.attack(key)
+            @player.ability(key)
         when "spell"
           unless @player.get('actionCd')
             @player.spell(key)
@@ -333,7 +330,7 @@
     transmuteFragments: (item,id) ->
       if item.total >= 10
         newTotal = item.total -= 10
-        # @destroyFragments(id)
+        @destroyFragments(id)
         console.log "item to be transmuted", item
         @createOrb(item.colour)
         @updateInvDisplay(newTotal,item)
@@ -373,34 +370,21 @@
       colour2 = items[1].item_colour
       firstColour = @colorMixer()[colour1]
       newColour = firstColour[colour2]
-      @createOrb(newColour.colour)
-######## no need for id if this works
+      @createOrb(newColour)
 
     colorMixer: ->
       colourObject = {
         ruby: {
-          topaz:
-            colour: "fireopal"
-            id: 21
-          sapphire:
-            colour: "amythest"
-            id: 19
+          topaz: "fireopal"
+          sapphire: "amythest"
         }
         topaz: {
-          ruby:
-            colour: "fireopal"
-            id: 21
-          sapphire:
-            colour: "emerald"
-            id: 20
+          ruby: "fireopal"
+          sapphire: "emerald"
         }
         sapphire: {
-          topaz:
-            colour: "emerald"
-            id: 20
-          ruby:
-            colour: "amythest"
-            id: 19
+          topaz: "emerald"
+          ruby: "amythest"
         }
       }
 
@@ -423,6 +407,8 @@
       orb = App.request "new:hero:inventory:entity"
       App.execute "when:fetched", orb, =>
         orb.set(
+          # set this first because for some reason all
+          # of the params nest under "hero_inventory"
           hero_inventory:
               heroes_id: @hero.id
               item_colour: colour
@@ -431,23 +417,7 @@
         @serverItems.push(
           item: orb
           action: "save"
-          create:
-            data:
-              heroes_id: @hero.id
-              item_colour: colour
-              item_category: "orb"
-            processData: true
           )
-
-        # orb.set(
-        #   hero_inventory:
-        #     heroes_id: @hero.id
-        #     hero_items_id: id
-        #   )
-        # @serverItems.push(
-        #   item: orb
-        #   action: "save"
-        #   )
 
     updateInvDisplay: (newTotal,item) ->
       console.log "item being destroyed??", item
@@ -500,7 +470,7 @@
       @inventoryRegion.show invDisplay
 
     loadSpellsView: ->
-      collection = @player.get('spellCollection')
+      collection = @player.spellCollection
       @spellsView = @getSpellsView(collection)
 
       @spellRegion.show @spellsView

@@ -1,81 +1,10 @@
 @Thrillhouse.module 'Entities.LilrpgApp', (LilrpgApp, App, Backbone, Marionette, $, _) ->
-  class LilrpgApp.Spell extends App.Entities.LilrpgModel
-    defaults:
-      cooldownMod: 1
-      onCd: false
-      range: 3
-      damage: 1
-      rotate: false
-      rotateSpeed: 10
-      stun: false
-      pierce: false
-      aoe: false
-      multishot: 1
-      confirmHit: false
-      target: 'enemy'
-      orbs: []
-      targets: []
-      uniqueId: "test-0"
 
-    setCooldown: ->
-      newCooldown = @get('cooldownBase') * @get('cooldownMod')
-      @set cooldown: newCooldown
+  class LilrpgApp.Spells extends App.Entities.Collection
 
-    uniqueId: (counter) ->
-      @set uniqueId: "#{@get('className')}-#{counter}"
-
-    showCooldown: ->
-      className = @get('className')
-      $("##{className}").prepend("<div class='cooldown-animation #{className}-cd'></div>")
-      $(".#{className}-cd").animate(
-        width: "0px"
-      ,
-        @get('cooldown')
-      ->
-        @remove()
-        )
-
-    checkTargets: (target) ->
-      hit = _.find(@get('targets'), (x) ->
-        target.id is x.id)
-      if hit?
-        return true
-      else
-        return false
-
-    getRange: (map, facing, playerLoc) ->
-      coords = map.get('coordinates')
-      max = map.get('size')
-      loc = coords[playerLoc]
-      x = loc.x
-      y = loc.y
-      range = 0
-      for i in [1..@get('range')]
-        switch facing.direction
-          when "up"
-            unless x is 1
-              x -= 1
-              range += 1
-          when "down"
-            unless x is max
-              x += 1
-              range += 1
-          when "left"
-            unless y is 1
-              y -= 1
-              range += 1
-          when "right"
-            unless y is max
-              y += 1
-              range += 1
-      range
-
-  class LilrpgApp.Fireball extends LilrpgApp.Spell
+  class LilrpgApp.Fireball extends App.Entities.Spell
     initialize:->
       @set
-        # pierce: true
-        # aoe: true
-        # multishot: 2
         className: "fireball"
         cooldownBase: 10000
         cooldown: 10000
@@ -84,12 +13,9 @@
         damage: 2
         type: 'projectile'
 
-  class LilrpgApp.Icicle extends LilrpgApp.Spell
+  class LilrpgApp.Icicle extends App.Entities.Spell
     initialize:->
       @set
-        # pierce: true
-        # aoe: true
-        # multishot: 2
         className: "icicle"
         cooldownBase: 9000
         cooldown: 9000
@@ -101,12 +27,9 @@
     #### higher rotate speed is faster rotation animation
     #### basically how many degrees change per milisecond
 
-  class LilrpgApp.ThunderBolt extends LilrpgApp.Spell
+  class LilrpgApp.ThunderBolt extends App.Entities.Spell
     initialize:->
       @set
-        # pierce: true
-        # aoe: true
-        # multishot: 2
         range: 2
         className: "thunderbolt"
         cooldownBase: 7000
@@ -116,7 +39,7 @@
         type: 'instant'
         extraDom: "<div class='lightning-left'></div><div class='lightning-right'></div>"
 
-   class LilrpgApp.Teleport extends LilrpgApp.Spell
+   class LilrpgApp.Teleport extends App.Entities.Spell
     initialize:->
       @set
         className: "teleport"
@@ -137,6 +60,16 @@
       new LilrpgApp.ThunderBolt
     teleport: ->
       new LilrpgApp.Teleport
+    spells: ->
+      new LilrpgApp.Spells([
+        API.fireball(),
+        API.icicle(),
+        API.thunderbolt(),
+        API.teleport()
+        ])
+
+  App.reqres.setHandler "lilrpg:spell:entities", ->
+    API.spells()
 
   App.reqres.setHandler "lilrpg:fireball:spell", ->
     API.fireball()

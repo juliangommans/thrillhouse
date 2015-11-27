@@ -2,7 +2,6 @@
   class LilrpgApp.Player extends App.Entities.LilrpgModel
 
     defaults:
-      damage: 1
       spellStats:
         damage: 0
         range: 0
@@ -22,43 +21,65 @@
       moveCd: false
       actionCd: false
       alive: true
-      facing: {}
+      # facing: {}
 
     initialize: (options) ->
       @aoeCount = 0
       { @map, @hero } = options
       @spellCount = 0
       @coords = @map.get('coordinates') if @map?
-
       @listenTo @, "change", @checkHealth
-      fireball = App.request "lilrpg:fireball:spell"
-      icicle = App.request "lilrpg:icicle:spell"
-      thunderbolt = App.request "lilrpg:thunderbolt:spell"
-      teleport = App.request "lilrpg:teleport:spell"
-      spellArray = [fireball,icicle,thunderbolt,teleport]
-      spellCollection = new App.Entities.Collection
       @getClassBonus()
+      @setupSpells()
+      @setupAbilities()
+      console.log "hero/player info", @
 
-      App.execute "when:fetched", spellArray, =>
+    setupSpells: ->
+      @spellCollection = App.request "lilrpg:spell:entities"
+      App.execute "when:fetched", @spellCollection, =>
+
         @set spells:
-          Q: fireball
-          W: icicle
-          E: thunderbolt
-          S: teleport
-        spellCollection.add spellArray
-        for spell in spellArray
+          Q: @findSpell("fireball")
+          W: @findSpell("icicle")
+          E: @findSpell("thunderbolt")
+          R: @findSpell("teleport")
+        for spell in @spellCollection.models
           @updateSpells(spell)
 
-        @set spellCollection: spellCollection
         console.log "spellses?", @get('spells')
-        console.log "hero/player info", @
+
+    setupAbilities: ->
+      @abilityCollection = App.request "lilrpg:ability:entities"
+      App.execute "when:fetched", @abilityCollection, =>
+
+        @set abilities:
+          A: @findAbility("attack")
+          S: @findAbility("blast")
+          D: @findAbility("shield")
+          F: @findAbility("lift")
+        for ability in @abilityCollection.models
+          @updateSpells(ability)
+
+        console.log "labilliteezus?", @get('abilities')
+
+
+    findSpell: (name) ->
+      @spellCollection.find((spell) ->
+        spell.get('className') is name)
+
+    findAbility: (name) ->
+      @abilityCollection.find((ability) ->
+        ability.get('className') is name)
 
     updateSpells: (spell) ->
       @assignSpellOrbs(spell)
       @updateOrbs(spell)
-      @updateFromHero(spell)
+      @updateFromHero(spell, @get('spellStats'))
       spell.uniqueId(@spellCount)
       spell.setCooldown()
+
+    # updateAbilities: (ability) ->
+    #   @updateFromHero(ability, @get('abilityStats'))
 
     updateOrbs: (spell) ->
       orbs = spell.get('orbs')
@@ -72,12 +93,11 @@
           change += orb.change
           spell.set(stat, change)
 
-    updateFromHero: (spell) ->
-      heroStats = @get('spellStats')
-      spell.set damage: (spell.get('damage') + heroStats.damage)
-      spell.set range: (spell.get('range') + heroStats.range)
-      spell.set multishot: (spell.get('multishot') + heroStats.multishot)
-      spell.set cooldownMod: (spell.get('cooldownMod') + heroStats.cooldownMod)
+    updateFromHero: (action, heroStats) ->
+      action.set damage: (action.get('damage') + heroStats.damage)
+      action.set range: (action.get('range') + heroStats.range)
+      action.set multishot: (action.get('multishot') + heroStats.multishot)
+      action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
 
     assignSpellOrbs: (spell) ->
       invs = @get('hero').get('hero_inventories')
@@ -88,7 +108,7 @@
       switch @get('hero').get('hero_class')
         when "Fighter"
           newHealth = @get('health')+2
-          newDamage = @get('damage')+1
+          newDamage = @get('abilityStats').damage+1
           @fighterBonus(newHealth,newDamage)
         when "Wizard"
           spellDamage = @get('spellStats').damage + 1
@@ -99,7 +119,7 @@
     fighterBonus: (hp,dmg) ->
       @set health: hp
       @set maxHealth: hp
-      @set damage: dmg
+      @get('abilityStats').damage = dmg
 
     wizardBonus: (dmg,range,cd) ->
       stat = @get('spellStats')
@@ -199,8 +219,10 @@
 
 #### Attack and Damage ####
 
-    attack: (key) ->
-      console.log "this is a standard attack"
+    ability: (keypress) ->
+      { key } = keypress
+      ability = @get('abilities')[key]
+      console.log "ability", ability.get('className'), ability
       @changeTarget()
       targetModel = @getTargetModel()
       if @sanityCheck(targetModel)

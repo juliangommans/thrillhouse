@@ -78,24 +78,36 @@
         axisChange: 0
         spaces: 3
         code: 69
+      82:
+        key: "R"
+        action: "spell"
+        axisChange: 0
+        spaces: 3
+        code: 82
       65:
         key: "A"
-        action: "attack"
+        action: "ability"
         axisChange: 0
         spaces: 1
         code: 65
       83:
         key: "S"
-        action: "spell"
+        action: "ability"
         axisChange: 0
-        spaces: 3
+        spaces: 2
         code: 83
       68:
         key: "D"
-        action: "block"
+        action: "ability"
         axisChange: 0
         spaces: 0
         code: 68
+      70:
+        key: "F"
+        action: "ability"
+        axisChange: 0
+        spaces: 1
+        code: 70
 
   API =
     getHeroesCollection: ->
