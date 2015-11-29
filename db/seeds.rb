@@ -63,10 +63,10 @@ require_relative "./seeding_data/heroes_items_seeding"
 #   end
 # end
 
-items_array = [HeroItemList.fragments, HeroItemList.orbs]
+items_array = [HeroItemList.fragments, HeroItemList.orbs, HeroItemList.super_orbs]
 items_array.each do |item_type|
   item_type.each do |item|
-    h = HeroItems.create(name: item[:name], colour: item[:colour], category: item[:category], description: item[:description])
+    h = HeroItems.create(name: item[:name], colour: item[:colour], category: item[:category], description: item[:description], spell_stat: item[:spell_stat], change: item[:change])
     h.save!
   end
 end

@@ -2,13 +2,13 @@
   display: inline-block;
   height: 20px;
   width: 20px;
+  position: relative;
 }
 
 .map-row {
   display: block;
   height: 20px;
 }
-
 
 .enemy {
 }
@@ -19,13 +19,40 @@
   // height: 5px;
 }
 
+.dunce-melee {
+  position: absolute;
+  margin: 2px;
+  background-color: pink;
+  z-index: 2;
+  border-radius: 8px;
+  border: 8px solid pink;
+}
+
 .simple-melee {
+  position: absolute;
   margin: 2px;
   background-color: red;
   z-index: 2;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 8px solid red;
 }
+
+.normal-melee {
+  margin: 2px;
+  background-color: crimson;
+  z-index: 2;
+  border-radius: 6px;
+  border: 8px solid crimson;
+}
+
+.strong-melee {
+  margin: 2px;
+  background-color: maroon;
+  z-index: 2;
+  border-radius: 4px;
+  border: 8px solid maroon;
+}
+
 
 .simple-ranged {
   border-radius: 3px;
@@ -42,50 +69,32 @@
   border: 8px solid green;
 }
 
-.tresure-chest {
+.treasure-chest {
   background-color: yellow;
   height: 8px;
   width: 14px;
   margin: 6px 3px;
   border: 2px solid gray;
 }
+
 .health {
-  height: 7px;
-  display: inline-block; //-block;
+  width: 22px !important;
+  max-width: 22px;
+  height: 22px;
+  display: block;
   position: absolute;
-  left: -3px;
-  top: -13px;
+  left: -10px;
   z-index: 5;
 }
+
 
 .health-bar {
   border: 1px solid red;
   border-radius: 1px;
   height: 5px;
-  width: 2px;
+  width: 3px;
   display: inline-block;
 }
-// .health{
-//   height: 8px;
-//   margin-top: 9px;
-// // these three things don't need to exist without gridlines
-//   background-color: black;
-//   border: 1px solid black;
-//   border-radius: 1px;
-
-//   position: absolute;
-// }
-
-// .health-bar {
-//   border: 1px solid red;
-//   border-radius: 1px;
-//   height: 5px;
-//   width: 3px;
-//   margin-right: 1px;
-//   margin-bottom: 10px;
-//   display: inline-block;
-// }
-
 
 .positive-health {
   border-color: green;
@@ -140,6 +149,17 @@
   border-left: 10px solid yellow;
 }
 
+.attack {
+  position: absolute;
+  background-color: lightgray;
+  border: 1px solid gray;
+  margin-left: 3px;
+  margin-top: 3px;
+  height: 4px;
+  width: 4px;
+  z-index: 9;
+}
+
 .direction {
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
@@ -175,4 +195,42 @@
   border-right: 8px solid transparent;
   border-left: 8px solid transparent;
 
+}
+
+.aoe-wrapper {
+  position: relative;
+  z-index: 9;
+  display: none;
+}
+
+.aoe {
+  position: absolute;
+  z-index: 9;
+  left: 4;
+  top: 4;
+  border: 3px dotted black;
+  border-radius: 6px;
+  opacity: 0.7;
+  height: 12px;
+  width: 12px;
+}
+
+.aoe-fireball {
+  background-color: yellow;
+  border-color: orange;
+}
+
+.aoe-icicle {
+  background-color: aqua;
+  border-color: blue;
+}
+
+.aoe-thunderbolt {
+  background-color: gold;
+  border-color: yellow;
+}
+
+.aoe-attack {
+  background-color: gray;
+  border-color: black;
 }

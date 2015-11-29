@@ -26,19 +26,52 @@ module HeroItemList
       name: "Ruby Orb",
       category: "orb",
       colour: "ruby",
+      spell_stat: "damage",
+      change: 1,
       description: "A Ruby Orb increases the associated abilities damage by 1"
     },
     {
       name: "Sapphire Orb",
       category: "orb",
       colour: "sapphire",
+      spell_stat: "cooldownMod",
+      change: -0.15,
       description: "A Sapphire Orb decreases the associated abilities cooldown by 20%"
     },
     {
       name: "Topaz Orb",
       category: "orb",
       colour: "topaz",
+      spell_stat: "range",
+      change: 1,
       description: "A Topaz Orb increases the associated abilities range by 1"
+    }]
+  end
+
+  def self.super_orbs
+    [{
+      name: "Amythest Orb",
+      category: "orb",
+      colour: "amythest",
+      spell_stat: "aoe",
+      change: 1,
+      description: "An Amythest Orb adds an area of effect bonus to your spell"
+    },
+    {
+      name: "Emerald Orb",
+      category: "orb",
+      colour: "emerald",
+      spell_stat: "pierce",
+      change: 1,
+      description: "An Emerald Orb causes your spell to pierce through enemies"
+    },
+    {
+      name: "Fire Opal Orb",
+      category: "orb",
+      colour: "fireopal",
+      spell_stat: "multishot",
+      change: 1,
+      description: "A Fire Opal Orb fires a successive shot of the same spell"
     }]
   end
 

@@ -53,8 +53,27 @@
       "cell-#{loc.x}-#{loc.y}"
 
     cleanupSpellSprite: (spell) ->
-      $(".#{spell}").stop()
-      $(".#{spell}").remove()
+      spellname = spell.get("uniqueId")
+      $("##{spellname}").stop()
+      $("##{spellname}").remove()
+
+    createAoeCells: (cell,radius) ->
+      cells = []
+      for newCell in [
+        {x:-1,y:-1},
+        {x:-1,y:0},
+        {x:-1,y:1},
+        {x:0,y:-1},
+        {x:0,y:1},
+        {x:1,y:-1},
+        {x:1,y:0},
+        {x:1,y:1}
+      ]
+        cells.push {
+          x: cell.x + (newCell.x*radius)
+          y: cell.y + (newCell.y*radius)
+        }
+      cells
 
     checkIllegalMoves: (newCoords) ->
       illegalMoves = ['wall', 'enemy', 'player']
@@ -120,3 +139,77 @@
       for key of arr
         array.push arr[key]
       array
+
+  class Entities.Spell extends Entities.LilrpgModel
+    defaults:
+      cooldownMod: 1
+      cooldownBase: 0
+      cooldown: 0
+      onCd: false
+      range: 3
+      damage: 1
+      rotate: false
+      rotateSpeed: 10
+      stun: false
+      pierce: false
+      aoe: false
+      multishot: 1
+      confirmHit: false
+      speed: 100
+      target: 'enemy'
+      orbs: []
+      targets: []
+      uniqueId: "test-0"
+
+    setCooldown: ->
+      newCooldown = @get('cooldownBase') * @get('cooldownMod')
+      @set cooldown: newCooldown
+
+    uniqueId: (counter) ->
+      @set uniqueId: "#{@get('className')}-#{counter}"
+
+    showCooldown: ->
+      className = @get('className')
+      $("##{className}").prepend("<div class='cooldown-animation #{className}-cd'></div>")
+      $(".#{className}-cd").animate(
+        width: "0px"
+      ,
+        @get('cooldown')
+      ->
+        @remove()
+        )
+
+    checkTargets: (target) ->
+      hit = _.find(@get('targets'), (x) ->
+        target.id is x.id)
+      if hit?
+        return true
+      else
+        return false
+
+    getRange: (map, facing, playerLoc) ->
+      coords = map.get('coordinates')
+      max = map.get('size')
+      loc = coords[playerLoc]
+      x = loc.x
+      y = loc.y
+      range = 0
+      for i in [1..@get('range')]
+        switch facing.direction
+          when "up"
+            unless x is 1
+              x -= 1
+              range += 1
+          when "down"
+            unless x is max
+              x += 1
+              range += 1
+          when "left"
+            unless y is 1
+              y -= 1
+              range += 1
+          when "right"
+            unless y is max
+              y += 1
+              range += 1
+      range

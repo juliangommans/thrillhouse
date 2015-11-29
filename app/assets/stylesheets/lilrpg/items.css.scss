@@ -6,6 +6,10 @@
   display: inline-block;
 }
 
+.loot {
+  position: absolute;
+}
+
 .unchecked-loot {
   background-color: lightgray;
   border-width: 2px;
@@ -24,13 +28,28 @@
 }
 
 .ruby {
-  background-color: mediumvioletred;
-  border-color: pink !important;
+  background-color: crimson;
+  border-color: salmon !important;
 }
 
 .topaz {
   background-color: gold;
   border-color: khaki !important;
+}
+
+.fireopal {
+  background-color: coral;
+  border-color: orange !important;
+}
+
+.amythest {
+  background-color: blueviolet;
+  border-color: mediumorchid !important;
+}
+
+.emerald {
+  background-color: seagreen;
+  border-color: lawngreen !important;
 }
 
 .fragment {
@@ -51,8 +70,8 @@
 }
 
 .inv-box {
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   display: inline-block;
 }
 
@@ -69,6 +88,21 @@
 .spell-box {
   width: 80px;
   height: 30px;
+}
+
+.play-spell-sockets {
+  width: 100px;
+  height: 20px;
+}
+
+.play-spell-wrapper {
+  height: 80px;
+  width: 110px;
+}
+
+.big-spell-wrapper {
+  height: 80px;
+  width: 250px;
 }
 
 .spell-slot {

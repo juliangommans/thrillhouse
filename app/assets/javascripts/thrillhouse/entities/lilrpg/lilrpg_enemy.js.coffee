@@ -2,12 +2,13 @@
   class LilrpgApp.Enemy extends App.Entities.LilrpgModel
 
     defaults:
-      health: 5
-      maxHealth: 5
+      health: 3
+      maxHealth: 3
       damage: 1
       range: 1
       alive: true
       moveSpeed: 1000
+      eligible: true
       stunned: false
       attackSpeed: 1200
       name: "TestSubject"
@@ -46,7 +47,7 @@
   #### this needs to be fixing, causes them to miss a step when hitting a wall
       # if @checkIllegalMoves(nextCell)
       #   @checkFacingCell(nextCell)
-      @createProxyChar()
+      # @createProxyChar()
 
     createProxyChar: ->
       if @get('alive')
@@ -92,24 +93,24 @@
       cell = @buildCellName(newLoc)
       cell
 
-    pulse: (coords,player) ->
-      @sensor = setInterval(@scanArea,@get('attackSpeed'))
+    # pulse: (coords,player) ->
+    #   @sensor = setInterval(@scanArea,@get('attackSpeed'))
 
-    scanArea: =>
-      if @get('alive') and @player.get('alive')
-        enemyCoords = @coords[@get('location')]
-        for x in [1..@get('range')]
-          @checkLoc(@getLoc(x))
-      else
-        clearInterval(@sensor)
+    # scanArea: =>
+    #   if @get('alive') and @player.get('alive')
+    #     enemyCoords = @coords[@get('location')]
+    #     for x in [1..@get('range')]
+    #       @checkLoc(@getLoc(x))
+    #   else
+    #     clearInterval(@sensor)
 
-    checkLoc: (locArray) ->
-      for item in locArray
-        newLoc =
-          x: @location.x + item.x
-          y: @location.y + item.y
-        if @playerChecker(newLoc)
-          @attackPlayer()
+    # checkLoc: (locArray) ->
+    #   for item in locArray
+    #     newLoc =
+    #       x: @location.x + item.x
+    #       y: @location.y + item.y
+    #     if @playerChecker(newLoc)
+    #       @attackPlayer()
 
     playerChecker: (newLoc) ->
       id = "#cell-#{newLoc.x}-#{newLoc.y}"
@@ -123,16 +124,17 @@
         false
 
     attackPlayer: =>
-      if @get('target')
-        if @checkPlayerStillInRange()
-          playerHp = @player.get('health')
-          console.log "before", playerHp
-          playerHp -= @get('damage')
-          @player.set health: playerHp
-          @postDamage()
-      else
-        clearInterval(@swing)
-        @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
+      unless @get('stunned')
+        if @get('target')
+          if @checkPlayerStillInRange()
+            playerHp = @player.get('health')
+            console.log "before", playerHp
+            playerHp -= @get('damage')
+            @player.set health: playerHp
+            @postDamage()
+        else
+          clearInterval(@swing)
+          @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
 
     postDamage: ->
       @checkPlayerStillInRange()
@@ -153,28 +155,66 @@
       #fire damage animation
 
 
+  class LilrpgApp.DunceMeleeEnemy extends LilrpgApp.Enemy
+
   class LilrpgApp.SimpleMeleeEnemy extends LilrpgApp.Enemy
 
+    initialize: ->
+      @set
+        health: 5
+        maxHealth: 5
+        attackSpeed: 1200
+
+  class LilrpgApp.NormalMeleeEnemy extends LilrpgApp.Enemy
+
+    initialize: ->
+      @set
+        health: 8
+        maxHealth: 8
+        attackSpeed: 1000
+
+  class LilrpgApp.StrongMeleeEnemy extends LilrpgApp.Enemy
+
+    initialize: ->
+      @set
+        health: 12
+        maxHealth: 12
+        damage: 2
+        attackSpeed: 1500
 
   class LilrpgApp.SimpleRangedEnemy extends LilrpgApp.Enemy
 
     initialize: ->
       @set
-        health: 2
-        maxHealth: 2
+        health: 3
+        maxHealth: 3
         range: 3
-        alive: true
         attackSpeed: 3000
 
 
   API =
+    dunceMeleeEnemy: ->
+      new LilrpgApp.DunceMeleeEnemy
     simpleMeleeEnemy: ->
       new LilrpgApp.SimpleMeleeEnemy
+    normalMeleeEnemy: ->
+      new LilrpgApp.NormalMeleeEnemy
+    strongMeleeEnemy: ->
+      new LilrpgApp.StrongMeleeEnemy
     simpleRangedEnemy: ->
       new LilrpgApp.SimpleRangedEnemy
 
+  App.reqres.setHandler "lilrpg:dunce-melee:enemy", ->
+    API.dunceMeleeEnemy()
+
   App.reqres.setHandler "lilrpg:simple-melee:enemy", ->
     API.simpleMeleeEnemy()
+
+  App.reqres.setHandler "lilrpg:normal-melee:enemy", ->
+    API.normalMeleeEnemy()
+
+  App.reqres.setHandler "lilrpg:strong-melee:enemy", ->
+    API.strongMeleeEnemy()
 
   App.reqres.setHandler "lilrpg:simple-ranged:enemy", ->
     API.simpleRangedEnemy()

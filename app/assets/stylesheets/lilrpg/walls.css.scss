@@ -1,5 +1,6 @@
 .wall {
   z-index: 3;
+  position: absolute;
   background-color: saddlebrown;
 }
 
@@ -18,7 +19,7 @@
 .joinery {
    width: 20px;
    height: 20px;
-   position: relative;
+   position: absolute;
    background-color: white;
 }
 

@@ -1,3 +1,21 @@
-<div id="<%= @className %>" class="cooldown-display">
-  <p><%= @className %></p>
+<div class="play-spell-wrapper inline">
+  <div id="<%= @className %>-box" class="block play-spell-sockets">
+    <div id="<%= @className %>-slot-1" class="drop-box spell-slot"></div>
+    <div id="<%= @className %>-slot-2" class="drop-box spell-slot"></div>
+    <div id="<%= @className %>-slot-3" class="drop-box spell-slot"></div>
+  </div>
+
+
+  <div id="<%= @className %>" class="block cooldown-display">
+    <p><%= @className %></p>
+  </div>
+
+  <div class="dummy-div block"></div>
+</div>
+<div class="inline">
+  <table>
+    <tr><td>Damage: </td><td><%= @damage %></td></tr>
+    <tr><td>Range: </td><td><%= @range %></td></tr>
+    <tr><td>Cooldown: </td><td><%= @cooldown/1000 %> s</td></tr>
+  </table>
 </div>

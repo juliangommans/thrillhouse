@@ -61,9 +61,7 @@
       'contextmenu @ui.cell': "returnFalse"
 
     onRender: ->
-      $(document).keydown (e) =>
-        console.log "map has rendered"
-        e.stopPropagation()
+      $(document).unbind("keydown")
 
     rightClick: (event) ->
       event.preventDefault()
