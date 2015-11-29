@@ -26,9 +26,14 @@
       if $(target).hasAnyClass(@facingData.directions).bool
         direction = @facingData.directions[$(target).hasAnyClass(@facingData.directions).index]
         axis = @facingData.axis[$(target).hasAnyClass(@facingData.directions).index]
+        if direction is "up" or direction is "down"
+          hv = "vertical"
+        else
+          hv = "horizontal"
         model.set facing:
           oldDirection: direction
           direction: direction
+          hv: hv
           axis: axis
 
     fetchEnemies: ->
@@ -79,10 +84,10 @@
             @player.move(key)
         when "ability"
           unless @player.get('actionCd')
-            @player.ability(key)
+            @player.action(key, 'abilities')
         when "spell"
           unless @player.get('actionCd')
-            @player.spell(key)
+            @player.action(key, 'spells')
       @checkForLoot()
 
     checkForLoot: ->

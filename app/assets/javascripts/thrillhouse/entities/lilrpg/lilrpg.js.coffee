@@ -5,7 +5,6 @@
 
     buildInventory: ->
       items = @get('hero_items')
-      console.log "items", items
       filtered = @uniqueArrayFilter(items,'id')
       inventory = []
       for item in filtered

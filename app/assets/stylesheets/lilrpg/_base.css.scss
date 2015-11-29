@@ -149,6 +149,17 @@
   border-left: 10px solid yellow;
 }
 
+.attack {
+  position: absolute;
+  background-color: lightgray;
+  border: 1px solid gray;
+  margin-left: 3px;
+  margin-top: 3px;
+  height: 4px;
+  width: 4px;
+  z-index: 9;
+}
+
 .direction {
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
@@ -217,4 +228,9 @@
 .aoe-thunderbolt {
   background-color: gold;
   border-color: yellow;
+}
+
+.aoe-attack {
+  background-color: gray;
+  border-color: black;
 }

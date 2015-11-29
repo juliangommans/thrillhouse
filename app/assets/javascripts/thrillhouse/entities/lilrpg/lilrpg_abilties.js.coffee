@@ -8,25 +8,29 @@
     initialize:->
       @set
         className: "attack"
-        speed: 50
+        speed: 75
         range: 1
         type: "projectile"
         target: "enemy"
-
 
   class LilrpgApp.Blast extends LilrpgApp.Ability
     initialize:->
       @set
         className: "blast"
-        range: 2
+        cooldownBase: 12000
+        cooldown: 12000
+        range: 1
         damage: 2
+        aoe: true
         stun: true
-        type: "projectile"
+        type: "instant"
         target: "enemy"
 
   class LilrpgApp.Shield extends LilrpgApp.Ability
     initialize:->
       @set
+        cooldownBase: 15000
+        cooldown: 15000
         className: "shield"
         range: 0
         type: "instant"

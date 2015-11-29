@@ -21,7 +21,6 @@
       moveCd: false
       actionCd: false
       alive: true
-      # facing: {}
 
     initialize: (options) ->
       @aoeCount = 0
@@ -44,6 +43,7 @@
           E: @findSpell("thunderbolt")
           R: @findSpell("teleport")
         for spell in @spellCollection.models
+          @updateFromHero(spell, @get('spellStats'))
           @updateSpells(spell)
 
         console.log "spellses?", @get('spells')
@@ -58,10 +58,10 @@
           D: @findAbility("shield")
           F: @findAbility("lift")
         for ability in @abilityCollection.models
+          @updateFromHero(ability, @get('abilityStats'))
           @updateSpells(ability)
 
         console.log "labilliteezus?", @get('abilities')
-
 
     findSpell: (name) ->
       @spellCollection.find((spell) ->
@@ -74,12 +74,8 @@
     updateSpells: (spell) ->
       @assignSpellOrbs(spell)
       @updateOrbs(spell)
-      @updateFromHero(spell, @get('spellStats'))
       spell.uniqueId(@spellCount)
       spell.setCooldown()
-
-    # updateAbilities: (ability) ->
-    #   @updateFromHero(ability, @get('abilityStats'))
 
     updateOrbs: (spell) ->
       orbs = spell.get('orbs')
@@ -203,9 +199,14 @@
 
     setFacing: (key, axisChange) ->
       oldDirection = @get('facing').direction
+      if key is "up" or key is "down"
+        hv = "vertical"
+      else
+        hv = "horizontal"
       @set facing:
         oldDirection: oldDirection
         direction: key
+        hv: hv
         axis: axisChange
       $(".player").removeClass(@get("facing").oldDirection)
       $(".player").addClass(key)
@@ -217,20 +218,7 @@
         $(".player").remove()
         $("##{@get('location')}").append(playerObj)
 
-#### Attack and Damage ####
-
-    ability: (keypress) ->
-      { key } = keypress
-      ability = @get('abilities')[key]
-      console.log "ability", ability.get('className'), ability
-      @changeTarget()
-      targetModel = @getTargetModel()
-      if @sanityCheck(targetModel)
-        @setActionCd(@get('actionSpeed'))
-        @dealDamage("attack", targetModel)
-        target = targetModel.get('name')
-        targetHealth = $("##{target}").children()
-        @modifyTargetHealth(targetHealth,targetModel)
+#### Damage ####
 
     modifyTargetHealth: (targetHealth, model) ->
       targetHealth.each( (index, object) =>
@@ -244,21 +232,11 @@
     dealDamage: (source, target) ->
       stunned = false
       if target?
-        if source is "attack"
-          damage = @get('damage')
-          @physicalDamage(source, target, damage)
-        else
-          damage = source.get('damage')
-          stunned = source.get('stun')
-          @magicalDamage(source, target, damage, stunned)
+        damage = source.get('damage')
+        stunned = source.get('stun')
+        @resolveDamage(source, target, damage, stunned)
 
-    physicalDamage: (source, target, damage) ->
-        enemyHp = target.get('health')
-        enemyHp -= damage
-        target.set alive: false if enemyHp < 1
-        target.set health: enemyHp
-
-    magicalDamage: (source, target, damage, stunned) ->
+    resolveDamage: (source, target, damage, stunned) ->
       console.log "damage", damage, source.get('uniqueId'), target
       if source.checkTargets(target) or !source.get('dummy')
         enemyHp = target.get('health')
@@ -285,11 +263,11 @@
       @set target: false
       @get('enemies').remove(model)
 
-#### Spells and Animations ####
+#### Actions/Spells and Animations ####
 
-    spell: (keypress) ->
+    action: (keypress, type) ->
       { key } = keypress
-      spell = @get('spells')[key]
+      spell = @get(type)[key]
       unless spell.get('onCd')
         console.log spell.get('className'), spell
         spell.set targets: []
@@ -331,13 +309,12 @@
       domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left+5}px;top:#{absoluteLoc.top+5}px;'></div>"
       destination = @getElementByLoc(route[route.length-1])
       $('body').append(domObject)
-      @animateProjectile(spell, route, destination)
+      @castProjectile(spell, route, destination)
 
     instantPierce: (spell, route) =>
       count = 1
       total = route.length
       spellDelay = =>
-        console.log "this should only happen 3 times", count, spell
         newSpell = @createNewSpell(spell)
         destination = @getElementByLoc(route[count-1])
         @castInstant(newSpell, route, destination)
@@ -364,16 +341,22 @@
 
         @animateInstant(spell, domObject, destination)
 
-    animateProjectile: (spell, route, destination) ->
+    castProjectile: (spell, route, destination) ->
       @degree = 0
-      className = spell.get('className')
+      id = spell.get('uniqueId')
       spellSpeed = spell.get('speed')
       @checkRoute(route,spell,spellSpeed)
       absoluteDest = @getOffset(destination[0])
-      if spell.get('rotate')
-        @rotate($(".#{className}"),spell.get('rotateSpeed'))
+      if spell.get('className') is "attack"
+        @animateAttack(spell, route, absoluteDest, id, spellSpeed)
+      else
+        @animateProjectile(spell, route, absoluteDest, id, spellSpeed)
 
-      $(".#{className}").animate(
+    animateProjectile: (spell, route, absoluteDest, id, spellSpeed) ->
+      if spell.get('rotate')
+        @rotate($("##{id}"),spell.get('rotateSpeed'))
+
+      $("##{id}").animate(
         left: absoluteDest.left+5
         top: absoluteDest.top+5
         ,
@@ -381,6 +364,33 @@
         =>
           if spell.get('rotate')
             clearTimeout(@rotationTimer)
+          @cleanupSpellSprite(spell)
+        )
+
+    animateAttack: (spell, route, absoluteDest, id, spellSpeed) ->
+      direction = @get('facing').direction
+      switch direction
+        when "up"
+          animation = {
+            height: 20*route.length
+            left: absoluteDest.left+5
+            top: absoluteDest.top+5
+          }
+        when "down"
+          animation = { height: 20*route.length }
+        when "left"
+          animation = {
+            width: 20*route.length
+            left: absoluteDest.left+5
+            top: absoluteDest.top+5
+          }
+        when "right"
+          animation = { width: 20*route.length }
+      $("##{id}").animate(
+        animation
+        ,
+        spellSpeed * route.length
+        =>
           @cleanupSpellSprite(spell)
         )
 
@@ -399,6 +409,7 @@
               if target.children().length
                 if target.children()[0].classList[1] is "enemy"
                   @hitTarget(target, spell)
+                  @cleanupSpellSprite(spell)
                 else
                   @cleanupSpellSprite(spell)
               else
@@ -471,7 +482,6 @@
       if cell.children().length
         check = cell.children()[0].classList[1]
       if check is "enemy" or check is "dummy"
-        console.log "=== AOE damaged target", cell, spell.get('uniqueId')
         unless spell.get('pierce')
           spell.set confirmHit: true
         @hitTarget(cell,spell)
