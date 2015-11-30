@@ -34,7 +34,7 @@
         className: "thunderbolt"
         cooldownBase: 7000
         cooldown: 7000
-        speed: 50
+        speed: 100
         damage: 1
         type: 'instant'
         extraDom: "<div class='lightning-left'></div><div class='lightning-right'></div>"

@@ -11,6 +11,7 @@
 }
 
 .enemy {
+  position: absolute;
 }
 
 .dummy {
@@ -20,7 +21,6 @@
 }
 
 .dunce-melee {
-  position: absolute;
   margin: 2px;
   background-color: pink;
   z-index: 2;
@@ -29,7 +29,6 @@
 }
 
 .simple-melee {
-  position: absolute;
   margin: 2px;
   background-color: red;
   z-index: 2;
@@ -62,6 +61,7 @@
 }
 
 .player {
+  position: absolute;
   background-color: green;
   z-index: 2;
   margin: 2px;
@@ -128,6 +128,7 @@
   position: absolute;
   width: 20px;
   height: 20px;
+  z-index: 9;
 
 }
 
@@ -138,6 +139,7 @@
   margin-right: 5px;
   margin-top: 5px;
   border-right: 10px solid yellow;
+  z-index: 9;
 }
 
 .lightning-right {
@@ -147,6 +149,7 @@
   margin-left: 5px;
   margin-bottom: 5px;
   border-left: 10px solid yellow;
+  z-index: 9;
 }
 
 .attack {
@@ -157,6 +160,16 @@
   margin-top: 3px;
   height: 4px;
   width: 4px;
+  z-index: 9;
+}
+
+.blast {
+  position: absolute;
+  height: 4px;
+  width: 4px;
+  background-color: darkorange;
+  border-radius: 4px;
+  border: 4px dashed black;
   z-index: 9;
 }
 
@@ -232,5 +245,10 @@
 
 .aoe-attack {
   background-color: gray;
+  border-color: black;
+}
+
+.aoe-blast {
+  background-color: darkorange;
   border-color: black;
 }

@@ -395,16 +395,23 @@
         )
 
     animateInstant: (spell, domObject, target) ->
-      console.log "instantly animated"
       extraDom = spell.get('extraDom')
-      className = spell.get('className')
+      id = spell.get('uniqueId')
       $('body').append(domObject)
       if extraDom?
-        $(".#{className}").append(extraDom)
+        $("##{id}").append(extraDom)
+      if spell.get('className') is 'blast'
+        $("##{id}").animate(
+          height: '20px'
+          width: '20px'
+          ,
+          spell.get('speed') * 3
+          )
 
-      $(".#{className}").fadeIn(spell.get("speed")*3
+
+      $("##{id}").fadeIn(spell.get("speed")
         , =>
-          $(".#{className}").fadeOut(spell.get("speed")*4
+          $("##{id}").fadeOut(spell.get("speed")*2
             , =>
               if target.children().length
                 if target.children()[0].classList[1] is "enemy"

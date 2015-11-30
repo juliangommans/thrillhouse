@@ -21,6 +21,7 @@
         cooldown: 12000
         range: 1
         damage: 2
+        speed: 133
         aoe: true
         stun: true
         type: "instant"
