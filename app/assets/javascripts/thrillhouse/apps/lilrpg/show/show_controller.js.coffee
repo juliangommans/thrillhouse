@@ -9,6 +9,7 @@
       @facingData =
         directions: ['up','right','down','left']
         axis: [-1,1,1,-1]
+      # @loadEntities()
       @listenTo @layout, 'show', =>
         @showView()
         @dialogView()
@@ -16,6 +17,9 @@
         @inventoryView()
 
       @show @layout
+
+    fetchLoadingEntities: ->
+      @loadMapList = App.request "lilrpg:map:entities"
 
     setPlayerLocation: ->
       location = $(".player").parent().attr('id')
@@ -128,7 +132,6 @@
         @loadCharacterSheet()
 
     afterMapLoadTasks: ->
-      @loadEntities()
       App.execute "when:fetched", [@hero, @items], =>
         @hero.buildInventory()
         @fetchPlayer()
@@ -214,10 +217,11 @@
           console.log "item FAIL", model
 
     loadCharacterSheet: ->
-      @hero = App.request "heroes:entity", 1
-      @item = App.request "hero:items:entities"
-      App.execute "when:fetched", [@hero, @item], =>
+      @hero or= App.request "heroes:entity", 1
+      @items or= App.request "hero:items:entities"
+      App.execute "when:fetched", [@hero, @items], =>
         $('#hero-modal').modal('show')
+        $('#load-map-modal').modal('hide')
         @hero.buildInventory()
         @showCharacterItems()
 
@@ -505,8 +509,11 @@
           $('#load-map-modal').modal('show')
         @listenTo loadView, "select:current:map", (id) =>
           @setLoadedMap(id)
+        @loadEntities()
 
-        @dialogMaps.show loadView
+        @dialogMaps.show loadView,
+          loading:
+            entities: [@hero, @items, @controls]
 
     getLayout: ->
       new Show.Layout

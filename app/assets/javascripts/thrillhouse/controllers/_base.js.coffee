@@ -14,9 +14,33 @@
       super args
       App.execute 'unregister:instance', @, @_instance_id
 
-    show: (view) ->
-      @listenTo view, 'destroy', @destroy
-      @region.show view
+    show: (view, options = {}) ->
+      _.defaults options,
+        loading: false
+        region: @region
+
+      @_setMainView view
+      @_manageView view, options
+
+    _setMainView: (view) ->
+      ## the first view we show is always going to become the mainView of our
+      ## controller (whether its a layout or another view type).  So if this
+      ## *is* a layout, when we show other regions inside of that layout, we
+      ## check for the existance of a mainView first, so our controller is only
+      ## closed down when the original mainView is closed.
+
+      return if @_mainView
+      @_mainView = view
+      @listenTo view, "destroy", @destroy
+
+    _manageView: (view, options) ->
+      if options.loading
+        ## show the loading view
+        App.execute "show:loading", view, options
+      else
+        options.region.show view
+
+#### custom controller logic
 
     buildElementMoves: (moves, element) ->
       moveList = _.filter moves.models, (model) ->

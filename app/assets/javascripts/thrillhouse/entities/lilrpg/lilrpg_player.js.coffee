@@ -337,9 +337,11 @@
         @teleport(spell,route)
       else
         absoluteLoc = @getOffset($(destination)[0])
-        domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
-
-        @animateInstant(spell, domObject, destination)
+        if spell.get('className') is "blast"
+          domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left+7}px;top:#{absoluteLoc.top+7}px;'></div>"
+        else
+          domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
+        @animateInstant(spell, domObject, destination, absoluteLoc)
 
     castProjectile: (spell, route, destination) ->
       @degree = 0
@@ -394,7 +396,7 @@
           @cleanupSpellSprite(spell)
         )
 
-    animateInstant: (spell, domObject, target) ->
+    animateInstant: (spell, domObject, target, absoluteLoc) ->
       extraDom = spell.get('extraDom')
       id = spell.get('uniqueId')
       $('body').append(domObject)
@@ -404,6 +406,8 @@
         $("##{id}").animate(
           height: '20px'
           width: '20px'
+          left: absoluteLoc.left
+          top: absoluteLoc.top
           ,
           spell.get('speed') * 3
           )
