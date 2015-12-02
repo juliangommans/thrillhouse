@@ -38,10 +38,10 @@
       App.execute "when:fetched", @spellCollection, =>
 
         @set spells:
-          Q: @findSpell("fireball")
-          W: @findSpell("icicle")
-          E: @findSpell("thunderbolt")
-          R: @findSpell("teleport")
+          Q: @findAbility("fireball")
+          W: @findAbility("icicle")
+          E: @findAbility("thunderbolt")
+          R: @findAbility("teleport")
         for spell in @spellCollection.models
           @updateFromHero(spell, @get('spellStats'))
           @updateSpells(spell)
@@ -61,11 +61,7 @@
           @updateFromHero(ability, @get('abilityStats'))
           @updateSpells(ability)
 
-        console.log "labilliteezus?", @get('abilities')
-
-    findSpell: (name) ->
-      @spellCollection.find((spell) ->
-        spell.get('className') is name)
+        console.log "abilliteezus?", @get('abilities')
 
     findAbility: (name) ->
       @abilityCollection.find((ability) ->
@@ -82,7 +78,7 @@
       for orb in orbs
         stat = orb.spell_stat
         change = spell.get(orb.spell_stat)
-        if orb.item_colour is "amythest" or orb.item_colour is"emerald"
+        if _.contains(["amythest", "emerald"], orb.item_colour)
           change = true
           spell.set(stat, change)
         else
@@ -90,10 +86,11 @@
           spell.set(stat, change)
 
     updateFromHero: (action, heroStats) ->
-      action.set damage: (action.get('damage') + heroStats.damage)
-      action.set range: (action.get('range') + heroStats.range)
-      action.set multishot: (action.get('multishot') + heroStats.multishot)
-      action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
+      unless action.get('target') is 'player'
+        action.set damage: (action.get('damage') + heroStats.damage)
+        action.set range: (action.get('range') + heroStats.range)
+        action.set multishot: (action.get('multishot') + heroStats.multishot)
+        action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
 
     assignSpellOrbs: (spell) ->
       invs = @get('hero').get('hero_inventories')
@@ -277,6 +274,18 @@
         @setActionCd(@get('actionSpeed'))
         @sortSpell(spell, route)
 
+    sortSpell: (spell, route) =>
+      count = 1
+      total = spell.get('multishot')
+      spellDelay = =>
+        @castSpell(spell, route)
+        if count >= total
+          return
+        else
+          count++
+        setTimeout spellDelay, (400)
+      spellDelay()
+
     castSpell: (spell, route) ->
       newSpell = @createNewSpell(spell)
       if newSpell.get('type') is "projectile"
@@ -292,24 +301,19 @@
       newSpell.set targets: []
       newSpell
 
-    sortSpell: (spell, route) =>
-      count = 1
-      total = spell.get('multishot')
-      spellDelay = =>
-        @castSpell(spell, route)
-        if count >= total
-          return
-        else
-          count++
-        setTimeout spellDelay, (400)
-      spellDelay()
-
     projectileSpell: (spell, route) ->
       absoluteLoc = @getOffset($("##{@get('location')}")[0])
       domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left+5}px;top:#{absoluteLoc.top+5}px;'></div>"
       destination = @getElementByLoc(route[route.length-1])
       $('body').append(domObject)
       @castProjectile(spell, route, destination)
+
+    instantSpell: (spell, route) ->
+      if spell.get('pierce')
+        @instantPierce(spell, route)
+      else
+        destination = @getElementByLoc(route[route.length-1])
+        @castInstant(spell, route, destination)
 
     instantPierce: (spell, route) =>
       count = 1
@@ -324,13 +328,6 @@
           count++
         setTimeout spellDelay, (100)
       spellDelay()
-
-    instantSpell: (spell, route) ->
-      if spell.get('pierce')
-        @instantPierce(spell, route)
-      else
-        destination = @getElementByLoc(route[route.length-1])
-        @castInstant(spell, route, destination)
 
     castInstant: (spell, route, destination) ->
       if spell.get('className') is "teleport"

@@ -33,7 +33,7 @@
       'mouseleave .inv-box': 'hideData'
       'mouseenter .loot-box': 'showData'
       'mouseleave .loot-box': 'hideData'
-      'click @ui.cancel': 'closeBackdrop'
+      'click button': 'closeBackdrop'
       'click @ui.itemSelect': 'selectItem'
       'click @ui.itemDrop': 'dropSelectedItem'
     triggers:

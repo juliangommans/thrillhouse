@@ -221,7 +221,6 @@
       @items or= App.request "hero:items:entities"
       App.execute "when:fetched", [@hero, @items], =>
         $('#hero-modal').modal('show')
-        $('#load-map-modal').modal('hide')
         @hero.buildInventory()
         @showCharacterItems()
 

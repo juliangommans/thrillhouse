@@ -5,12 +5,13 @@
   class LilrpgApp.Fireball extends App.Entities.Spell
     initialize:->
       @set
+        aoe: true
         className: "fireball"
         cooldownBase: 10000
         cooldown: 10000
         speed: 325
         range: 4
-        damage: 2
+        damage: 1
         type: 'projectile'
 
   class LilrpgApp.Icicle extends App.Entities.Spell
@@ -30,7 +31,7 @@
   class LilrpgApp.ThunderBolt extends App.Entities.Spell
     initialize:->
       @set
-        range: 2
+        range: 3
         className: "thunderbolt"
         cooldownBase: 7000
         cooldown: 7000

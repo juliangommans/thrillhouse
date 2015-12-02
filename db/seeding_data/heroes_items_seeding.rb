@@ -69,10 +69,19 @@ module HeroItemList
       name: "Fire Opal Orb",
       category: "orb",
       colour: "fireopal",
-      spell_stat: "multishot",
+      spell_stat: "stun",
       change: 1,
-      description: "A Fire Opal Orb fires a successive shot of the same spell"
-    }]
+      description: "A Fire Opal Orb causes your spell to stun enemies"
+    },
+    {
+      name: "Obsidian Orb",
+      category: "orb",
+      colour: "obsidian",
+      spell_stat: "multistrike",
+      change: 1,
+      description: "An Obsidian Orb fires a successive shot of the same spell"
+    }
+  ]
   end
 
 end
