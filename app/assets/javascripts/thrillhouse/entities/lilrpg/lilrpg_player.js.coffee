@@ -86,11 +86,11 @@
           spell.set(stat, change)
 
     updateFromHero: (action, heroStats) ->
+      action.set range: (action.get('range') + heroStats.range)
+      action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
       unless action.get('target') is 'player'
         action.set damage: (action.get('damage') + heroStats.damage)
-        action.set range: (action.get('range') + heroStats.range)
         action.set multishot: (action.get('multishot') + heroStats.multishot)
-        action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
 
     assignSpellOrbs: (spell) ->
       invs = @get('hero').get('hero_inventories')

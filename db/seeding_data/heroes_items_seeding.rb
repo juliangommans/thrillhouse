@@ -77,7 +77,7 @@ module HeroItemList
       name: "Obsidian Orb",
       category: "orb",
       colour: "obsidian",
-      spell_stat: "multistrike",
+      spell_stat: "multishot",
       change: 1,
       description: "An Obsidian Orb fires a successive shot of the same spell"
     }
