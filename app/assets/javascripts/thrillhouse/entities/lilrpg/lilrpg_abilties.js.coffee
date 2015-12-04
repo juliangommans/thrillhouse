@@ -33,7 +33,9 @@
         cooldownBase: 15000
         cooldown: 15000
         className: "shield"
+        damage: 0
         range: 0
+        speed: 2000
         type: "instant"
         target: "player"
 

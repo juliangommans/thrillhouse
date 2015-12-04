@@ -36,13 +36,13 @@
     setupSpells: ->
       @spellCollection = App.request "lilrpg:spell:entities"
       App.execute "when:fetched", @spellCollection, =>
-
+        list = @spellCollection
         @set spells:
-          Q: @findAbility("fireball")
-          W: @findAbility("icicle")
-          E: @findAbility("thunderbolt")
-          R: @findAbility("teleport")
-        for spell in @spellCollection.models
+          Q: @findAbility("fireball", list)
+          W: @findAbility("icicle", list)
+          E: @findAbility("thunderbolt", list)
+          R: @findAbility("teleport", list)
+        for spell in list.models
           @updateFromHero(spell, @get('spellStats'))
           @updateSpells(spell)
 
@@ -51,20 +51,20 @@
     setupAbilities: ->
       @abilityCollection = App.request "lilrpg:ability:entities"
       App.execute "when:fetched", @abilityCollection, =>
-
+        list = @abilityCollection
         @set abilities:
-          A: @findAbility("attack")
-          S: @findAbility("blast")
-          D: @findAbility("shield")
-          F: @findAbility("lift")
-        for ability in @abilityCollection.models
+          A: @findAbility("attack", list)
+          S: @findAbility("blast", list)
+          D: @findAbility("shield", list)
+          F: @findAbility("lift", list)
+        for ability in list.models
           @updateFromHero(ability, @get('abilityStats'))
           @updateSpells(ability)
 
         console.log "abilliteezus?", @get('abilities')
 
-    findAbility: (name) ->
-      @abilityCollection.find((ability) ->
+    findAbility: (name, list) ->
+      list.find((ability) ->
         ability.get('className') is name)
 
     updateSpells: (spell) ->
@@ -86,9 +86,9 @@
           spell.set(stat, change)
 
     updateFromHero: (action, heroStats) ->
-      action.set range: (action.get('range') + heroStats.range)
       action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
       unless action.get('target') is 'player'
+        action.set range: (action.get('range') + heroStats.range)
         action.set damage: (action.get('damage') + heroStats.damage)
         action.set multishot: (action.get('multishot') + heroStats.multishot)
 
@@ -565,17 +565,21 @@
       facing = @get('facing')
       range = spell.getRange(@map, facing, @get('location'))
       currentLocation = @coords[@get('location')]
-      for i in [1..range]
-        if facing.direction is "up" or facing.direction is "down"
-          temp =
-            x: currentLocation.x + facing.axis*i
-            y: currentLocation.y
-        else if facing.direction is "left" or facing.direction is "right"
-          temp =
-            x: currentLocation.x
-            y: currentLocation.y + facing.axis*i
-        array.push(temp)
-      array
+      if spell.get('range') is 0
+        console.log "loc", currentLocation
+        return [currentLocation]
+      else
+        for i in [1..range]
+          if facing.direction is "up" or facing.direction is "down"
+            temp =
+              x: currentLocation.x + facing.axis*i
+              y: currentLocation.y
+          else if facing.direction is "left" or facing.direction is "right"
+            temp =
+              x: currentLocation.x
+              y: currentLocation.y + facing.axis*i
+          array.push(temp)
+        array
 
 #### Cooldowns and Timers ####
 
