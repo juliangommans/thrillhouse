@@ -9,7 +9,6 @@
       @facingData =
         directions: ['up','right','down','left']
         axis: [-1,1,1,-1]
-      # @loadEntities()
       @listenTo @layout, 'show', =>
         @showView()
         @dialogView()

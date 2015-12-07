@@ -7,7 +7,7 @@
       damage: 1
       range: 1
       alive: true
-      moveSpeed: 1000
+      moveSpeed: 750
       eligible: true
       stunned: false
       attackSpeed: 1200
@@ -127,14 +127,20 @@
       unless @get('stunned')
         if @get('target')
           if @checkPlayerStillInRange()
-            playerHp = @player.get('health')
-            console.log "before", playerHp
-            playerHp -= @get('damage')
-            @player.set health: playerHp
-            @postDamage()
+            console.log "player?", @player.get('shield')
+            if @player.get('shield')
+              @damageShield()
+            else
+              @dealDamage(@get('damage'))
         else
           clearInterval(@swing)
           @patrolLoop = setInterval(@patrol, @get('moveSpeed'))
+
+    dealDamage: (damage) =>
+      playerHp = @player.get('health')
+      playerHp -= damage
+      @player.set health: playerHp
+      @postDamage()
 
     postDamage: ->
       @checkPlayerStillInRange()
@@ -154,6 +160,23 @@
 
       #fire damage animation
 
+    damageShield: ->
+      damage = @get('damage')
+      shield = $('.shield-bar')
+      console.log "what does shield look like", shield
+      if shield.length
+        shield.each( (index, object) =>
+          if damage > 0
+            $(object).removeClass('shield-bar')
+            console.log "removing a shield BAR"
+            damage -= 1
+          )
+        if damage > 0 or damage > shield.length
+          console.log "DAMAGE HAS EXCEDED SHIUELD"
+          @player.set shield: false
+          $('.shield').stop()
+          $('.shield').remove()
+          @dealDamage(damage)
 
   class LilrpgApp.DunceMeleeEnemy extends LilrpgApp.Enemy
 

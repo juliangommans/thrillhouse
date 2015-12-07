@@ -12,15 +12,16 @@
         range: 0
         cooldownMod: 0
         multishot: 0
+        block: 0
       health: 5
       maxHealth: 5
       range: 1
       actionSpeed: 750
       moveSpeed: 150
-      shield: 3
       moveCd: false
       actionCd: false
       alive: true
+      shield: false
 
     initialize: (options) ->
       @aoeCount = 0
@@ -78,15 +79,16 @@
       for orb in orbs
         stat = orb.spell_stat
         change = spell.get(orb.spell_stat)
-        if _.contains(["amythest", "emerald"], orb.item_colour)
-          change = true
-          spell.set(stat, change)
-        else
-          change += orb.change
-          spell.set(stat, change)
+        # if _.contains(["amythest", "emerald"], orb.item_colour)
+        #   change = true
+        #   spell.set(stat, change)
+        # else
+        change += orb.change
+        spell.set(stat, change)
 
     updateFromHero: (action, heroStats) ->
       action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
+      action.set black: (action.get('black') + heroStats.black) if action.get('block')
       unless action.get('target') is 'player'
         action.set range: (action.get('range') + heroStats.range)
         action.set damage: (action.get('damage') + heroStats.damage)
@@ -102,17 +104,19 @@
         when "Fighter"
           newHealth = @get('health')+2
           newDamage = @get('abilityStats').damage+1
-          @fighterBonus(newHealth,newDamage)
+          newBlock = @get('abilityStats').block+1
+          @fighterBonus(newHealth,newDamage,newBlock)
         when "Wizard"
           spellDamage = @get('spellStats').damage + 1
           spellRange = 1
           spellCooldown = -0.15
           @wizardBonus(spellDamage,spellRange,spellCooldown)
 
-    fighterBonus: (hp,dmg) ->
+    fighterBonus: (hp,dmg,block) ->
       @set health: hp
       @set maxHealth: hp
       @get('abilityStats').damage = dmg
+      @get('abilityStats').block = block
 
     wizardBonus: (dmg,range,cd) ->
       stat = @get('spellStats')
@@ -334,10 +338,14 @@
         @teleport(spell,route)
       else
         absoluteLoc = @getOffset($(destination)[0])
-        if spell.get('className') is "blast"
-          domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left+7}px;top:#{absoluteLoc.top+7}px;'></div>"
-        else
-          domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style='left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
+        domObject = "<div id='#{spell.get('uniqueId')}' class='#{spell.get('className')}' style="
+        switch spell.get('className')
+          when "blast"
+            domObject += "'left:#{absoluteLoc.left+7}px;top:#{absoluteLoc.top+7}px;'></div>"
+          when "shield"
+            domObject += "'left: -11px; top: -11px;'></div>"
+          else
+            domObject += "'left:#{absoluteLoc.left}px;top:#{absoluteLoc.top}px;'></div>"
         @animateInstant(spell, domObject, destination, absoluteLoc)
 
     castProjectile: (spell, route, destination) ->
@@ -396,7 +404,10 @@
     animateInstant: (spell, domObject, target, absoluteLoc) ->
       extraDom = spell.get('extraDom')
       id = spell.get('uniqueId')
-      $('body').append(domObject)
+      if spell.get('className') is 'shield'
+        @shieldDisplay(spell, domObject)
+      else
+        $('body').append(domObject)
       if extraDom?
         $("##{id}").append(extraDom)
       if spell.get('className') is 'blast'
@@ -408,22 +419,31 @@
           ,
           spell.get('speed') * 3
           )
+      @displayInstant(spell, target, id)
 
-
+    displayInstant: (spell, target, id) ->
       $("##{id}").fadeIn(spell.get("speed")
         , =>
           $("##{id}").fadeOut(spell.get("speed")*2
             , =>
               if target.children().length
-                if target.children()[0].classList[1] is "enemy"
-                  @hitTarget(target, spell)
-                  @cleanupSpellSprite(spell)
-                else
-                  @cleanupSpellSprite(spell)
+                unless spell.get('className') is 'shield'
+                  if target.children()[0].classList[1] is "enemy"
+                    @hitTarget(target, spell)
+                    @cleanupSpellSprite(spell)
+                  else
+                    @cleanupSpellSprite(spell)
               else
                 @cleanupSpellSprite(spell)
             )
         )
+
+    shieldDisplay: (spell, domObject) ->
+      $('.player').append(domObject)
+      shield = "<div class='health-bar shield-bar'></div>"
+      @setShield(spell.get('speed')*3)
+      for s in [1..spell.get('block')]
+        $(".#{spell.get('className')}").append(shield)
 
     teleport: (spell,route) ->
       speed = spell.get("speed")
@@ -609,6 +629,15 @@
     setActionCd: (time) ->
       @set actionCd: true
       setTimeout(@resetAction,time)
+
+    setShield: (time) ->
+      console.log "setting shield?"
+      @set shield: true
+      setTimeout(@removeShield,time)
+
+    removeShield: =>
+      console.log "removing shield!!!!!"
+      @set shield: false
 
     resetMove: =>
       @set moveCd: false

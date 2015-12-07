@@ -89,11 +89,20 @@
 
 
 .health-bar {
-  border: 1px solid red;
+  border: 1px solid lightgray;
+  background-color: gray;
   border-radius: 1px;
   height: 5px;
   width: 3px;
   display: inline-block;
+  z-index: 5;
+}
+
+.shield-bar {
+  border-color: white;
+  margin: 1px;
+  background-color: white;
+  opacity: 1 !important;
 }
 
 .positive-health {
@@ -257,7 +266,7 @@
   position: absolute;
   height: 22px;
   width: 22px;
-  background-color: rgba(155,155,155,0.8);
+  background-color: rgba(105,105,105,0.8);
   border: 2px solid gray;
   z-index: 9;
 }
