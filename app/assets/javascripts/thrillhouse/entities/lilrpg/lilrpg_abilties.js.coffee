@@ -34,9 +34,9 @@
         cooldown: 15000
         className: "shield"
         damage: 0
-        block: 3
+        block: 2
         range: 0
-        speed: 2000
+        speed: 5000
         type: "instant"
         target: "player"
 

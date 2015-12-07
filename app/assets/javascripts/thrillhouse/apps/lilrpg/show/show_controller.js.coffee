@@ -147,7 +147,8 @@
     afterHeroFetch: ->
       App.execute "when:fetched", @player, =>
         @loadSpellsView()
-        @loadInventoryDisplay()
+        @loadAbilitiesView()
+        # @loadInventoryDisplay()
 
         @setPlayerLocation()
         @updateDisplay()
@@ -156,6 +157,7 @@
 
     updateDisplay: ->
       @spellsView.render()
+      @abilitiesView.render()
       for item in @hero.get('inventory')
         @checkForSocket(item)
 
@@ -466,21 +468,29 @@
       @listenTo invView, "show", ->
         @spellRegion = new Backbone.Marionette.Region
           el: "#spell-display"
-        @inventoryRegion = new Backbone.Marionette.Region
-          el: "#inventory-display"
+        @abilityRegion = new Backbone.Marionette.Region
+          el: "#ability-display"
+        # @inventoryRegion = new Backbone.Marionette.Region
+        #   el: "#inventory-display"
 
       @layout.invRegion.show invView
 
-    loadInventoryDisplay: ->
-      invDisplay = @getInventoryDisplay()
+    # loadInventoryDisplay: ->
+    #   invDisplay = @getInventoryDisplay()
 
-      @inventoryRegion.show invDisplay
+    #   @inventoryRegion.show invDisplay
 
     loadSpellsView: ->
-      collection = @player.spellCollection
-      @spellsView = @getSpellsView(collection)
+      spellCollection = @player.spellCollection
+      @spellsView = @getSpellsView(spellCollection)
 
       @spellRegion.show @spellsView
+
+    loadAbilitiesView: ->
+      abilityCollection = @player.abilityCollection
+      @abilitiesView = @getAbilitiesView(abilityCollection)
+
+      @abilityRegion.show @abilitiesView
 
     dialogView: ->
       dialogView = @getDialogView()
@@ -533,9 +543,13 @@
       new Show.Spells
         collection: collection
 
-    getInventoryDisplay: ->
-      new Show.InventoryDisplay
-        model: @player
+    getAbilitiesView: (collection) ->
+      new Show.Abilities
+        collection: collection
+
+    # getInventoryDisplay: ->
+    #   new Show.InventoryDisplay
+    #     model: @player
 
     getShowView: ->
       new Show.Show

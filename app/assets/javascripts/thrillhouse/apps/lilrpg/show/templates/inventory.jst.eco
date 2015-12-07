@@ -1,4 +1,4 @@
 <div id='inventory-wrapper'>
   <div id='spell-display'></div>
-  <div id='inventory-display'></div>
+  <div id='ability-display'></div>
 </div>

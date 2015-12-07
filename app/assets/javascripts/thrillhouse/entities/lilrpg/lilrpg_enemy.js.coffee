@@ -163,20 +163,27 @@
     damageShield: ->
       damage = @get('damage')
       shield = $('.shield-bar')
-      console.log "what does shield look like", shield
+      console.log "how long is this shield?", shield.length
       if shield.length
         shield.each( (index, object) =>
           if damage > 0
             $(object).removeClass('shield-bar')
             console.log "removing a shield BAR"
             damage -= 1
+            unless $('.shield-bar').length
+              @expendShield(damage)
           )
-        if damage > 0 or damage > shield.length
-          console.log "DAMAGE HAS EXCEDED SHIUELD"
-          @player.set shield: false
-          $('.shield').stop()
-          $('.shield').remove()
-          @dealDamage(damage)
+      if damage > 0 or damage > shield.length
+        console.log "DAMAGE HAS EXCEDED SHIUELD"
+        @expendShield(damage)
+
+    expendShield: (damage) ->
+      @player.set shield: false
+      console.log "&&& shield is being DESTROYED", @player
+      $('.shield').stop()
+      $('.shield').remove()
+      $('.player').empty()
+      @dealDamage(damage)
 
   class LilrpgApp.DunceMeleeEnemy extends LilrpgApp.Enemy
 
@@ -213,7 +220,6 @@
         maxHealth: 3
         range: 3
         attackSpeed: 3000
-
 
   API =
     dunceMeleeEnemy: ->

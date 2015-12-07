@@ -79,16 +79,16 @@
       for orb in orbs
         stat = orb.spell_stat
         change = spell.get(orb.spell_stat)
-        # if _.contains(["amythest", "emerald"], orb.item_colour)
-        #   change = true
-        #   spell.set(stat, change)
-        # else
-        change += orb.change
-        spell.set(stat, change)
+        if _.contains(["amythest", "emerald", "fireopal"], orb.item_colour)
+          change = true
+          spell.set(stat, change)
+        else
+          change += orb.change
+          spell.set(stat, change)
 
     updateFromHero: (action, heroStats) ->
       action.set cooldownMod: (action.get('cooldownMod') + heroStats.cooldownMod)
-      action.set black: (action.get('black') + heroStats.black) if action.get('block')
+      action.set block: (action.get('block') + heroStats.block) if action.get('block')
       unless action.get('target') is 'player'
         action.set range: (action.get('range') + heroStats.range)
         action.set damage: (action.get('damage') + heroStats.damage)
@@ -441,7 +441,7 @@
     shieldDisplay: (spell, domObject) ->
       $('.player').append(domObject)
       shield = "<div class='health-bar shield-bar'></div>"
-      @setShield(spell.get('speed')*3)
+      @setShield(spell.get('speed')*1.5)
       for s in [1..spell.get('block')]
         $(".#{spell.get('className')}").append(shield)
 

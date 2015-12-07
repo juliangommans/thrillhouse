@@ -27,7 +27,7 @@
 }
 
 #inventory-region {
-  width: 500px;
+  width: 700px;
   height: 400px;
   display: inline-block;
 }
@@ -39,13 +39,13 @@
   display: inline-block;
 
   #spell-display {
-    width: 65%;
+    width: 45%;
     display: inline-block;
     vertical-align: middle;
   }
 
-  #inventory-display {
-    width: 30%;
+  #ability-display {
+    width: 45%;
     display: inline-block;
     vertical-align: middle;
   }

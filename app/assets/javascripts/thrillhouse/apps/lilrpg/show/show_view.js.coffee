@@ -6,8 +6,8 @@
   class Show.Inventory extends App.Views.ItemView
     template: 'lilrpg/show/inventory'
 
-  class Show.InventoryDisplay extends App.Views.ItemView
-    template: 'lilrpg/show/inventory_display'
+  # class Show.InventoryDisplay extends App.Views.ItemView
+  #   template: 'lilrpg/show/inventory_display'
 
   class Show.Spell extends App.Views.ItemView
     template: 'lilrpg/show/spell'
@@ -17,6 +17,11 @@
     template: 'lilrpg/show/spells'
     childView: Show.Spell
     childViewContainer: '#spells-collection'
+
+  class Show.Abilities extends App.Views.CompositeView
+    template: 'lilrpg/show/abilities'
+    childView: Show.Spell
+    childViewContainer: '#ability-collection'
 
   class Show.Dialog extends App.Views.ItemView
     template: 'lilrpg/show/dialog'
