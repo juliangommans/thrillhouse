@@ -193,7 +193,7 @@
         lootbox += "<div id='#{item.get('id')}' class='#{item.get('colour')} #{item.get('category')}'></div>"
         lootbox += "</div>"
         $("#loot-outcome").append(lootbox)
-      $('#loot-modal').modal('show')
+      $('#loot-modal').modal(backdrop: "static")
 
     collectCurrentLoot: ->
       @itemcontainer = []
@@ -223,7 +223,7 @@
       @hero or= App.request "heroes:entity", 1
       @items or= App.request "hero:items:entities"
       App.execute "when:fetched", [@hero, @items], =>
-        $('#hero-modal').modal('show')
+        $('#hero-modal').modal(backdrop: "static")
         @hero.buildInventory()
         @showCharacterItems()
 
@@ -524,7 +524,7 @@
       App.execute "when:fetched", @loadMapList, =>
         loadView = @getMapLoadView()
         @listenTo loadView, "show", ->
-          $('#load-map-modal').modal('show')
+          $('#load-map-modal').modal(backdrop: "static")
         @listenTo loadView, "select:current:map", (id) =>
           @setLoadedMap(id)
         @loadEntities()

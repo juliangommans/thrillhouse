@@ -16,6 +16,6 @@
   <table>
     <tr><td>Damage: </td><td><%= @damage %></td></tr>
     <tr><td>Range: </td><td><%= @range %></td></tr>
-    <tr><td>Cooldown: </td><td><%= @cooldown/1000 %> s</td></tr>
+    <tr><td>Cooldown: </td><td><%= Math.round((@cooldown/1000)*100)/100 %> s</td></tr>
   </table>
 </div>

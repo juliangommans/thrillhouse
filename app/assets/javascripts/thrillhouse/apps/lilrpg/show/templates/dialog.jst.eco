@@ -1,4 +1,4 @@
-<div id="load-map-modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+<div id="load-map-modal" class="modal" role="dialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div id="loot-modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+<div id="loot-modal" class="modal" role="dialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -34,7 +34,7 @@
   </div>
 </div>
 
-<div id="hero-modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+<div id="hero-modal" class="modal" role="dialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

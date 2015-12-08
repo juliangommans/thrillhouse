@@ -16,7 +16,7 @@
       health: 5
       maxHealth: 5
       range: 1
-      actionSpeed: 750
+      actionSpeed: 500
       moveSpeed: 150
       moveCd: false
       actionCd: false

@@ -8,7 +8,7 @@
 </div>
 
 
-<div id="save-map-modal" class="modal fade" role="dialog">
+<div id="save-map-modal" class="modal" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -26,7 +26,7 @@
   </div>
 </div>
 
-<div id="load-map-modal-bloop" class="modal fade" role="dialog">
+<div id="load-map-modal-bloop" class="modal" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
