@@ -8,6 +8,7 @@
     initialize:->
       @set
         className: "attack"
+        cooldown: 750
         speed: 75
         range: 1
         type: "projectile"

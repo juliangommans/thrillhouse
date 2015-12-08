@@ -165,7 +165,7 @@
     mapUiView: ->
       uiView = @getMapUiView()
       @listenTo uiView, "show", ->
-        @bob = new Backbone.Marionette.Region
+        @loadMapRegion = new Backbone.Marionette.Region
           el: "#map-load-select"
         @mapLoadView()
       @listenTo uiView, "save:current:map", @saveMap
@@ -181,7 +181,7 @@
         @listenTo loadView, "load:selected:map", (id) =>
           @setLoadedMap(id)
 
-        @bob.show loadView
+        @loadMapRegion.show loadView
 
     getLayout: ->
       new Mapeditor.Layout

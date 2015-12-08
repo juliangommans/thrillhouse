@@ -100,6 +100,7 @@
         if $(loc.children()[0]).hasClass('loot')
           item.remove()
           @chestLoot()
+          @stopEventPropogation()
 
     getTargetModel: ->
       @enemies.find((enemy) =>
@@ -209,6 +210,7 @@
             @saveItemToServer(item)
             @itemcontainer.push(item)
           )
+      @activateControls()
 
     saveItemToServer: (item) ->
       item.save {},
@@ -446,8 +448,16 @@
 
     clearHeroCss: ->
       @mapLoadView()
-      $('.spell-slot').removeClass('socketed topaz ruby saphire')
+      $('.spell-slot').removeClass('socketed topaz ruby saphire fireopal amythest emerald')
       $('#inventory-items').empty()
+
+    stopEventPropogation: ->
+      $(document).unbind("keydown")
+
+    activateControls: ->
+      $(document).keydown (e) =>
+        e.preventDefault()
+        @sortPlayerAction()
 
 
 #### Views ####
